@@ -82,3 +82,12 @@ Las notificaciones locales funcionan en Expo Go. Las notificaciones remotas y la
 7. Pulsar `SALTAR DESCANSO` y confirmar que no llega la alerta cancelada.
 
 En iOS, la vibración háptica depende de que el Taptic Engine esté habilitado, que el modo de bajo consumo esté desactivado y que Expo Go tenga permitido emitir sonidos y notificaciones. Con la app activa se ejecutan tres impulsos fuertes durante aproximadamente un segundo. Cuando la app está en segundo plano, la vibración pertenece al sistema de notificaciones de iOS; la app no puede forzar su duración desde JavaScript mientras está suspendida. El sonido usa el volumen de alertas del sistema y no puede amplificarse desde la app.
+
+## Prueba de Stage 3: progreso semanal
+
+1. Completar una sesión de un grupo muscular.
+2. Volver a Home y confirmar que aparece como `HECHO ESTA SEMANA`.
+3. Abrir Historial y comprobar el contador de sesiones.
+4. Confirmar que el grupo aparece con su última actividad relativa, por ejemplo `HOY`.
+5. Revisar que la recomendación muestre grupos pendientes.
+6. Completar una sesión combinada y confirmar que todos sus grupos quedan registrados.
