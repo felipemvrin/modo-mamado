@@ -20,7 +20,13 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
   activeWorkout: null,
   completedSets: [],
   history: [],
-  toggleMuscle: (muscle) => set((state) => ({ selectedMuscles: state.selectedMuscles.includes(muscle) ? state.selectedMuscles.filter((item) => item !== muscle) : [...state.selectedMuscles, muscle] })),
+  toggleMuscle: (muscle) => set((state) => {
+    if (state.selectedMuscles.includes(muscle)) {
+      if (state.selectedMuscles.length === 1) return state;
+      return { selectedMuscles: state.selectedMuscles.filter((item) => item !== muscle) };
+    }
+    return { selectedMuscles: [...state.selectedMuscles, muscle] };
+  }),
   startWorkout: () => set({ activeWorkout: get().selectedMuscles, completedSets: [] }),
   completeSet: (exerciseIndex, setIndex) => set((state) => ({ completedSets: state.completedSets.includes(exerciseIndex * 100 + setIndex) ? state.completedSets : [...state.completedSets, exerciseIndex * 100 + setIndex] })),
   finishWorkout: () => {
