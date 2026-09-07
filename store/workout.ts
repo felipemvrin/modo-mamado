@@ -1,14 +1,14 @@
 import { create } from 'zustand';
-import { defaultMuscle, routines } from '../data/routines';
+import { defaultMuscle, getExercisesForMuscles } from '../data/routines';
 import { getWorkouts, initializeDatabase, saveWorkout } from '../database/workouts';
 import { CompletedWorkout, MuscleGroup } from '../types/workout';
 
 type WorkoutState = {
-  selectedMuscle: MuscleGroup;
-  activeWorkout: MuscleGroup | null;
+  selectedMuscles: MuscleGroup[];
+  activeWorkout: MuscleGroup[] | null;
   completedSets: number[];
   history: CompletedWorkout[];
-  selectMuscle: (muscle: MuscleGroup) => void;
+  toggleMuscle: (muscle: MuscleGroup) => void;
   startWorkout: () => void;
   completeSet: (exerciseIndex: number, setIndex: number) => void;
   finishWorkout: () => void;
@@ -16,17 +16,23 @@ type WorkoutState = {
 };
 
 export const useWorkoutStore = create<WorkoutState>((set, get) => ({
-  selectedMuscle: defaultMuscle,
+  selectedMuscles: [defaultMuscle],
   activeWorkout: null,
   completedSets: [],
   history: [],
-  selectMuscle: (selectedMuscle) => set({ selectedMuscle }),
-  startWorkout: () => set({ activeWorkout: get().selectedMuscle, completedSets: [] }),
+  toggleMuscle: (muscle) => set((state) => {
+    if (state.selectedMuscles.includes(muscle)) {
+      if (state.selectedMuscles.length === 1) return state;
+      return { selectedMuscles: state.selectedMuscles.filter((item) => item !== muscle) };
+    }
+    return { selectedMuscles: [...state.selectedMuscles, muscle] };
+  }),
+  startWorkout: () => set({ activeWorkout: get().selectedMuscles, completedSets: [] }),
   completeSet: (exerciseIndex, setIndex) => set((state) => ({ completedSets: state.completedSets.includes(exerciseIndex * 100 + setIndex) ? state.completedSets : [...state.completedSets, exerciseIndex * 100 + setIndex] })),
   finishWorkout: () => {
     const { activeWorkout } = get();
-    if (!activeWorkout) return;
-    const workout: CompletedWorkout = { id: `${Date.now()}`, muscleGroup: activeWorkout, completedAt: new Date().toISOString(), exerciseCount: routines[activeWorkout].length };
+    if (!activeWorkout?.length) return;
+    const workout: CompletedWorkout = { id: `${Date.now()}`, muscleGroups: activeWorkout, completedAt: new Date().toISOString(), exerciseCount: getExercisesForMuscles(activeWorkout).length };
     saveWorkout(workout);
     set({ activeWorkout: null, history: [workout, ...get().history] });
   },

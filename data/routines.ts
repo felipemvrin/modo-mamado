@@ -16,3 +16,7 @@ export const routines: Record<MuscleGroup, Exercise[]> = {
 };
 
 export const defaultMuscle: MuscleGroup = muscleGroups[0];
+
+export function getExercisesForMuscles(selectedMuscles: MuscleGroup[]): Exercise[] {
+  return selectedMuscles.flatMap((muscle) => routines[muscle]);
+}
