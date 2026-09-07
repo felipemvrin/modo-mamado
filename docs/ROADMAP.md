@@ -70,6 +70,8 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 
 **Rama:** `feat/stage-3-weekly-progress`
 
+**Estado:** En desarrollo
+
 **Objetivo:** mostrar qué se trabajó y orientar la próxima sesión.
 
 **Incluye:**
@@ -79,6 +81,13 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - Grupos pendientes o con mayor tiempo de recuperación.
 - Recomendación simple de siguiente entrenamiento.
 - Registro de ejercicios completados.
+
+**Implementado en esta rama:**
+
+- Resumen de sesiones de la semana actual, comenzando el lunes.
+- Estado por grupo: entrenado o pendiente.
+- Cantidad de sesiones y tiempo relativo desde la última sesión.
+- Recomendación de hasta dos grupos pendientes.
 
 ## Etapas posteriores
 
