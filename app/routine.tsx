@@ -1,16 +1,16 @@
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { routines } from '../data/routines';
+import { getExercisesForMuscles } from '../data/routines';
 import { colors, radius, spacing, typography } from '../theme/tokens';
 import { useWorkoutStore } from '../store/workout';
 
 export default function Routine() {
-  const { selectedMuscle, startWorkout } = useWorkoutStore();
-  const exercises = routines[selectedMuscle];
+  const { selectedMuscles, startWorkout } = useWorkoutStore();
+  const exercises = getExercisesForMuscles(selectedMuscles);
   return <SafeAreaView style={styles.safe}><ScrollView contentContainerStyle={styles.container}>
     <Pressable onPress={() => router.back()} style={styles.back}><MaterialCommunityIcons name="arrow-left" size={22} color={colors.text} /><Text style={styles.backText}>VOLVER</Text></Pressable>
-    <Text style={styles.kicker}>RUTINA SUGERIDA / {exercises.length} EJERCICIOS</Text><Text style={styles.title}>{selectedMuscle.toUpperCase()}</Text><Text style={styles.subtitle}>Hoy no toca pensar. Solo ejecutar.</Text>
+    <Text style={styles.kicker}>RUTINA SUGERIDA / {exercises.length} EJERCICIOS</Text><Text style={styles.title}>{selectedMuscles.join(' + ').toUpperCase()}</Text><Text style={styles.subtitle}>Hoy no toca pensar. Solo ejecutar.</Text>
     <View style={styles.list}>{exercises.map((item, index) => <View key={item.id} style={styles.exercise}><View style={styles.number}><Text style={styles.numberText}>{String(index + 1).padStart(2, '0')}</Text></View><View style={styles.info}><Text style={styles.name}>{item.name}</Text><Text style={styles.detail}>{item.equipment.toUpperCase()} · {item.restSeconds}s DESCANSO</Text></View><View style={styles.prescription}><Text style={styles.sets}>{item.sets}</Text><Text style={styles.reps}>SERIES · {item.reps} REPS</Text></View></View>)}</View>
     <View style={styles.note}><MaterialCommunityIcons name="information-outline" color={colors.lime} size={20} /><Text style={styles.noteText}>Calienta antes de empezar. La técnica manda.</Text></View>
     <Pressable onPress={() => { startWorkout(); router.push('/workout'); }} style={styles.start}><Text style={styles.startText}>COMENZAR ENTRENAMIENTO</Text><MaterialCommunityIcons name="arrow-right" size={21} color={colors.background} /></Pressable>

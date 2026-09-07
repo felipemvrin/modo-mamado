@@ -16,7 +16,7 @@ export type Exercise = {
 
 export type CompletedWorkout = {
   id: string;
-  muscleGroup: MuscleGroup;
+  muscleGroups: MuscleGroup[];
   completedAt: string;
   exerciseCount: number;
 };
