@@ -7,7 +7,7 @@ import { configureNotifications } from '../services/notifications';
 
 export default function Layout() {
   const [fontsLoaded] = useFonts({ Quantico: Quantico_400Regular, QuanticoBold: Quantico_700Bold });
-  useEffect(() => { configureNotifications(); }, []);
+  useEffect(() => { void configureNotifications(); }, []);
   if (!fontsLoaded) return null;
   return <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }} />;
 }

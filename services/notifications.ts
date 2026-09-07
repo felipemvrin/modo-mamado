@@ -13,24 +13,30 @@ Notifications.setNotificationHandler({
 });
 
 export async function configureNotifications(): Promise<boolean> {
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync(REST_CHANNEL_ID, {
-      name: 'Descanso de entrenamiento',
-      importance: Notifications.AndroidImportance.HIGH,
-      sound: 'default',
-      vibrationPattern: [0, 300, 150, 300, 150, 300],
+  if (Platform.OS === 'web') return false;
+
+  try {
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync(REST_CHANNEL_ID, {
+        name: 'Descanso de entrenamiento',
+        importance: Notifications.AndroidImportance.HIGH,
+        sound: 'default',
+        vibrationPattern: [0, 300, 150, 300, 150, 300],
+      });
+    }
+
+    const currentPermissions = await Notifications.getPermissionsAsync();
+    if (currentPermissions.granted || currentPermissions.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL) {
+      return true;
+    }
+
+    const requestedPermissions = await Notifications.requestPermissionsAsync({
+      ios: { allowAlert: true, allowBadge: false, allowSound: true },
     });
+    return requestedPermissions.granted || requestedPermissions.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL;
+  } catch {
+    return false;
   }
-
-  const currentPermissions = await Notifications.getPermissionsAsync();
-  if (currentPermissions.granted || currentPermissions.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL) {
-    return true;
-  }
-
-  const requestedPermissions = await Notifications.requestPermissionsAsync({
-    ios: { allowAlert: true, allowBadge: false, allowSound: true },
-  });
-  return requestedPermissions.granted || requestedPermissions.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL;
 }
 
 export async function scheduleRestFinishedNotification(endAt: number): Promise<string | null> {
