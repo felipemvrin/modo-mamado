@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { AppState, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getExercisesForMuscles } from '../data/routines';
 import { colors, radius, spacing, typography } from '../theme/tokens';
 import { useWorkoutStore } from '../store/workout';
+import { cancelNotification, scheduleRestFinishedNotification } from '../services/notifications';
 
 const formatTime = (seconds: number) => `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 
@@ -14,16 +15,24 @@ export default function Workout() {
   const exercises = activeWorkout ? getExercisesForMuscles(activeWorkout) : [];
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [setIndex, setSetIndex] = useState(0);
-  const [rest, setRest] = useState<number | null>(null);
+  const [restEndAt, setRestEndAt] = useState<number | null>(null);
+  const [now, setNow] = useState(Date.now());
+  const [notificationId, setNotificationId] = useState<string | null>(null);
+  const lastFeedbackAt = useRef(0);
   const current = exercises[exerciseIndex];
-  useEffect(() => { if (rest === null || rest <= 0) return; const timer = setInterval(() => setRest((value) => value === null ? null : value - 1), 1000); return () => clearInterval(timer); }, [rest]);
-  useEffect(() => { if (rest === 0) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); }, [rest]);
+  const rest = restEndAt === null ? null : Math.max(0, Math.ceil((restEndAt - now) / 1000));
+  const signalRestFinished = async () => { const timestamp = Date.now(); if (timestamp - lastFeedbackAt.current < 1200) return; lastFeedbackAt.current = timestamp; await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); await new Promise((resolve) => setTimeout(resolve, 280)); await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); await new Promise((resolve) => setTimeout(resolve, 280)); await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); };
+  useEffect(() => { if (restEndAt === null) return; const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, [restEndAt]);
+  useEffect(() => { if (rest === 0) signalRestFinished(); }, [rest]);
+  useEffect(() => { const subscription = AppState.addEventListener('change', (state) => { if (state === 'active' && rest === 0) signalRestFinished(); }); return () => subscription.remove(); }, [rest]);
   if (!activeWorkout || !current) return null;
   const totalSets = exercises.reduce((sum, item) => sum + item.sets, 0);
   const completedTotal = completedSets.length;
   const isLastSet = exerciseIndex === exercises.length - 1 && setIndex === current.sets - 1;
-  const markSet = () => { completeSet(exerciseIndex, setIndex); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); if (isLastSet) { finishWorkout(); router.replace('/'); return; } setRest(current.restSeconds); if (setIndex + 1 < current.sets) setSetIndex(setIndex + 1); else { setExerciseIndex(exerciseIndex + 1); setSetIndex(0); } };
-  if (rest !== null) return <SafeAreaView style={styles.safe}><View style={styles.restScreen}><Text style={styles.kicker}>DESCANSANDO</Text><Text style={styles.restTitle}>{rest === 0 ? 'DALE NOMÁS' : formatTime(rest)}</Text><View style={styles.progressTrack}><View style={[styles.progress, { width: `${Math.max(0, Math.min(100, ((current.restSeconds - rest) / current.restSeconds) * 100))}%` }]} /></View><Text style={styles.nextLabel}>PRÓXIMA SERIE</Text><Text style={styles.next}>{current.name.toUpperCase()} · {setIndex + 1}/{current.sets}</Text><View style={styles.restActions}><Pressable onPress={() => setRest((value) => value === null ? null : value + 30)} style={styles.secondary}><Text style={styles.secondaryText}>+30 SEG</Text></Pressable><Pressable onPress={() => setRest(null)} style={styles.start}><Text style={styles.startText}>SALTAR DESCANSO</Text></Pressable></View></View></SafeAreaView>;
+  const startRest = async (seconds: number) => { const endAt = Date.now() + seconds * 1000; await cancelNotification(notificationId); setNow(Date.now()); setRestEndAt(endAt); const nextNotificationId = await scheduleRestFinishedNotification(endAt); setNotificationId(nextNotificationId); };
+  const skipRest = async () => { await cancelNotification(notificationId); setNotificationId(null); setRestEndAt(null); setNow(Date.now()); };
+  const markSet = async () => { completeSet(exerciseIndex, setIndex); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); if (isLastSet) { await skipRest(); finishWorkout(); router.replace('/'); return; } await startRest(current.restSeconds); if (setIndex + 1 < current.sets) setSetIndex(setIndex + 1); else { setExerciseIndex(exerciseIndex + 1); setSetIndex(0); } };
+  if (rest !== null) return <SafeAreaView style={styles.safe}><View style={styles.restScreen}><Text style={styles.kicker}>DESCANSANDO</Text><Text style={styles.restTitle}>{rest === 0 ? 'DALE NOMÁS' : formatTime(rest)}</Text><View style={styles.progressTrack}><View style={[styles.progress, { width: `${Math.max(0, Math.min(100, ((current.restSeconds - rest) / current.restSeconds) * 100))}%` }]} /></View><Text style={styles.nextLabel}>PRÓXIMA SERIE</Text><Text style={styles.next}>{current.name.toUpperCase()} · {setIndex + 1}/{current.sets}</Text><View style={styles.restActions}><Pressable onPress={() => startRest(rest + 30)} style={styles.secondary}><Text style={styles.secondaryText}>+30 SEG</Text></Pressable><Pressable onPress={skipRest} style={styles.start}><Text style={styles.startText}>SALTAR DESCANSO</Text></Pressable></View></View></SafeAreaView>;
   return <SafeAreaView style={styles.safe}><View style={styles.container}><View style={styles.header}><Pressable onPress={() => router.back()}><MaterialCommunityIcons name="close" size={26} color={colors.text} /></Pressable><Text style={styles.headerTitle}>{activeWorkout.join(' + ').toUpperCase()}</Text><Text style={styles.counter}>{completedTotal}/{totalSets}</Text></View><View style={styles.main}><Text style={styles.kicker}>EJERCICIO {String(exerciseIndex + 1).padStart(2, '0')} / {String(exercises.length).padStart(2, '0')}</Text><Text style={styles.exerciseName}>{current.name.toUpperCase()}</Text><Text style={styles.equipment}>{current.equipment.toUpperCase()}</Text><View style={styles.prescription}><Text style={styles.seriesLabel}>SERIE</Text><Text style={styles.series}>{setIndex + 1} <Text style={styles.seriesMuted}>/ {current.sets}</Text></Text><View style={styles.repsBox}><Text style={styles.reps}>{current.reps}</Text><Text style={styles.repsLabel}>REPETICIONES</Text></View></View></View><Pressable onPress={markSet} style={styles.complete}><MaterialCommunityIcons name="check" size={28} color={colors.background} /><Text style={styles.completeText}>SERIE COMPLETADA</Text></Pressable></View></SafeAreaView>;
 }
 
