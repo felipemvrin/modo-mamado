@@ -6,16 +6,17 @@ MODO MAMADO es un copiloto de entrenamiento offline-first para gimnasio. Te dice
 
 ## MVP
 
-- Selección visual de grupo muscular.
+- Selección visual de uno o más grupos musculares.
 - Rutinas locales de pecho, espalda, brazos, hombros, piernas y core.
 - Sesión guiada con series, repeticiones y progreso.
 - Descanso automático con cronómetro grande, +30 segundos, saltar y feedback háptico.
 - Historial local de entrenamientos con Expo SQLite.
+- Señales de grupos trabajados durante los últimos 7 días.
 - Tipografía Quantico, iconografía consistente y diseño oscuro de alto contraste.
 
 ## Stack
 
-- Expo SDK 54, React Native 0.81 y TypeScript estricto.
+- Expo SDK 57, React Native 0.86 y TypeScript estricto.
 - Expo Router para navegación basada en archivos.
 - Zustand para el estado de la sesión.
 - Expo SQLite para persistencia local.
@@ -52,7 +53,13 @@ npx expo export --platform ios
 
 ## Roadmap
 
-1. Media de ejercicios con un repositorio local pequeño.
-2. Ajustes de presets de descanso y reduced motion.
-3. Migraciones SQLite versionadas y más métricas de historial.
-4. Tests de store, timer y navegación.
+El avance está organizado por etapas y ramas. Consulta [docs/ROADMAP.md](docs/ROADMAP.md) para el estado actualizado.
+
+1. Documentación y control del proyecto.
+2. Timer confiable, vibración y alertas locales.
+3. Selección múltiple muscular.
+4. Historial semanal y recomendaciones.
+5. Catálogo amplio, filtros y sustituciones.
+6. Progresión y Apple Watch.
+
+Para comandos, validaciones y flujo de ramas consulta [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md). Para decisiones técnicas consulta [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
