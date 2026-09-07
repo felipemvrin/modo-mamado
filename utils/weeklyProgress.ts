@@ -7,7 +7,7 @@ export type MuscleProgress = {
   sessions: number;
   lastTrainedAt: string | null;
   daysSinceLastTraining: number | null;
-  status: 'trained' | 'ready' | 'pending';
+  status: 'trained' | 'pending';
 };
 
 export type WeeklyProgress = {
@@ -33,10 +33,16 @@ function daysSince(date: Date, now: Date): number {
 
 export function getWeeklyProgress(history: CompletedWorkout[], now = new Date()): WeeklyProgress {
   const weekStart = startOfWeek(now);
-  const workouts = history.filter((workout) => new Date(workout.completedAt) >= weekStart);
+  const workouts = history.filter((workout) => {
+    const completedAt = new Date(workout.completedAt);
+    return !Number.isNaN(completedAt.getTime()) && completedAt >= weekStart;
+  });
   const muscles = muscleGroups.map((muscle): MuscleProgress => {
     const muscleWorkouts = workouts.filter((workout) => workout.muscleGroups.includes(muscle));
-    const latest = muscleWorkouts[0];
+    const latest = muscleWorkouts.reduce<CompletedWorkout | null>((current, workout) => {
+      if (!current) return workout;
+      return new Date(workout.completedAt).getTime() > new Date(current.completedAt).getTime() ? workout : current;
+    }, null);
     const lastTrainedAt = latest?.completedAt ?? null;
     const daysSinceLastTraining = lastTrainedAt ? daysSince(new Date(lastTrainedAt), now) : null;
     return {
