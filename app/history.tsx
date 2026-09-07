@@ -1,0 +1,14 @@
+import { useEffect } from 'react';
+import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { colors, radius, spacing } from '../theme/tokens';
+import { useWorkoutStore } from '../store/workout';
+
+export default function History() {
+  const { history, loadHistory } = useWorkoutStore();
+  useEffect(() => loadHistory(), [loadHistory]);
+  return <SafeAreaView style={styles.safe}><ScrollView contentContainerStyle={styles.container}><Pressable onPress={() => router.back()} style={styles.back}><MaterialCommunityIcons name="arrow-left" size={22} color={colors.text} /><Text style={styles.backText}>VOLVER</Text></Pressable><Text style={styles.kicker}>REGISTRO LOCAL</Text><Text style={styles.title}>HISTORIAL</Text><Text style={styles.subtitle}>Tu constancia habla por ti.</Text>{history.length === 0 ? <View style={styles.empty}><MaterialCommunityIcons name="calendar-blank-outline" size={40} color={colors.lime} /><Text style={styles.emptyTitle}>AÚN NO HAY ENTRENAMIENTOS</Text><Text style={styles.emptyText}>Completa tu primera sesión y aparecerá aquí.</Text></View> : <View style={styles.list}>{history.map((item) => <View key={item.id} style={styles.row}><View><Text style={styles.date}>{new Date(item.completedAt).toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase()}</Text><Text style={styles.muscle}>{item.muscleGroup.toUpperCase()}</Text></View><MaterialCommunityIcons name="check-circle" size={24} color={colors.lime} /></View>)}</View>}</ScrollView></SafeAreaView>;
+}
+
+const styles = StyleSheet.create({ safe: { flex: 1, backgroundColor: colors.background }, container: { padding: spacing.lg, gap: spacing.lg }, back: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm }, backText: { color: colors.text, fontFamily: 'Quantico', fontSize: 12 }, kicker: { color: colors.lime, fontFamily: 'Quantico', fontSize: 12, letterSpacing: 1 }, title: { color: colors.text, fontFamily: 'QuanticoBold', fontSize: 38, marginTop: -10 }, subtitle: { color: colors.muted, fontSize: 16, marginTop: -10 }, list: { gap: spacing.sm }, row: { padding: spacing.md, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: radius.sm, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, date: { color: colors.muted, fontFamily: 'Quantico', fontSize: 11 }, muscle: { color: colors.text, fontFamily: 'QuanticoBold', fontSize: 18, marginTop: 5 }, empty: { marginTop: spacing.xxl, alignItems: 'center', gap: spacing.md, padding: spacing.xl, borderWidth: 1, borderColor: colors.border, borderRadius: radius.sm }, emptyTitle: { color: colors.text, fontFamily: 'QuanticoBold', fontSize: 15, textAlign: 'center' }, emptyText: { color: colors.muted, textAlign: 'center' } });
