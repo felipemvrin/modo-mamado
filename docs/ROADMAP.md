@@ -29,6 +29,8 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 
 **Rama:** `feat/stage-1-timer-alerts`
 
+**Estado:** En desarrollo
+
 **Objetivo:** avisar de forma confiable cuando termina el descanso.
 
 **Incluye:**
@@ -40,6 +42,14 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 - Actualización de documentación y troubleshooting.
 
 **Nota:** Apple Watch requiere una integración nativa o una app companion y queda fuera de esta etapa.
+
+**Implementado en esta rama:**
+
+- Timer basado en una marca de tiempo absoluta para recuperar el restante al volver a la app.
+- Notificación local con sonido al finalizar el descanso.
+- Vibración háptica al finalizar el descanso en el dispositivo.
+- Cancelación y reprogramación de la alerta al saltar o sumar 30 segundos.
+- Canal Android dedicado para alertas de descanso.
 
 ## Etapa 2: Selección múltiple muscular
 
