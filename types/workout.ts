@@ -31,4 +31,12 @@ export type CompletedWorkout = {
   muscleGroups: MuscleGroup[];
   completedAt: string;
   exerciseCount: number;
+  setLogs?: SetLog[];
+};
+
+export type SetLog = {
+  exerciseId: string;
+  setIndex: number;
+  weight: number;
+  reps: number;
 };

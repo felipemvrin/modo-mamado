@@ -1,18 +1,20 @@
 import { create } from 'zustand';
 import { defaultMuscle, getExercisesForMuscles } from '../data/routines';
 import { getWorkouts, initializeDatabase, saveWorkout } from '../database/workouts';
-import { CompletedWorkout, EquipmentType, equipmentTypes, MuscleGroup } from '../types/workout';
+import { CompletedWorkout, EquipmentType, equipmentTypes, MuscleGroup, SetLog } from '../types/workout';
 
 type WorkoutState = {
   selectedMuscles: MuscleGroup[];
   activeWorkout: MuscleGroup[] | null;
   completedSets: number[];
+  setLogs: Record<string, SetLog>;
   history: CompletedWorkout[];
   availableEquipment: EquipmentType[];
   substitutions: Record<string, string>;
   toggleMuscle: (muscle: MuscleGroup) => void;
   startWorkout: () => void;
   completeSet: (exerciseIndex: number, setIndex: number) => void;
+  logSet: (exerciseIndex: number, setIndex: number, exerciseId: string, weight: number, reps: number) => void;
   finishWorkout: () => void;
   loadHistory: () => void;
   toggleEquipment: (equipment: EquipmentType) => void;
@@ -24,6 +26,7 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
   selectedMuscles: [defaultMuscle],
   activeWorkout: null,
   completedSets: [],
+  setLogs: {},
   history: [],
   availableEquipment: [...equipmentTypes],
   substitutions: {},
@@ -34,14 +37,15 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
     }
     return { selectedMuscles: [...state.selectedMuscles, muscle] };
   }),
-  startWorkout: () => set({ activeWorkout: get().selectedMuscles, completedSets: [] }),
+  startWorkout: () => set({ activeWorkout: get().selectedMuscles, completedSets: [], setLogs: {} }),
   completeSet: (exerciseIndex, setIndex) => set((state) => ({ completedSets: state.completedSets.includes(exerciseIndex * 100 + setIndex) ? state.completedSets : [...state.completedSets, exerciseIndex * 100 + setIndex] })),
+  logSet: (exerciseIndex, setIndex, exerciseId, weight, reps) => set((state) => ({ setLogs: { ...state.setLogs, [`${exerciseIndex}-${setIndex}`]: { exerciseId, setIndex, weight, reps } } })),
   finishWorkout: () => {
-    const { activeWorkout } = get();
+    const { activeWorkout, setLogs } = get();
     if (!activeWorkout?.length) return;
-    const workout: CompletedWorkout = { id: `${Date.now()}`, muscleGroups: activeWorkout, completedAt: new Date().toISOString(), exerciseCount: getExercisesForMuscles(activeWorkout).length };
+    const workout: CompletedWorkout = { id: `${Date.now()}`, muscleGroups: activeWorkout, completedAt: new Date().toISOString(), exerciseCount: getExercisesForMuscles(activeWorkout).length, setLogs: Object.values(setLogs) };
     saveWorkout(workout);
-    set({ activeWorkout: null, history: [workout, ...get().history] });
+    set({ activeWorkout: null, setLogs: {}, history: [workout, ...get().history] });
   },
   loadHistory: () => {
     initializeDatabase();
