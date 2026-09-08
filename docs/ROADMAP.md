@@ -9,7 +9,7 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 - Etapas 0 a 3: integradas en `main`.
 - Etapa 4: en desarrollo.
 - Base disponible: Expo SDK 57, selección múltiple de grupos y persistencia local.
-- Rama activa: `chore/stage-0-documentation`.
+- Rama activa: `feat/stage-4-exercise-catalog`.
 
 ## Etapa 0: Documentación y control del proyecto
 
