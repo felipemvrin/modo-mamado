@@ -32,3 +32,11 @@ export function getExercisesByCategory(category: ExerciseCategory): Exercise[] {
 export function getExercisesByEquipment(equipment: EquipmentType): Exercise[] {
   return allExercises.filter((item) => item.equipment === equipment);
 }
+
+export function getExerciseById(id: string): Exercise | undefined {
+  return allExercises.find((item) => item.id === id);
+}
+
+export function getSubstitutes(exercise: Exercise, availableEquipment?: EquipmentType[]): Exercise[] {
+  return allExercises.filter((item) => item.id !== exercise.id && item.muscleGroup === exercise.muscleGroup && item.equipment !== exercise.equipment && (!availableEquipment || availableEquipment.includes(item.equipment)));
+}
