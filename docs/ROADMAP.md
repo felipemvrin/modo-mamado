@@ -174,8 +174,9 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - Pantalla `Timer` (`app/timer.tsx`): temporizador de descanso independiente, sin rutina activa, con presets (30/60/90/120s) y duración personalizada.
 - Reutiliza notificación local y feedback háptico de `Workout` al terminar el descanso.
 - Acceso rápido en `Home` (ícono junto al historial) que navega directo a `/timer`.
+- Catálogo local ampliado a 6 ejercicios por grupo muscular (42 en total), sumando variantes en polea, bandas, kettlebell, barra paralela y peso corporal para mejorar la cobertura de sustituciones por equipamiento.
 
-**Pendiente:** ampliar el catálogo de ejercicios e incorporar imágenes de referencia (`Exercise.mediaUrl`).
+**Pendiente:** imágenes de referencia (`Exercise.mediaUrl`).
 
 ## Etapas posteriores
 
