@@ -15,16 +15,20 @@ export default function StandaloneTimer() {
   const [restSeconds, setRestSeconds] = useState(DEFAULT_REST_SECONDS);
   const [customInput, setCustomInput] = useState(String(DEFAULT_REST_SECONDS));
   const [restEndAt, setRestEndAt] = useState<number | null>(null);
+  const [restTotalSeconds, setRestTotalSeconds] = useState(DEFAULT_REST_SECONDS);
   const [now, setNow] = useState(Date.now());
   const lastFeedbackAt = useRef(0);
+  const restFinishedFeedbackSent = useRef(false);
   const notificationIdRef = useRef<string | null>(null);
   const restRequestId = useRef(0);
   const rest = restEndAt === null ? null : Math.max(0, Math.ceil((restEndAt - now) / 1000));
 
   const signalRestFinished = async () => {
+    if (restFinishedFeedbackSent.current) return;
     const timestamp = Date.now();
     if (timestamp - lastFeedbackAt.current < 1200) return;
     lastFeedbackAt.current = timestamp;
+    restFinishedFeedbackSent.current = true;
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     await new Promise((resolve) => setTimeout(resolve, 280));
@@ -35,13 +39,21 @@ export default function StandaloneTimer() {
   useEffect(() => { if (restEndAt === null) return; const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, [restEndAt]);
   useEffect(() => { if (rest === 0) signalRestFinished(); }, [rest]);
   useEffect(() => { const subscription = AppState.addEventListener('change', (state) => { if (state === 'active' && rest === 0) signalRestFinished(); }); return () => subscription.remove(); }, [rest]);
+  useEffect(() => () => {
+    ++restRequestId.current;
+    const notificationId = notificationIdRef.current;
+    notificationIdRef.current = null;
+    void cancelNotification(notificationId);
+  }, []);
 
-  const startRest = async (seconds: number) => {
+  const startRest = async (seconds: number, totalSeconds = seconds) => {
     const requestId = ++restRequestId.current;
     const previousNotificationId = notificationIdRef.current;
     notificationIdRef.current = null;
+    restFinishedFeedbackSent.current = false;
     await cancelNotification(previousNotificationId);
     const endAt = Date.now() + seconds * 1000;
+    setRestTotalSeconds(totalSeconds);
     setNow(Date.now());
     setRestEndAt(endAt);
     const nextNotificationId = await scheduleRestFinishedNotification(endAt);
@@ -55,6 +67,8 @@ export default function StandaloneTimer() {
     ++restRequestId.current;
     const previousNotificationId = notificationIdRef.current;
     notificationIdRef.current = null;
+    restFinishedFeedbackSent.current = false;
+    setRestTotalSeconds(restSeconds);
     setRestEndAt(null);
     setNow(Date.now());
     await cancelNotification(previousNotificationId);
@@ -70,9 +84,9 @@ export default function StandaloneTimer() {
         <Pressable onPress={stopRest} style={styles.close}><MaterialCommunityIcons name="close" size={26} color={colors.text} /></Pressable>
         <Text style={styles.kicker}>DESCANSANDO</Text>
         <Text style={styles.restTitle}>{rest === 0 ? 'DALE NOMÁS' : formatTime(rest)}</Text>
-        <View style={styles.progressTrack}><View style={[styles.progress, { width: `${Math.max(0, Math.min(100, ((restSeconds - rest) / restSeconds) * 100))}%` }]} /></View>
+        <View style={styles.progressTrack}><View style={[styles.progress, { width: `${Math.max(0, Math.min(100, ((restTotalSeconds - rest) / Math.max(restTotalSeconds, 1)) * 100))}%` }]} /></View>
         <View style={styles.restActions}>
-          <Pressable onPress={() => startRest(rest + 30)} style={styles.secondary}><Text style={styles.secondaryText}>+30 SEG</Text></Pressable>
+          <Pressable onPress={() => startRest(rest + 30, restTotalSeconds + 30)} style={styles.secondary}><Text style={styles.secondaryText}>+30 SEG</Text></Pressable>
           <Pressable onPress={stopRest} style={styles.start}><Text style={styles.startText}>DETENER</Text></Pressable>
         </View>
       </View>
