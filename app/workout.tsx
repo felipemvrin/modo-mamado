@@ -3,7 +3,7 @@ import { AppState, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { getExercisesForMuscles } from '../data/routines';
+import { getExerciseById, getExercisesForMuscles } from '../data/routines';
 import { colors, radius, spacing, typography } from '../theme/tokens';
 import { useWorkoutStore } from '../store/workout';
 import { cancelNotification, scheduleRestFinishedNotification } from '../services/notifications';
@@ -11,8 +11,10 @@ import { cancelNotification, scheduleRestFinishedNotification } from '../service
 const formatTime = (seconds: number) => `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 
 export default function Workout() {
-  const { activeWorkout, completedSets, completeSet, finishWorkout } = useWorkoutStore();
-  const exercises = activeWorkout ? getExercisesForMuscles(activeWorkout) : [];
+  const { activeWorkout, completedSets, completeSet, finishWorkout, substitutions } = useWorkoutStore();
+  const exercises = activeWorkout
+    ? getExercisesForMuscles(activeWorkout).map((item) => (substitutions[item.id] ? getExerciseById(substitutions[item.id]) ?? item : item))
+    : [];
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [setIndex, setSetIndex] = useState(0);
   const [restEndAt, setRestEndAt] = useState<number | null>(null);
