@@ -2,11 +2,23 @@ export const muscleGroups = ['Pecho', 'Espalda', 'Bíceps', 'Tríceps', 'Hombros
 
 export type MuscleGroup = (typeof muscleGroups)[number];
 
+export const exerciseCategories = ['Pesas libres', 'Máquinas', 'Kettlebell', 'Calistenia', 'Bandas', 'Peso corporal'] as const;
+export type ExerciseCategory = (typeof exerciseCategories)[number];
+
+export const equipmentTypes = ['Barra', 'Mancuernas', 'Máquina', 'Polea', 'Kettlebell', 'Bandas', 'Peso corporal', 'Barra paralela'] as const;
+export type EquipmentType = (typeof equipmentTypes)[number];
+
+export const difficultyLevels = ['Inicial', 'Intermedio', 'Avanzado'] as const;
+export type Difficulty = (typeof difficultyLevels)[number];
+
 export type Exercise = {
   id: string;
   name: string;
   muscleGroup: MuscleGroup;
-  equipment: string;
+  secondaryMuscles: MuscleGroup[];
+  category: ExerciseCategory;
+  equipment: EquipmentType;
+  difficulty: Difficulty;
   sets: number;
   reps: string;
   restSeconds: number;

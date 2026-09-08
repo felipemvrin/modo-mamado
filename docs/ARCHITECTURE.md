@@ -26,7 +26,7 @@ Home
 ## Dominio
 
 - `MuscleGroup` representa un grupo muscular válido.
-- `Exercise` es el contrato interno de un ejercicio.
+- `Exercise` es el contrato interno de un ejercicio e incluye categoría, equipamiento, dificultad y músculos secundarios.
 - `CompletedWorkout` guarda los grupos trabajados, fecha y cantidad de ejercicios.
 - Las rutinas se resuelven localmente y la UI no depende de un dataset externo.
 
@@ -59,3 +59,13 @@ Los cambios de esquema futuros deben incluir una migración explícita y una not
 - Expo Router para navegación basada en archivos.
 - Dependencias nativas compatibles con Expo SDK 57.
 - Sin backend, login o red social en esta fase.
+
+## Catálogo de ejercicios
+
+`data/routines.ts` mantiene un catálogo local pequeño y reutilizable:
+
+- `allExercises` devuelve el catálogo completo.
+- `getExercisesByCategory` filtra por modalidad.
+- `getExercisesByEquipment` filtra por equipamiento.
+
+La pantalla de exploración y las demostraciones multimedia se incorporarán después. El bundle no incluye GIFs masivos.
