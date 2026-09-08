@@ -39,7 +39,8 @@ Home
 - series completadas;
 - historial cargado desde SQLite;
 - equipamiento disponible hoy;
-- sustituciones de ejercicio activas (mapa id original -> id sustituto).
+- sustituciones de ejercicio activas (mapa id original -> id sustituto);
+- registros de peso/repeticiones de la serie en curso (`setLogs`).
 
 Las alertas y el tiempo restante deben vivir en una capa de timer separada cuando se implemente la etapa 1. No mezclar notificaciones con componentes de presentación.
 
@@ -51,14 +52,25 @@ Las alertas y el tiempo restante deben vivir en una capa de timer separada cuand
 
 ## Persistencia
 
-SQLite mantiene una tabla local de entrenamientos. Las columnas principales son:
+SQLite mantiene dos tablas locales.
+
+`workouts`:
 
 - `id`;
 - `muscle_group`;
 - `completed_at`;
 - `exercise_count`.
 
-Los cambios de esquema futuros deben incluir una migración explícita y una nota en este documento.
+`set_logs` (una fila por serie registrada):
+
+- `workout_id`;
+- `exercise_id`;
+- `set_index`;
+- `weight`;
+- `reps`;
+- `completed_at`.
+
+`getLastSetLog(exerciseId)` consulta la serie más reciente de un ejercicio para mostrar referencia de progresión. Los cambios de esquema futuros deben incluir una migración explícita y una nota en este documento.
 
 ## Decisiones de diseño
 

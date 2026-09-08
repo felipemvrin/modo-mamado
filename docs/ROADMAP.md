@@ -6,10 +6,10 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 
 ## Estado actual
 
-- Etapas 0 a 3: integradas en `main`.
-- Etapa 4: en desarrollo.
-- Base disponible: Expo SDK 57, selección múltiple de grupos y persistencia local.
-- Rama activa: `feat/stage-4-exercise-catalog`.
+- Etapas 0 a 5: integradas en `main`.
+- Etapa 6: en desarrollo.
+- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo con sustituciones por equipamiento y persistencia local.
+- Rama activa: `feat/stage-6-progress-tracking`.
 
 ## Etapa 0: Documentación y control del proyecto
 
@@ -125,14 +125,38 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - `getSubstitutes` y `getExerciseById` en `data/routines.ts`.
 - Estado `availableEquipment` y `substitutions` en `WorkoutStore`.
 - Chips de equipamiento en `Home` y modal de sustitución en `Routine`.
+- Aplicación de la sustitución elegida durante la ejecución en `Workout`.
 
 **Pendiente:** pantalla de exploración y filtros visuales, repositorio de media.
 
+## Etapa 6: Registro de peso, repeticiones reales y progresión
+
+**Rama:** `feat/stage-6-progress-tracking`
+
+**Estado:** En desarrollo
+
+**Objetivo:** registrar lo que realmente se levantó en cada serie y mostrar referencia de la sesión anterior para progresar.
+
+**Incluye:**
+
+- Entrada de peso y repeticiones reales por serie durante el entrenamiento.
+- Persistencia local de cada serie registrada, asociada al entrenamiento y al ejercicio.
+- Referencia a la última carga registrada para el mismo ejercicio.
+
+**Implementado en esta rama:**
+
+- Tipo `SetLog` y `CompletedWorkout.setLogs` en `types/workout.ts`.
+- Tabla `set_logs` y `getLastSetLog` en `database/workouts.ts`.
+- Estado `setLogs` y acción `logSet` en `WorkoutStore`.
+- Campos de peso/reps y aviso "ÚLTIMA VEZ" en `Workout`.
+
+**Pendiente:** visualización de progresión histórica (gráfico o lista) en `History`.
+
 ## Etapas posteriores
 
-1. Registro de peso, repeticiones reales y progresión.
-2. Integración Apple Watch.
-3. Media optimizada para ejercicios.
+1. Integración Apple Watch.
+2. Media optimizada para ejercicios.
+3. Pantalla de exploración y filtros visuales del catálogo.
 
 ## Regla de avance
 
