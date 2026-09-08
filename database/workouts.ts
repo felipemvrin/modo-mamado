@@ -30,5 +30,21 @@ export function getExercisesWithProgress(): { exerciseId: string; lastCompletedA
 }
 
 export function getProgressionForExercise(exerciseId: string, limit = 8): { completedAt: string; weight: number; reps: number }[] {
-  return database.getAllSync<{ completedAt: string; weight: number; reps: number }>('SELECT completed_at as completedAt, MAX(weight) as weight, MAX(reps) as reps FROM set_logs WHERE exercise_id = ? GROUP BY workout_id ORDER BY completed_at DESC LIMIT ?;', exerciseId, limit);
+  return database.getAllSync<{ completedAt: string; weight: number; reps: number }>(
+    `SELECT s.completed_at as completedAt, s.weight as weight, s.reps as reps
+     FROM set_logs s
+     WHERE s.exercise_id = ?
+       AND s.id = (
+         SELECT s2.id
+         FROM set_logs s2
+         WHERE s2.exercise_id = s.exercise_id
+           AND s2.workout_id = s.workout_id
+         ORDER BY s2.weight DESC, s2.reps DESC, s2.id DESC
+         LIMIT 1
+       )
+     ORDER BY s.completed_at DESC, s.id DESC
+     LIMIT ?;`,
+    exerciseId,
+    limit,
+  );
 }
