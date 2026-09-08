@@ -37,9 +37,17 @@ Home
 - grupos seleccionados;
 - sesión activa;
 - series completadas;
-- historial cargado desde SQLite.
+- historial cargado desde SQLite;
+- equipamiento disponible hoy;
+- sustituciones de ejercicio activas (mapa id original -> id sustituto).
 
 Las alertas y el tiempo restante deben vivir en una capa de timer separada cuando se implemente la etapa 1. No mezclar notificaciones con componentes de presentación.
+
+## Sustituciones
+
+- `getSubstitutes(exercise, availableEquipment?)` en `data/routines.ts` busca ejercicios del mismo `muscleGroup` con distinto `equipment`, filtrando por el equipamiento marcado como disponible.
+- `Routine` resuelve cada ejercicio contra `substitutions` antes de renderizarlo, sin alterar el catálogo base.
+- El equipamiento disponible se marca en `Home` y persiste en memoria durante la sesión (no en SQLite).
 
 ## Persistencia
 

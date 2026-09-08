@@ -94,7 +94,7 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 
 **Rama:** `feat/stage-4-exercise-catalog`
 
-**Estado:** En desarrollo
+**Estado:** Integrada en `main`.
 
 **Objetivo:** ampliar las opciones de entrenamiento sin incorporar todavía una biblioteca pesada de imágenes o GIFs.
 
@@ -106,15 +106,33 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - Ejercicios nuevos de flexiones, remo invertido, fondos, kettlebell, bandas y elevaciones de rodillas.
 - Consultas locales por categoría y equipamiento.
 
-**Pendiente:** pantalla de exploración y filtros visuales, sustituciones por equipamiento y repositorio de media.
+## Etapa 5: Sustituciones según el equipamiento disponible
+
+**Rama:** `feat/stage-5-equipment-substitutions`
+
+**Estado:** En desarrollo
+
+**Objetivo:** permitir reemplazar un ejercicio por otro equivalente cuando falta equipamiento.
+
+**Incluye:**
+
+- Selector de equipamiento disponible en `Home`.
+- Cálculo de sustitutos por grupo muscular y equipamiento disponible.
+- Selección manual del sustituto en `Routine` y opción de volver al original.
+
+**Implementado en esta rama:**
+
+- `getSubstitutes` y `getExerciseById` en `data/routines.ts`.
+- Estado `availableEquipment` y `substitutions` en `WorkoutStore`.
+- Chips de equipamiento en `Home` y modal de sustitución en `Routine`.
+
+**Pendiente:** pantalla de exploración y filtros visuales, repositorio de media.
 
 ## Etapas posteriores
 
-1. Sustituciones según el equipamiento disponible.
-2. Sustituciones según el equipamiento disponible.
-3. Registro de peso, repeticiones reales y progresión.
-4. Integración Apple Watch.
-5. Media optimizada para ejercicios.
+1. Registro de peso, repeticiones reales y progresión.
+2. Integración Apple Watch.
+3. Media optimizada para ejercicios.
 
 ## Regla de avance
 
