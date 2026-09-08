@@ -24,3 +24,27 @@ export function getLastSetLog(exerciseId: string): { weight: number; reps: numbe
   const row = database.getFirstSync<{ weight: number; reps: number }>('SELECT weight, reps FROM set_logs WHERE exercise_id = ? ORDER BY completed_at DESC, id DESC LIMIT 1;', exerciseId);
   return row ?? null;
 }
+
+export function getExercisesWithProgress(): { exerciseId: string; lastCompletedAt: string }[] {
+  return database.getAllSync<{ exerciseId: string; lastCompletedAt: string }>('SELECT exercise_id as exerciseId, MAX(completed_at) as lastCompletedAt FROM set_logs GROUP BY exercise_id ORDER BY lastCompletedAt DESC;');
+}
+
+export function getProgressionForExercise(exerciseId: string, limit = 8): { completedAt: string; weight: number; reps: number }[] {
+  return database.getAllSync<{ completedAt: string; weight: number; reps: number }>(
+    `SELECT s.completed_at as completedAt, s.weight as weight, s.reps as reps
+     FROM set_logs s
+     WHERE s.exercise_id = ?
+       AND s.id = (
+         SELECT s2.id
+         FROM set_logs s2
+         WHERE s2.exercise_id = s.exercise_id
+           AND s2.workout_id = s.workout_id
+         ORDER BY s2.weight DESC, s2.reps DESC, s2.id DESC
+         LIMIT 1
+       )
+     ORDER BY s.completed_at DESC, s.id DESC
+     LIMIT ?;`,
+    exerciseId,
+    limit,
+  );
+}
