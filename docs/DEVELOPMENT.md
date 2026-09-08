@@ -91,3 +91,10 @@ En iOS, la vibración háptica depende de que el Taptic Engine esté habilitado,
 4. Confirmar que el grupo aparece con su última actividad relativa, por ejemplo `HOY`.
 5. Revisar que la recomendación muestre grupos pendientes.
 6. Completar una sesión combinada y confirmar que todos sus grupos quedan registrados.
+
+## Prueba de Stage 4: catálogo de ejercicios
+
+1. Ejecutar `npx tsc --noEmit`.
+2. Comprobar que las rutinas existentes conservan sus ejercicios base.
+3. Verificar que el catálogo incluye pesas libres, máquinas, kettlebell, calistenia, bandas y peso corporal.
+4. Usar `getExercisesByCategory` y `getExercisesByEquipment` desde una pantalla o test antes de conectar filtros visuales.

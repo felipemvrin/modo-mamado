@@ -6,7 +6,8 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 
 ## Estado actual
 
-- Etapas 0 a 3: planificadas para esta secuencia de evolución.
+- Etapas 0 a 3: integradas en `main`.
+- Etapa 4: en desarrollo.
 - Base disponible: Expo SDK 57, selección múltiple de grupos y persistencia local.
 - Rama activa: `chore/stage-0-documentation`.
 
@@ -89,9 +90,27 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - Cantidad de sesiones y tiempo relativo desde la última sesión.
 - Recomendación de hasta dos grupos pendientes.
 
+## Etapa 4: Catálogo amplio de ejercicios
+
+**Rama:** `feat/stage-4-exercise-catalog`
+
+**Estado:** En desarrollo
+
+**Objetivo:** ampliar las opciones de entrenamiento sin incorporar todavía una biblioteca pesada de imágenes o GIFs.
+
+**Implementado en esta rama:**
+
+- Categorías: pesas libres, máquinas, kettlebell, calistenia, bandas y peso corporal.
+- Equipamiento tipado y dificultad por ejercicio.
+- Músculos secundarios para futuras recomendaciones.
+- Ejercicios nuevos de flexiones, remo invertido, fondos, kettlebell, bandas y elevaciones de rodillas.
+- Consultas locales por categoría y equipamiento.
+
+**Pendiente:** pantalla de exploración y filtros visuales, sustituciones por equipamiento y repositorio de media.
+
 ## Etapas posteriores
 
-1. Catálogo amplio de ejercicios y filtros por equipamiento.
+1. Sustituciones según el equipamiento disponible.
 2. Sustituciones según el equipamiento disponible.
 3. Registro de peso, repeticiones reales y progresión.
 4. Integración Apple Watch.
