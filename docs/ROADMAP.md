@@ -7,9 +7,9 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 ## Estado actual
 
 - Etapas 0 a 6: integradas en `main`.
-- Etapa 6: pendiente la visualización de progresión histórica en `History` (rama `feat/stage-6-progress-history-view`).
-- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo con sustituciones por equipamiento, registro de peso/reps y persistencia local.
-- Rama activa: `feat/stage-6-progress-history-view`.
+- Etapa 7: en desarrollo.
+- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo con sustituciones por equipamiento, registro de peso/reps con progresión histórica y persistencia local.
+- Rama activa: `feat/stage-7-quick-access-media`.
 
 ## Etapa 0: Documentación y control del proyecto
 
@@ -131,9 +131,9 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 
 ## Etapa 6: Registro de peso, repeticiones reales y progresión
 
-**Rama:** `feat/stage-6-progress-tracking` (base) y `feat/stage-6-progress-history-view` (pendiente)
+**Rama:** `feat/stage-6-progress-tracking` y `feat/stage-6-progress-history-view`
 
-**Estado:** Integrada en `main`, con un pendiente abierto.
+**Estado:** Integrada en `main`.
 
 **Objetivo:** registrar lo que realmente se levantó en cada serie y mostrar referencia de la sesión anterior para progresar.
 
@@ -142,26 +142,21 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - Entrada de peso y repeticiones reales por serie durante el entrenamiento.
 - Persistencia local de cada serie registrada, asociada al entrenamiento y al ejercicio.
 - Referencia a la última carga registrada para el mismo ejercicio.
+- Visualización de progresión histórica por ejercicio.
 
 **Implementado en `main`:**
 
 - Tipo `SetLog` y `CompletedWorkout.setLogs` en `types/workout.ts`.
-- Tabla `set_logs` y `getLastSetLog` en `database/workouts.ts`.
+- Tabla `set_logs`, `getLastSetLog`, `getExercisesWithProgress` y `getProgressionForExercise` en `database/workouts.ts`.
 - Estado `setLogs` y acción `logSet` en `WorkoutStore`.
 - Campos de peso/reps y aviso "ÚLTIMA VEZ" en `Workout`.
-
-**Pendiente (en desarrollo en `feat/stage-6-progress-history-view`):** visualización de progresión histórica (gráfico o lista) por ejercicio en `History`.
-
-**Implementado en `feat/stage-6-progress-history-view`:**
-
-- `getExercisesWithProgress` y `getProgressionForExercise` en `database/workouts.ts`.
 - Sección "PROGRESIÓN POR EJERCICIO" en `History`: chips por ejercicio con registros y lista de sesiones (peso × reps) con indicador de tendencia.
 
 ## Etapa 7: Acceso rápido, descanso independiente y catálogo con media
 
 **Rama:** `feat/stage-7-quick-access-media`
 
-**Estado:** Planificada
+**Estado:** En desarrollo
 
 **Objetivo:** acortar el camino a la pantalla de descanso desde `Home` y enriquecer el catálogo con más ejercicios e imágenes de referencia.
 
@@ -173,6 +168,14 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - Imágenes de referencia por ejercicio (`Exercise.mediaUrl`) mostradas en `Routine` y `Workout`, con assets livianos incluidos en el bundle o cargados bajo demanda.
 
 **Criterio de salida:** documentación actualizada, catálogo ampliado validado con `tsc`, timer de descanso accesible desde `Home` y al menos un ejercicio de referencia con imagen visible en la UI.
+
+**Implementado en esta rama:**
+
+- Pantalla `Timer` (`app/timer.tsx`): temporizador de descanso independiente, sin rutina activa, con presets (30/60/90/120s) y duración personalizada.
+- Reutiliza notificación local y feedback háptico de `Workout` al terminar el descanso.
+- Acceso rápido en `Home` (ícono junto al historial) que navega directo a `/timer`.
+
+**Pendiente:** ampliar el catálogo de ejercicios e incorporar imágenes de referencia (`Exercise.mediaUrl`).
 
 ## Etapas posteriores
 

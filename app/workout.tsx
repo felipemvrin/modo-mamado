@@ -19,19 +19,27 @@ export default function Workout() {
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [setIndex, setSetIndex] = useState(0);
   const [restEndAt, setRestEndAt] = useState<number | null>(null);
+  const [restTotalSeconds, setRestTotalSeconds] = useState(0);
   const [now, setNow] = useState(Date.now());
   const [weightInput, setWeightInput] = useState('');
   const [repsInput, setRepsInput] = useState('');
   const [lastLog, setLastLog] = useState<{ weight: number; reps: number } | null>(null);
   const lastFeedbackAt = useRef(0);
+  const restFinishedFeedbackSent = useRef(false);
   const notificationIdRef = useRef<string | null>(null);
   const restRequestId = useRef(0);
   const current = exercises[exerciseIndex];
   const rest = restEndAt === null ? null : Math.max(0, Math.ceil((restEndAt - now) / 1000));
-  const signalRestFinished = async () => { const timestamp = Date.now(); if (timestamp - lastFeedbackAt.current < 1200) return; lastFeedbackAt.current = timestamp; await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); await new Promise((resolve) => setTimeout(resolve, 280)); await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); await new Promise((resolve) => setTimeout(resolve, 280)); await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); };
+  const signalRestFinished = async () => { if (restFinishedFeedbackSent.current) return; const timestamp = Date.now(); if (timestamp - lastFeedbackAt.current < 1200) return; lastFeedbackAt.current = timestamp; restFinishedFeedbackSent.current = true; await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); await new Promise((resolve) => setTimeout(resolve, 280)); await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); await new Promise((resolve) => setTimeout(resolve, 280)); await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); };
   useEffect(() => { if (restEndAt === null) return; const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, [restEndAt]);
   useEffect(() => { if (rest === 0) signalRestFinished(); }, [rest]);
   useEffect(() => { const subscription = AppState.addEventListener('change', (state) => { if (state === 'active' && rest === 0) signalRestFinished(); }); return () => subscription.remove(); }, [rest]);
+  useEffect(() => () => {
+    ++restRequestId.current;
+    const notificationId = notificationIdRef.current;
+    notificationIdRef.current = null;
+    void cancelNotification(notificationId);
+  }, []);
   useEffect(() => {
     if (!current) return;
     const log = getLastSetLog(current.id);
@@ -43,12 +51,14 @@ export default function Workout() {
   const totalSets = exercises.reduce((sum, item) => sum + item.sets, 0);
   const completedTotal = completedSets.length;
   const isLastSet = exerciseIndex === exercises.length - 1 && setIndex === current.sets - 1;
-  const startRest = async (seconds: number) => {
+  const startRest = async (seconds: number, totalSeconds = seconds) => {
     const requestId = ++restRequestId.current;
     const previousNotificationId = notificationIdRef.current;
     notificationIdRef.current = null;
+    restFinishedFeedbackSent.current = false;
     await cancelNotification(previousNotificationId);
     const endAt = Date.now() + seconds * 1000;
+    setRestTotalSeconds(totalSeconds);
     setNow(Date.now());
     setRestEndAt(endAt);
     const nextNotificationId = await scheduleRestFinishedNotification(endAt);
@@ -62,12 +72,14 @@ export default function Workout() {
     ++restRequestId.current;
     const previousNotificationId = notificationIdRef.current;
     notificationIdRef.current = null;
+    restFinishedFeedbackSent.current = false;
+    setRestTotalSeconds(0);
     setRestEndAt(null);
     setNow(Date.now());
     await cancelNotification(previousNotificationId);
   };
   const markSet = async () => { const weight = parseFloat(weightInput.replace(',', '.')) || 0; const reps = parseInt(repsInput, 10) || 0; logSet(exerciseIndex, setIndex, current.id, weight, reps); completeSet(exerciseIndex, setIndex); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); if (isLastSet) { await skipRest(); finishWorkout(); router.replace('/'); return; } await startRest(current.restSeconds); if (setIndex + 1 < current.sets) setSetIndex(setIndex + 1); else { setExerciseIndex(exerciseIndex + 1); setSetIndex(0); } };
-  if (rest !== null) return <SafeAreaView style={styles.safe}><View style={styles.restScreen}><Text style={styles.kicker}>DESCANSANDO</Text><Text style={styles.restTitle}>{rest === 0 ? 'DALE NOMÁS' : formatTime(rest)}</Text><View style={styles.progressTrack}><View style={[styles.progress, { width: `${Math.max(0, Math.min(100, ((current.restSeconds - rest) / current.restSeconds) * 100))}%` }]} /></View><Text style={styles.nextLabel}>PRÓXIMA SERIE</Text><Text style={styles.next}>{current.name.toUpperCase()} · {setIndex + 1}/{current.sets}</Text><View style={styles.restActions}><Pressable onPress={() => startRest(rest + 30)} style={styles.secondary}><Text style={styles.secondaryText}>+30 SEG</Text></Pressable><Pressable onPress={skipRest} style={styles.start}><Text style={styles.startText}>SALTAR DESCANSO</Text></Pressable></View></View></SafeAreaView>;
+  if (rest !== null) return <SafeAreaView style={styles.safe}><View style={styles.restScreen}><Text style={styles.kicker}>DESCANSANDO</Text><Text style={styles.restTitle}>{rest === 0 ? 'DALE NOMÁS' : formatTime(rest)}</Text><View style={styles.progressTrack}><View style={[styles.progress, { width: `${Math.max(0, Math.min(100, ((restTotalSeconds - rest) / Math.max(restTotalSeconds, 1)) * 100))}%` }]} /></View><Text style={styles.nextLabel}>PRÓXIMA SERIE</Text><Text style={styles.next}>{current.name.toUpperCase()} · {setIndex + 1}/{current.sets}</Text><View style={styles.restActions}><Pressable onPress={() => startRest(rest + 30, restTotalSeconds + 30)} style={styles.secondary}><Text style={styles.secondaryText}>+30 SEG</Text></Pressable><Pressable onPress={skipRest} style={styles.start}><Text style={styles.startText}>SALTAR DESCANSO</Text></Pressable></View></View></SafeAreaView>;
   return <SafeAreaView style={styles.safe}><View style={styles.container}><View style={styles.header}><Pressable onPress={() => router.back()}><MaterialCommunityIcons name="close" size={26} color={colors.text} /></Pressable><Text style={styles.headerTitle}>{activeWorkout.join(' + ').toUpperCase()}</Text><Text style={styles.counter}>{completedTotal}/{totalSets}</Text></View><View style={styles.main}><Text style={styles.kicker}>EJERCICIO {String(exerciseIndex + 1).padStart(2, '0')} / {String(exercises.length).padStart(2, '0')}</Text><Text style={styles.exerciseName}>{current.name.toUpperCase()}</Text><Text style={styles.equipment}>{current.equipment.toUpperCase()}</Text><View style={styles.prescription}><Text style={styles.seriesLabel}>SERIE</Text><Text style={styles.series}>{setIndex + 1} <Text style={styles.seriesMuted}>/ {current.sets}</Text></Text><View style={styles.repsBox}><Text style={styles.reps}>{current.reps}</Text><Text style={styles.repsLabel}>REPETICIONES</Text></View>
     <View style={styles.logRow}>
       <View style={styles.logField}><Text style={styles.logLabel}>PESO (KG)</Text><TextInput value={weightInput} onChangeText={setWeightInput} keyboardType="decimal-pad" placeholder="0" placeholderTextColor={colors.muted} style={styles.logInput} /></View>
