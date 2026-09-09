@@ -14,11 +14,20 @@ export default function Explore() {
   const [categoryFilter, setCategoryFilter] = useState<(typeof exerciseCategories)[number] | null>(null);
   const [equipmentFilter, setEquipmentFilter] = useState<(typeof equipmentTypes)[number] | null>(null);
   const [difficultyFilter, setDifficultyFilter] = useState<(typeof difficultyLevels)[number] | null>(null);
+  const [failedImages, setFailedImages] = useState<string[]>([]);
 
   const filtered = useMemo(() => {
-    const query = search.trim().toLowerCase();
+    const query = search
+      .trim()
+      .toLocaleLowerCase()
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '');
     return allExercises.filter((item) =>
-      (!query || item.name.toLowerCase().includes(query))
+      (!query || item.name
+        .toLocaleLowerCase()
+        .normalize('NFD')
+        .replace(/\p{Diacritic}/gu, '')
+        .includes(query))
       && (!muscleFilter || item.muscleGroup === muscleFilter)
       && (!categoryFilter || item.category === categoryFilter)
       && (!equipmentFilter || item.equipment === equipmentFilter)
@@ -34,7 +43,7 @@ export default function Explore() {
   ];
 
   const clearFilters = () => { setSearch(''); setMuscleFilter(null); setCategoryFilter(null); setEquipmentFilter(null); setDifficultyFilter(null); };
-  const hasActiveFilters = Boolean(search || muscleFilter || categoryFilter || equipmentFilter || difficultyFilter);
+  const hasActiveFilters = Boolean(search.trim() || muscleFilter || categoryFilter || equipmentFilter || difficultyFilter);
 
   return <SafeAreaView style={styles.safe}>
     <View style={styles.header}>
@@ -43,7 +52,7 @@ export default function Explore() {
       <Text style={styles.title}>EXPLORAR</Text>
       <TextInput value={search} onChangeText={setSearch} placeholder="Buscar ejercicio..." placeholderTextColor={colors.muted} style={styles.search} />
     </View>
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       {filterGroups.map((group) => <View key={group.label} style={styles.filterGroup}>
         <Text style={styles.filterLabel}>{group.label}</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
@@ -61,7 +70,9 @@ export default function Explore() {
       </View>
       <View style={styles.list}>
         {filtered.map((item: Exercise) => <View key={item.id} style={styles.card}>
-          <View style={styles.thumbnail}>{item.mediaUrl ? <Image source={{ uri: item.mediaUrl }} style={styles.thumbnailImage} /> : <MaterialCommunityIcons name="image-off-outline" size={22} color={colors.muted} />}</View>
+          <View style={styles.thumbnail}>{item.mediaUrl && !failedImages.includes(item.id)
+            ? <Image source={{ uri: item.mediaUrl }} style={styles.thumbnailImage} onError={() => setFailedImages((current) => (current.includes(item.id) ? current : [...current, item.id]))} />
+            : <MaterialCommunityIcons name="image-off-outline" size={22} color={colors.muted} />}</View>
           <View style={styles.cardInfo}>
             <Text style={styles.cardName}>{item.name.toUpperCase()}</Text>
             <Text style={styles.cardMeta}>{item.muscleGroup.toUpperCase()} · {item.equipment.toUpperCase()} · {item.difficulty.toUpperCase()}</Text>
