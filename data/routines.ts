@@ -1,6 +1,6 @@
 import { Difficulty, Exercise, ExerciseCategory, EquipmentType, MuscleGroup, muscleGroups } from '../types/workout';
 
-type ExerciseOptions = { category: ExerciseCategory; secondaryMuscles?: MuscleGroup[]; difficulty?: Difficulty; restSeconds?: number; mediaId?: string; mediaSource?: number };
+type ExerciseOptions = { category: ExerciseCategory; secondaryMuscles?: MuscleGroup[]; difficulty?: Difficulty; restSeconds?: number; mediaId?: string; mediaSource?: Exercise['mediaSource'] };
 
 const repdbImage = (id: string) => `https://exercise-dataset.com/images/flat/${id}-start.webp`;
 

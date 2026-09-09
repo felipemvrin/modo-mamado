@@ -17,7 +17,7 @@ export default function Explore() {
   const [categoryFilter, setCategoryFilter] = useState<(typeof exerciseCategories)[number] | null>(null);
   const [equipmentFilter, setEquipmentFilter] = useState<(typeof equipmentTypes)[number] | null>(null);
   const [difficultyFilter, setDifficultyFilter] = useState<(typeof difficultyLevels)[number] | null>(null);
-  const [failedImages, setFailedImages] = useState<string[]>([]);
+  const [failedImages, setFailedImages] = useState<Record<string, { local?: true; remote?: true }>>({});
 
   const filtered = useMemo(() => {
     const query = search
@@ -72,16 +72,21 @@ export default function Explore() {
         {hasActiveFilters && <Pressable onPress={clearFilters}><Text style={styles.clearText}>LIMPIAR FILTROS</Text></Pressable>}
       </View>
       <View style={styles.list}>
-        {filtered.map((item: Exercise) => <Pressable key={item.id} onPress={() => setSelected(item)} style={styles.card}>
-          <View style={styles.thumbnail}>{(item.mediaSource || item.mediaUrl) && !failedImages.includes(item.id)
-            ? <Image source={item.mediaSource ?? { uri: item.mediaUrl }} style={styles.thumbnailImage} onError={() => setFailedImages((current) => (current.includes(item.id) ? current : [...current, item.id]))} />
+        {filtered.map((item: Exercise) => {
+          const canShowLocal = !!item.mediaSource && !failedImages[item.id]?.local;
+          const canShowRemote = !!item.mediaUrl && !failedImages[item.id]?.remote;
+          const imageSource = canShowLocal ? item.mediaSource : canShowRemote ? { uri: item.mediaUrl } : null;
+          return <Pressable key={item.id} onPress={() => setSelected(item)} style={styles.card}>
+          <View style={styles.thumbnail}>{imageSource
+            ? <Image source={imageSource} style={styles.thumbnailImage} onError={() => setFailedImages((current) => ({ ...current, [item.id]: canShowLocal ? { ...current[item.id], local: true } : { ...current[item.id], remote: true } }))} />
             : <MaterialCommunityIcons name="image-off-outline" size={22} color={colors.muted} />}</View>
           <View style={styles.cardInfo}>
             <Text style={styles.cardName}>{item.name.toUpperCase()}</Text>
             <Text style={styles.cardMeta}>{item.muscleGroup.toUpperCase()} · {item.equipment.toUpperCase()} · {item.difficulty.toUpperCase()}</Text>
           </View>
           <MaterialCommunityIcons name="chevron-right" size={20} color={colors.muted} />
-        </Pressable>)}
+        </Pressable>;
+        })}
         {filtered.length === 0 && <Text style={styles.emptyText}>Sin resultados para estos filtros.</Text>}
       </View>
     </ScrollView>
@@ -93,9 +98,12 @@ export default function Explore() {
               const current = substitutions[selected.id] ? getExerciseById(substitutions[selected.id]) ?? selected : selected;
               const substituteOptions = getSubstitutes(selected, availableEquipment);
               const selectedSubstituteId = substitutions[selected.id];
+              const canShowLocal = !!current.mediaSource && !failedImages[current.id]?.local;
+              const canShowRemote = !!current.mediaUrl && !failedImages[current.id]?.remote;
+              const imageSource = canShowLocal ? current.mediaSource : canShowRemote ? { uri: current.mediaUrl } : null;
               return <>
-                <View style={styles.modalThumbnail}>{(current.mediaSource || current.mediaUrl) && !failedImages.includes(current.id)
-                  ? <Image source={current.mediaSource ?? { uri: current.mediaUrl }} style={styles.thumbnailImage} onError={() => setFailedImages((previous) => (previous.includes(current.id) ? previous : [...previous, current.id]))} />
+                <View style={styles.modalThumbnail}>{imageSource
+                  ? <Image source={imageSource} style={styles.thumbnailImage} onError={() => setFailedImages((previous) => ({ ...previous, [current.id]: canShowLocal ? { ...previous[current.id], local: true } : { ...previous[current.id], remote: true } }))} />
                   : <MaterialCommunityIcons name="image-off-outline" size={32} color={colors.muted} />}</View>
                 <Text style={styles.modalTitle}>{current.name.toUpperCase()}</Text>
                 <Text style={styles.modalMeta}>{current.muscleGroup.toUpperCase()}{current.secondaryMuscles.length > 0 ? ` + ${current.secondaryMuscles.join(', ').toUpperCase()}` : ''}</Text>

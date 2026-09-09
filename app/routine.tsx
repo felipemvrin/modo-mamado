@@ -10,7 +10,7 @@ import { Exercise } from '../types/workout';
 export default function Routine() {
   const { selectedMuscles, startWorkout, availableEquipment, substitutions, setSubstitute, clearSubstitute } = useWorkoutStore();
   const [pickerFor, setPickerFor] = useState<Exercise | null>(null);
-  const [failedMediaById, setFailedMediaById] = useState<Record<string, true>>({});
+  const [failedMediaById, setFailedMediaById] = useState<Record<string, { local?: true; remote?: true }>>({});
   const baseExercises = getExercisesForMuscles(selectedMuscles);
   const exercises = baseExercises.map((item) => (substitutions[item.id] ? getExerciseById(substitutions[item.id]) ?? item : item));
   const canStartWorkout = exercises.length > 0;
@@ -21,9 +21,11 @@ export default function Routine() {
     <View style={styles.list}>{exercises.map((item, index) => {
       const original = baseExercises[index];
       const isSubstituted = original.id !== item.id;
-      const canShowImage = !!(item.mediaSource || item.mediaUrl) && !failedMediaById[item.id];
+      const canShowLocal = !!item.mediaSource && !failedMediaById[item.id]?.local;
+      const canShowRemote = !!item.mediaUrl && !failedMediaById[item.id]?.remote;
+      const imageSource = canShowLocal ? item.mediaSource : canShowRemote ? { uri: item.mediaUrl } : null;
       return <View key={original.id} style={styles.exercise}>
-        <View style={styles.thumbnail}>{canShowImage ? <Image source={item.mediaSource ?? { uri: item.mediaUrl }} style={styles.thumbnailImage} onError={() => setFailedMediaById((previous) => (previous[item.id] ? previous : { ...previous, [item.id]: true }))} /> : <MaterialCommunityIcons name="image-off-outline" size={20} color={colors.muted} />}</View>
+        <View style={styles.thumbnail}>{imageSource ? <Image source={imageSource} style={styles.thumbnailImage} onError={() => setFailedMediaById((previous) => ({ ...previous, [item.id]: canShowLocal ? { ...previous[item.id], local: true } : { ...previous[item.id], remote: true } }))} /> : <MaterialCommunityIcons name="image-off-outline" size={20} color={colors.muted} />}</View>
         <View style={styles.number}><Text style={styles.numberText}>{String(index + 1).padStart(2, '0')}</Text></View>
         <View style={styles.info}><Text style={styles.name}>{item.name}</Text><Text style={styles.detail}>{item.equipment.toUpperCase()} · {item.restSeconds}s DESCANSO</Text></View>
         <View style={styles.prescription}><Text style={styles.sets}>{item.sets}</Text><Text style={styles.reps}>SERIES · {item.reps} REPS</Text></View>
