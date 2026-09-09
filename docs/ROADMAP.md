@@ -6,11 +6,10 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 
 ## Estado actual
 
-- Etapas 0 a 7: integradas en `main`.
-- Etapa 8: en desarrollo (36/42 ejercicios con imagen; 6 pendientes de fuente con licencia libre).
-- Etapa 9: integrada en `main` (pantalla de exploración, filtros y detalle/sustitución).
-- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo de 42 ejercicios con sustituciones por equipamiento, registro de peso/reps con progresión histórica, timer de descanso independiente, explorador de catálogo y persistencia local.
-- Rama activa: `feat/stage-9-exercise-detail`.
+- Etapas 0 a 9: integradas en `main`.
+- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo de 42 ejercicios (37 con imagen) con sustituciones por equipamiento, registro de peso/reps con progresión histórica, timer de descanso independiente, explorador de catálogo con detalle/sustitución y persistencia local.
+- Rama activa: `feat/stage-8-exercise-images-final`.
+- Pendiente sin bloquear avance: 5 imágenes de ejercicio sin fuente confirmada (ver Etapa 8) e integración Apple Watch (fuera de alcance, requiere app nativa).
 
 ## Etapa 0: Documentación y control del proyecto
 
@@ -178,9 +177,9 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 
 ## Etapa 8: Imágenes de referencia por ejercicio
 
-**Rama:** `feat/stage-7-exercise-media` (placeholder) y `feat/stage-8-exercise-images` (imágenes reales)
+**Rama:** `feat/stage-7-exercise-media` (placeholder), `feat/stage-8-exercise-images`, `feat/stage-8-exercise-images-remaining`, `feat/stage-8-exercise-images-final`
 
-**Estado:** En desarrollo
+**Estado:** Integrada en `main`.
 
 **Objetivo:** mostrar una imagen de referencia por ejercicio en `Routine` y `Workout`, usando únicamente fuentes con licencia libre o de uso permitido, sin depender de media con copyright de terceros.
 
@@ -205,10 +204,15 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - 6 ejercicios adicionales verificados y mapeados: Sentadilla (`squat`), Sentadilla con banda (`banded-squat`), Zancadas (`lunge`), Pallof press (`cable-pallof-press`), Giro ruso con kettlebell (`kettlebell-russian-twist`), Extensión con kettlebell (`kettlebell-skull-crusher`).
 - Total actual: **36 de 42 ejercicios** con imagen.
 
-**Pendiente:** verificar y asignar imagen a los **6 ejercicios restantes** (sin coincidencia exacta confirmada en RepDB tras varios intentos; requiere revisar `exercises.json` completo o el buscador en [exercise-dataset.com](https://exercise-dataset.com/)):
+**Implementado en `feat/stage-8-exercise-images-final`:**
+
+- Curl con kettlebell → `kettlebell-hammer-curl`.
+- Total final: **37 de 42 ejercicios** con imagen.
+
+**Estado final:** los **5 ejercicios restantes** no tienen coincidencia exacta en RepDB tras múltiples intentos de búsqueda de slug (probablemente no están cubiertos en su catálogo público, o usan un nombre no evidente). Se deja como mejora menor futura, no bloqueante:
 
 - Pecho: Press con banda.
-- Bíceps: Curl con kettlebell, Curl con banda.
+- Bíceps: Curl con banda.
 - Tríceps: Extensión con banda.
 - Hombros: Press con kettlebell, Flexión pike.
 
