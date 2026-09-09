@@ -1,14 +1,17 @@
 import { useMemo, useState } from 'react';
-import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { allExercises } from '../data/routines';
+import { allExercises, getExerciseById, getSubstitutes } from '../data/routines';
 import { colors, radius, spacing, typography } from '../theme/tokens';
+import { useWorkoutStore } from '../store/workout';
 import { difficultyLevels, equipmentTypes, Exercise, exerciseCategories, muscleGroups } from '../types/workout';
 
 type FilterGroup<T extends string> = { label: string; values: readonly T[]; selected: T | null; onSelect: (value: T | null) => void };
 
 export default function Explore() {
+  const { availableEquipment, substitutions, setSubstitute, clearSubstitute } = useWorkoutStore();
+  const [selected, setSelected] = useState<Exercise | null>(null);
   const [search, setSearch] = useState('');
   const [muscleFilter, setMuscleFilter] = useState<(typeof muscleGroups)[number] | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<(typeof exerciseCategories)[number] | null>(null);
@@ -69,7 +72,7 @@ export default function Explore() {
         {hasActiveFilters && <Pressable onPress={clearFilters}><Text style={styles.clearText}>LIMPIAR FILTROS</Text></Pressable>}
       </View>
       <View style={styles.list}>
-        {filtered.map((item: Exercise) => <View key={item.id} style={styles.card}>
+        {filtered.map((item: Exercise) => <Pressable key={item.id} onPress={() => setSelected(item)} style={styles.card}>
           <View style={styles.thumbnail}>{item.mediaUrl && !failedImages.includes(item.id)
             ? <Image source={{ uri: item.mediaUrl }} style={styles.thumbnailImage} onError={() => setFailedImages((current) => (current.includes(item.id) ? current : [...current, item.id]))} />
             : <MaterialCommunityIcons name="image-off-outline" size={22} color={colors.muted} />}</View>
@@ -77,10 +80,41 @@ export default function Explore() {
             <Text style={styles.cardName}>{item.name.toUpperCase()}</Text>
             <Text style={styles.cardMeta}>{item.muscleGroup.toUpperCase()} · {item.equipment.toUpperCase()} · {item.difficulty.toUpperCase()}</Text>
           </View>
-        </View>)}
+          <MaterialCommunityIcons name="chevron-right" size={20} color={colors.muted} />
+        </Pressable>)}
         {filtered.length === 0 && <Text style={styles.emptyText}>Sin resultados para estos filtros.</Text>}
       </View>
     </ScrollView>
+    <Modal visible={!!selected} transparent animationType="fade" onRequestClose={() => setSelected(null)}>
+      <Pressable style={styles.modalBackdrop} onPress={() => setSelected(null)}>
+        <Pressable style={styles.modalCard} onPress={() => {}}>
+          <ScrollView contentContainerStyle={styles.modalContent}>
+            {selected && (() => {
+              const current = substitutions[selected.id] ? getExerciseById(substitutions[selected.id]) ?? selected : selected;
+              const substituteOptions = getSubstitutes(selected, availableEquipment);
+              const selectedSubstituteId = substitutions[selected.id];
+              return <>
+                <View style={styles.modalThumbnail}>{current.mediaUrl && !failedImages.includes(current.id)
+                  ? <Image source={{ uri: current.mediaUrl }} style={styles.thumbnailImage} onError={() => setFailedImages((previous) => (previous.includes(current.id) ? previous : [...previous, current.id]))} />
+                  : <MaterialCommunityIcons name="image-off-outline" size={32} color={colors.muted} />}</View>
+                <Text style={styles.modalTitle}>{current.name.toUpperCase()}</Text>
+                <Text style={styles.modalMeta}>{current.muscleGroup.toUpperCase()}{current.secondaryMuscles.length > 0 ? ` + ${current.secondaryMuscles.join(', ').toUpperCase()}` : ''}</Text>
+                <Text style={styles.modalMeta}>{current.category.toUpperCase()} · {current.equipment.toUpperCase()} · {current.difficulty.toUpperCase()}</Text>
+                <Text style={styles.modalPrescription}>{current.sets} SERIES · {current.reps} REPS · {current.restSeconds}S DESCANSO</Text>
+                <Text style={styles.modalInstructions}>{current.instructions}</Text>
+                <Text style={styles.modalSection}>SUSTITUTOS DISPONIBLES</Text>
+                {substituteOptions.length === 0 && <Text style={styles.modalEmpty}>Sin alternativas con tu equipamiento disponible.</Text>}
+                {substituteOptions.map((option) => <Pressable key={option.id} style={styles.modalOption} onPress={() => setSubstitute(selected.id, option.id)}>
+                  <Text style={styles.modalOptionName}>{option.name.toUpperCase()}</Text>
+                  <Text style={styles.modalOptionDetail}>{option.id === selectedSubstituteId ? `${option.equipment.toUpperCase()} · ACTUAL` : option.equipment.toUpperCase()}</Text>
+                </Pressable>)}
+                {substitutions[selected.id] && <Pressable style={styles.modalReset} onPress={() => clearSubstitute(selected.id)}><Text style={styles.modalResetText}>VOLVER AL ORIGINAL</Text></Pressable>}
+              </>;
+            })()}
+          </ScrollView>
+        </Pressable>
+      </Pressable>
+    </Modal>
   </SafeAreaView>;
 }
 
@@ -111,4 +145,19 @@ const styles = StyleSheet.create({
   cardName: { color: colors.text, fontFamily: 'QuanticoBold', fontSize: 13 },
   cardMeta: { color: colors.muted, fontFamily: 'Quantico', fontSize: 9 },
   emptyText: { color: colors.muted, ...typography.body, textAlign: 'center', marginTop: spacing.xl },
+  modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'flex-end' },
+  modalCard: { maxHeight: '80%', backgroundColor: colors.card, borderTopLeftRadius: radius.lg, borderTopRightRadius: radius.lg },
+  modalContent: { padding: spacing.lg, gap: spacing.sm },
+  modalThumbnail: { width: 96, height: 96, borderRadius: radius.sm, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, justifyContent: 'center', alignItems: 'center', overflow: 'hidden', alignSelf: 'center' },
+  modalTitle: { color: colors.text, fontFamily: 'QuanticoBold', fontSize: 22, textAlign: 'center' },
+  modalMeta: { color: colors.muted, fontFamily: 'Quantico', fontSize: 11, textAlign: 'center' },
+  modalPrescription: { color: colors.lime, fontFamily: 'QuanticoBold', fontSize: 13, textAlign: 'center', marginTop: spacing.xs },
+  modalInstructions: { color: colors.text, fontFamily: 'Quantico', fontSize: 13, marginTop: spacing.sm },
+  modalSection: { color: colors.muted, fontFamily: 'Quantico', fontSize: 12, letterSpacing: 1, marginTop: spacing.md },
+  modalEmpty: { color: colors.muted, fontFamily: 'Quantico', fontSize: 12 },
+  modalOption: { paddingVertical: spacing.sm, borderBottomColor: colors.border, borderBottomWidth: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  modalOptionName: { color: colors.text, fontFamily: 'QuanticoBold', fontSize: 13 },
+  modalOptionDetail: { color: colors.muted, fontFamily: 'Quantico', fontSize: 10 },
+  modalReset: { marginTop: spacing.sm, alignItems: 'center', paddingVertical: spacing.sm },
+  modalResetText: { color: colors.error, fontFamily: 'Quantico', fontSize: 12 },
 });
