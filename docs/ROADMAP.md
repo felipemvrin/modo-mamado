@@ -7,9 +7,10 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 ## Estado actual
 
 - Etapas 0 a 7: integradas en `main`.
-- Etapa 8: en desarrollo (imágenes de referencia por ejercicio, pendiente de fuentes con licencia libre).
+- Etapa 8: en desarrollo (36/42 ejercicios con imagen; 6 pendientes de fuente con licencia libre).
+- Etapa 9: en desarrollo (pantalla de exploración y filtros del catálogo).
 - Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo de 42 ejercicios con sustituciones por equipamiento, registro de peso/reps con progresión histórica, timer de descanso independiente y persistencia local.
-- Rama activa: `feat/stage-7-exercise-media`.
+- Rama activa: `feat/stage-9-catalog-explorer`.
 
 ## Etapa 0: Documentación y control del proyecto
 
@@ -211,10 +212,30 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - Tríceps: Extensión con banda.
 - Hombros: Press con kettlebell, Flexión pike.
 
+## Etapa 9: Pantalla de exploración y filtros visuales del catálogo
+
+**Rama:** `feat/stage-9-catalog-explorer`
+
+**Estado:** En desarrollo
+
+**Objetivo:** dejar navegar el catálogo completo (42 ejercicios) fuera del flujo de selección de grupos, con búsqueda y filtros.
+
+**Incluye:**
+
+- Pantalla `Explore` (`app/explore.tsx`) con buscador por nombre y filtros por grupo muscular, categoría, equipamiento y dificultad (combinables).
+- Miniatura por ejercicio (imagen real o placeholder) reutilizando `Exercise.mediaUrl`.
+- Acceso rápido en `Home` (ícono de lupa junto a timer/historial).
+
+**Implementado en esta rama:**
+
+- `app/explore.tsx`: filtros por chips seleccionables, búsqueda en vivo, contador de resultados y botón "limpiar filtros".
+- Ícono de acceso en `Home` que navega a `/explore`.
+
+**Pendiente:** navegación desde una tarjeta del catálogo hacia el detalle/sustitución de un ejercicio específico.
+
 ## Etapas posteriores
 
 1. Integración Apple Watch.
-2. Pantalla de exploración y filtros visuales del catálogo completo.
 
 ## Regla de avance
 
