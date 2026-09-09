@@ -177,28 +177,36 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 
 ## Etapa 8: Imágenes de referencia por ejercicio
 
-**Rama:** `feat/stage-7-exercise-media` (continúa desde el nombre de la etapa 7 por continuidad de la rama ya creada)
+**Rama:** `feat/stage-7-exercise-media` (placeholder) y `feat/stage-8-exercise-images` (imágenes reales)
 
 **Estado:** En desarrollo
 
 **Objetivo:** mostrar una imagen de referencia por ejercicio en `Routine` y `Workout`, usando únicamente fuentes con licencia libre o de uso permitido, sin depender de media con copyright de terceros.
 
-**Nota sobre licencias:** se evaluó el dataset [hasaneyldrm/exercises-dataset](https://github.com/hasaneyldrm/exercises-dataset). Su código/metadata es MIT, pero las imágenes y GIFs son © Gym visual y su propio `NOTICE.md` exige licencia propia de Gym visual antes de reutilizar esa media. Por eso **no se incorporó ninguna imagen de esa fuente**. Cada imagen que se agregue debe verificarse individualmente (CC0, dominio público, licencia propia o generada) antes de sumarla.
+**Nota sobre licencias:**
 
-**Implementado en esta rama:**
+- Se descartó [hasaneyldrm/exercises-dataset](https://github.com/hasaneyldrm/exercises-dataset): código/metadata MIT, pero imágenes y GIFs © Gym visual, que exige licencia propia antes de reutilizar esa media.
+- Se adoptó [RepDB/exercise-dataset](https://github.com/RepDB/exercise-dataset) (free tier): uso personal y comercial en apps permitido, **solo requiere atribución visible** ("Exercise data by RepDB (repdb.co)"). No se puede redistribuir como dataset/API, solo usar dentro de la app.
+
+**Implementado en `feat/stage-7-exercise-media`:**
 
 - `Exercise.mediaUrl` (ya existía) se renderiza como imagen en `Routine` (miniatura por fila) y `Workout` (miniatura del ejercicio actual).
-- Placeholder (ícono `image-off-outline`) cuando el ejercicio aún no tiene `mediaUrl`.
+- Placeholder (ícono `image-off-outline`) y manejo de error de carga cuando el ejercicio aún no tiene `mediaUrl` o la imagen falla.
 
-**Pendiente:** buscar e incorporar una imagen con licencia libre para cada uno de los 42 ejercicios del catálogo (ninguno tiene `mediaUrl` aún):
+**Implementado en `feat/stage-8-exercise-images`:**
 
-- Pecho: Press de pecho, Press inclinado, Aperturas, Flexiones, Aperturas en polea, Press con banda.
-- Espalda: Jalón al pecho, Remo con barra, Face pull, Remo invertido, Dominadas, Remo con kettlebell.
-- Bíceps: Curl con barra, Curl inclinado, Curl con kettlebell, Curl con banda, Curl en polea, Dominada supina.
-- Tríceps: Extensión en polea, Press francés, Fondos en banco, Extensión con kettlebell, Extensión con banda, Fondos en paralelas.
-- Hombros: Press militar, Elevaciones laterales, Pull apart con banda, Press con kettlebell, Flexión pike, Elevación frontal en polea.
-- Piernas: Sentadilla, Prensa, Curl femoral, Swing con kettlebell, Sentadilla con banda, Zancadas.
-- Core: Plancha, Crunch en polea, Pallof press, Elevación de rodillas, Giro ruso con kettlebell, Mountain climbers.
+- `mediaId` + helper `repdbImage()` en `data/routines.ts`, apuntando a `https://exercise-dataset.com/images/flat/<id>-start.webp`.
+- **24 de 42 ejercicios** verificados uno por uno contra el dataset real de RepDB y con imagen asignada.
+- Atribución visible "Ilustraciones de ejercicio: RepDB (repdb.co)" agregada al pie de `History` (requisito de la licencia gratuita).
+
+**Pendiente:** verificar y asignar imagen a los **18 ejercicios restantes** (no tienen coincidencia exacta confirmada en RepDB; hay que revisar `exercises.json` o el buscador en [exercise-dataset.com](https://exercise-dataset.com/) para encontrar el slug correcto o una variante equivalente):
+
+- Pecho: Press con banda.
+- Bíceps: Curl con kettlebell, Curl con banda.
+- Tríceps: Extensión con kettlebell, Extensión con banda.
+- Hombros: Press con kettlebell, Flexión pike.
+- Piernas: Sentadilla, Sentadilla con banda, Zancadas.
+- Core: Pallof press, Giro ruso con kettlebell (probable candidato: `kettlebell-russian-twist`, sin confirmar).
 
 ## Etapas posteriores
 
