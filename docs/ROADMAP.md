@@ -199,14 +199,17 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - **24 de 42 ejercicios** verificados uno por uno contra el dataset real de RepDB y con imagen asignada.
 - Atribución visible "Ilustraciones de ejercicio: RepDB (repdb.co)" agregada al pie de `History` (requisito de la licencia gratuita).
 
-**Pendiente:** verificar y asignar imagen a los **18 ejercicios restantes** (no tienen coincidencia exacta confirmada en RepDB; hay que revisar `exercises.json` o el buscador en [exercise-dataset.com](https://exercise-dataset.com/) para encontrar el slug correcto o una variante equivalente):
+**Implementado en `feat/stage-8-exercise-images-remaining`:**
+
+- 6 ejercicios adicionales verificados y mapeados: Sentadilla (`squat`), Sentadilla con banda (`banded-squat`), Zancadas (`lunge`), Pallof press (`cable-pallof-press`), Giro ruso con kettlebell (`kettlebell-russian-twist`), Extensión con kettlebell (`kettlebell-skull-crusher`).
+- Total actual: **30 de 42 ejercicios** con imagen.
+
+**Pendiente:** verificar y asignar imagen a los **12 ejercicios restantes** (sin coincidencia exacta confirmada en RepDB tras varios intentos; requiere revisar `exercises.json` completo o el buscador en [exercise-dataset.com](https://exercise-dataset.com/)):
 
 - Pecho: Press con banda.
 - Bíceps: Curl con kettlebell, Curl con banda.
-- Tríceps: Extensión con kettlebell, Extensión con banda.
+- Tríceps: Extensión con banda.
 - Hombros: Press con kettlebell, Flexión pike.
-- Piernas: Sentadilla, Sentadilla con banda, Zancadas.
-- Core: Pallof press, Giro ruso con kettlebell (probable candidato: `kettlebell-russian-twist`, sin confirmar).
 
 ## Etapas posteriores
 
