@@ -92,8 +92,11 @@ export default function Explore() {
             {selected && (() => {
               const current = substitutions[selected.id] ? getExerciseById(substitutions[selected.id]) ?? selected : selected;
               const substituteOptions = getSubstitutes(selected, availableEquipment);
+              const selectedSubstituteId = substitutions[selected.id];
               return <>
-                <View style={styles.modalThumbnail}>{current.mediaUrl ? <Image source={{ uri: current.mediaUrl }} style={styles.thumbnailImage} /> : <MaterialCommunityIcons name="image-off-outline" size={32} color={colors.muted} />}</View>
+                <View style={styles.modalThumbnail}>{current.mediaUrl && !failedImages.includes(current.id)
+                  ? <Image source={{ uri: current.mediaUrl }} style={styles.thumbnailImage} onError={() => setFailedImages((previous) => (previous.includes(current.id) ? previous : [...previous, current.id]))} />
+                  : <MaterialCommunityIcons name="image-off-outline" size={32} color={colors.muted} />}</View>
                 <Text style={styles.modalTitle}>{current.name.toUpperCase()}</Text>
                 <Text style={styles.modalMeta}>{current.muscleGroup.toUpperCase()}{current.secondaryMuscles.length > 0 ? ` + ${current.secondaryMuscles.join(', ').toUpperCase()}` : ''}</Text>
                 <Text style={styles.modalMeta}>{current.category.toUpperCase()} · {current.equipment.toUpperCase()} · {current.difficulty.toUpperCase()}</Text>
@@ -103,7 +106,7 @@ export default function Explore() {
                 {substituteOptions.length === 0 && <Text style={styles.modalEmpty}>Sin alternativas con tu equipamiento disponible.</Text>}
                 {substituteOptions.map((option) => <Pressable key={option.id} style={styles.modalOption} onPress={() => setSubstitute(selected.id, option.id)}>
                   <Text style={styles.modalOptionName}>{option.name.toUpperCase()}</Text>
-                  <Text style={styles.modalOptionDetail}>{option.equipment.toUpperCase()}</Text>
+                  <Text style={styles.modalOptionDetail}>{option.id === selectedSubstituteId ? `${option.equipment.toUpperCase()} · ACTUAL` : option.equipment.toUpperCase()}</Text>
                 </Pressable>)}
                 {substitutions[selected.id] && <Pressable style={styles.modalReset} onPress={() => clearSubstitute(selected.id)}><Text style={styles.modalResetText}>VOLVER AL ORIGINAL</Text></Pressable>}
               </>;
