@@ -202,9 +202,9 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 **Implementado en `feat/stage-8-exercise-images-remaining`:**
 
 - 6 ejercicios adicionales verificados y mapeados: Sentadilla (`squat`), Sentadilla con banda (`banded-squat`), Zancadas (`lunge`), Pallof press (`cable-pallof-press`), Giro ruso con kettlebell (`kettlebell-russian-twist`), Extensión con kettlebell (`kettlebell-skull-crusher`).
-- Total actual: **30 de 42 ejercicios** con imagen.
+- Total actual: **36 de 42 ejercicios** con imagen.
 
-**Pendiente:** verificar y asignar imagen a los **12 ejercicios restantes** (sin coincidencia exacta confirmada en RepDB tras varios intentos; requiere revisar `exercises.json` completo o el buscador en [exercise-dataset.com](https://exercise-dataset.com/)):
+**Pendiente:** verificar y asignar imagen a los **6 ejercicios restantes** (sin coincidencia exacta confirmada en RepDB tras varios intentos; requiere revisar `exercises.json` completo o el buscador en [exercise-dataset.com](https://exercise-dataset.com/)):
 
 - Pecho: Press con banda.
 - Bíceps: Curl con kettlebell, Curl con banda.
