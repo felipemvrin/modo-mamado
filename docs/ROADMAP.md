@@ -6,10 +6,10 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 
 ## Estado actual
 
-- Etapas 0 a 6: integradas en `main`.
-- Etapa 7: en desarrollo.
-- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo con sustituciones por equipamiento, registro de peso/reps con progresión histórica y persistencia local.
-- Rama activa: `feat/stage-7-quick-access-media`.
+- Etapas 0 a 7: integradas en `main`.
+- Etapa 8: en desarrollo (imágenes de referencia por ejercicio, pendiente de fuentes con licencia libre).
+- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo de 42 ejercicios con sustituciones por equipamiento, registro de peso/reps con progresión histórica, timer de descanso independiente y persistencia local.
+- Rama activa: `feat/stage-7-exercise-media`.
 
 ## Etapa 0: Documentación y control del proyecto
 
@@ -152,22 +152,21 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - Campos de peso/reps y aviso "ÚLTIMA VEZ" en `Workout`.
 - Sección "PROGRESIÓN POR EJERCICIO" en `History`: chips por ejercicio con registros y lista de sesiones (peso × reps) con indicador de tendencia.
 
-## Etapa 7: Acceso rápido, descanso independiente y catálogo con media
+## Etapa 7: Acceso rápido, descanso independiente y catálogo ampliado
 
-**Rama:** `feat/stage-7-quick-access-media`
+**Rama:** `feat/stage-7-quick-access-media`, `feat/stage-7-exercise-catalog-expansion`
 
-**Estado:** En desarrollo
+**Estado:** Integrada en `main`.
 
-**Objetivo:** acortar el camino a la pantalla de descanso desde `Home` y enriquecer el catálogo con más ejercicios e imágenes de referencia.
+**Objetivo:** acortar el camino a la pantalla de descanso desde `Home` y enriquecer el catálogo con más ejercicios.
 
 **Incluye:**
 
 - Menú de acceso rápido en `Home` para ir directo al temporizador de descanso sin pasar por la selección de grupos.
 - Timer de descanso independiente, usable sin una rutina activa, con tiempo de descanso configurable por el usuario.
 - Ampliación del catálogo local: más ejercicios por grupo muscular y por categoría.
-- Imágenes de referencia por ejercicio (`Exercise.mediaUrl`) mostradas en `Routine` y `Workout`, con assets livianos incluidos en el bundle o cargados bajo demanda.
 
-**Criterio de salida:** documentación actualizada, catálogo ampliado validado con `tsc`, timer de descanso accesible desde `Home` y al menos un ejercicio de referencia con imagen visible en la UI.
+**Nota:** las imágenes de referencia por ejercicio se movieron a la Etapa 8 por un tema de licencias de las fuentes disponibles (ver esa etapa).
 
 **Implementado en esta rama:**
 
@@ -176,7 +175,30 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - Acceso rápido en `Home` (ícono junto al historial) que navega directo a `/timer`.
 - Catálogo local ampliado a 6 ejercicios por grupo muscular (42 en total), sumando variantes en polea, bandas, kettlebell, barra paralela y peso corporal para mejorar la cobertura de sustituciones por equipamiento.
 
-**Pendiente:** imágenes de referencia (`Exercise.mediaUrl`).
+## Etapa 8: Imágenes de referencia por ejercicio
+
+**Rama:** `feat/stage-7-exercise-media` (continúa desde el nombre de la etapa 7 por continuidad de la rama ya creada)
+
+**Estado:** En desarrollo
+
+**Objetivo:** mostrar una imagen de referencia por ejercicio en `Routine` y `Workout`, usando únicamente fuentes con licencia libre o de uso permitido, sin depender de media con copyright de terceros.
+
+**Nota sobre licencias:** se evaluó el dataset [hasaneyldrm/exercises-dataset](https://github.com/hasaneyldrm/exercises-dataset). Su código/metadata es MIT, pero las imágenes y GIFs son © Gym visual y su propio `NOTICE.md` exige licencia propia de Gym visual antes de reutilizar esa media. Por eso **no se incorporó ninguna imagen de esa fuente**. Cada imagen que se agregue debe verificarse individualmente (CC0, dominio público, licencia propia o generada) antes de sumarla.
+
+**Implementado en esta rama:**
+
+- `Exercise.mediaUrl` (ya existía) se renderiza como imagen en `Routine` (miniatura por fila) y `Workout` (miniatura del ejercicio actual).
+- Placeholder (ícono `image-off-outline`) cuando el ejercicio aún no tiene `mediaUrl`.
+
+**Pendiente:** buscar e incorporar una imagen con licencia libre para cada uno de los 42 ejercicios del catálogo (ninguno tiene `mediaUrl` aún):
+
+- Pecho: Press de pecho, Press inclinado, Aperturas, Flexiones, Aperturas en polea, Press con banda.
+- Espalda: Jalón al pecho, Remo con barra, Face pull, Remo invertido, Dominadas, Remo con kettlebell.
+- Bíceps: Curl con barra, Curl inclinado, Curl con kettlebell, Curl con banda, Curl en polea, Dominada supina.
+- Tríceps: Extensión en polea, Press francés, Fondos en banco, Extensión con kettlebell, Extensión con banda, Fondos en paralelas.
+- Hombros: Press militar, Elevaciones laterales, Pull apart con banda, Press con kettlebell, Flexión pike, Elevación frontal en polea.
+- Piernas: Sentadilla, Prensa, Curl femoral, Swing con kettlebell, Sentadilla con banda, Zancadas.
+- Core: Plancha, Crunch en polea, Pallof press, Elevación de rodillas, Giro ruso con kettlebell, Mountain climbers.
 
 ## Etapas posteriores
 
