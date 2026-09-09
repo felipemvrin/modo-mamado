@@ -73,8 +73,8 @@ export default function Explore() {
       </View>
       <View style={styles.list}>
         {filtered.map((item: Exercise) => <Pressable key={item.id} onPress={() => setSelected(item)} style={styles.card}>
-          <View style={styles.thumbnail}>{item.mediaUrl && !failedImages.includes(item.id)
-            ? <Image source={{ uri: item.mediaUrl }} style={styles.thumbnailImage} onError={() => setFailedImages((current) => (current.includes(item.id) ? current : [...current, item.id]))} />
+          <View style={styles.thumbnail}>{(item.mediaSource || item.mediaUrl) && !failedImages.includes(item.id)
+            ? <Image source={item.mediaSource ?? { uri: item.mediaUrl }} style={styles.thumbnailImage} onError={() => setFailedImages((current) => (current.includes(item.id) ? current : [...current, item.id]))} />
             : <MaterialCommunityIcons name="image-off-outline" size={22} color={colors.muted} />}</View>
           <View style={styles.cardInfo}>
             <Text style={styles.cardName}>{item.name.toUpperCase()}</Text>
@@ -94,8 +94,8 @@ export default function Explore() {
               const substituteOptions = getSubstitutes(selected, availableEquipment);
               const selectedSubstituteId = substitutions[selected.id];
               return <>
-                <View style={styles.modalThumbnail}>{current.mediaUrl && !failedImages.includes(current.id)
-                  ? <Image source={{ uri: current.mediaUrl }} style={styles.thumbnailImage} onError={() => setFailedImages((previous) => (previous.includes(current.id) ? previous : [...previous, current.id]))} />
+                <View style={styles.modalThumbnail}>{(current.mediaSource || current.mediaUrl) && !failedImages.includes(current.id)
+                  ? <Image source={current.mediaSource ?? { uri: current.mediaUrl }} style={styles.thumbnailImage} onError={() => setFailedImages((previous) => (previous.includes(current.id) ? previous : [...previous, current.id]))} />
                   : <MaterialCommunityIcons name="image-off-outline" size={32} color={colors.muted} />}</View>
                 <Text style={styles.modalTitle}>{current.name.toUpperCase()}</Text>
                 <Text style={styles.modalMeta}>{current.muscleGroup.toUpperCase()}{current.secondaryMuscles.length > 0 ? ` + ${current.secondaryMuscles.join(', ').toUpperCase()}` : ''}</Text>

@@ -1,3 +1,5 @@
+import type { ImageSourcePropType } from 'react-native';
+
 export const muscleGroups = ['Pecho', 'Espalda', 'Bíceps', 'Tríceps', 'Hombros', 'Piernas', 'Core'] as const;
 
 export type MuscleGroup = (typeof muscleGroups)[number];
@@ -24,6 +26,7 @@ export type Exercise = {
   restSeconds: number;
   instructions: string;
   mediaUrl?: string;
+  mediaSource?: ImageSourcePropType;
 };
 
 export type CompletedWorkout = {
