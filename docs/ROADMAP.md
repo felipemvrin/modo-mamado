@@ -8,9 +8,9 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 
 - Etapas 0 a 7: integradas en `main`.
 - Etapa 8: en desarrollo (36/42 ejercicios con imagen; 6 pendientes de fuente con licencia libre).
-- Etapa 9: en desarrollo (pantalla de exploración y filtros del catálogo).
-- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo de 42 ejercicios con sustituciones por equipamiento, registro de peso/reps con progresión histórica, timer de descanso independiente y persistencia local.
-- Rama activa: `feat/stage-9-catalog-explorer`.
+- Etapa 9: integrada en `main` (pantalla de exploración, filtros y detalle/sustitución).
+- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo de 42 ejercicios con sustituciones por equipamiento, registro de peso/reps con progresión histórica, timer de descanso independiente, explorador de catálogo y persistencia local.
+- Rama activa: `feat/stage-9-exercise-detail`.
 
 ## Etapa 0: Documentación y control del proyecto
 
@@ -214,9 +214,9 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 
 ## Etapa 9: Pantalla de exploración y filtros visuales del catálogo
 
-**Rama:** `feat/stage-9-catalog-explorer`
+**Rama:** `feat/stage-9-catalog-explorer`, `feat/stage-9-exercise-detail`
 
-**Estado:** En desarrollo
+**Estado:** Integrada en `main`.
 
 **Objetivo:** dejar navegar el catálogo completo (42 ejercicios) fuera del flujo de selección de grupos, con búsqueda y filtros.
 
@@ -231,11 +231,14 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - `app/explore.tsx`: filtros por chips seleccionables, búsqueda en vivo, contador de resultados y botón "limpiar filtros".
 - Ícono de acceso en `Home` que navega a `/explore`.
 
-**Pendiente:** navegación desde una tarjeta del catálogo hacia el detalle/sustitución de un ejercicio específico.
+**Implementado en `feat/stage-9-exercise-detail`:**
+
+- Modal de detalle al tocar una tarjeta: imagen, músculos, categoría/equipamiento/dificultad, series/reps/descanso e instrucciones.
+- Sustitutos disponibles (`getSubstitutes`) filtrados por equipamiento, con opción de fijar sustitución y volver al original — comparte el mismo estado `substitutions` que `Routine`.
 
 ## Etapas posteriores
 
-1. Integración Apple Watch.
+1. Integración Apple Watch (requiere app companion o integración nativa; fuera de alcance de este proyecto Expo/React Native puro).
 
 ## Regla de avance
 
