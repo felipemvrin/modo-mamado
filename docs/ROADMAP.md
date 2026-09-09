@@ -6,7 +6,8 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 
 ## Estado actual
 
-- Etapas 0 a 9: integradas en `main`.
+- Etapas 0 a 7 y 9: integradas en `main`.
+- Etapa 8: completada en `feat/stage-8-exercise-images-final` (37/42 ejercicios con imagen), pendiente de integrar en `main`.
 - Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo de 42 ejercicios (37 con imagen) con sustituciones por equipamiento, registro de peso/reps con progresión histórica, timer de descanso independiente, explorador de catálogo con detalle/sustitución y persistencia local.
 - Rama activa: `feat/stage-8-exercise-images-final`.
 - Pendiente sin bloquear avance: 5 imágenes de ejercicio sin fuente confirmada (ver Etapa 8) e integración Apple Watch (fuera de alcance, requiere app nativa).
@@ -179,7 +180,7 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 
 **Rama:** `feat/stage-7-exercise-media` (placeholder), `feat/stage-8-exercise-images`, `feat/stage-8-exercise-images-remaining`, `feat/stage-8-exercise-images-final`
 
-**Estado:** Integrada en `main`.
+**Estado:** Completada en esta rama (pendiente de integrar en `main`).
 
 **Objetivo:** mostrar una imagen de referencia por ejercicio en `Routine` y `Workout`, usando únicamente fuentes con licencia libre o de uso permitido, sin depender de media con copyright de terceros.
 
