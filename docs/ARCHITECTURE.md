@@ -87,5 +87,6 @@ SQLite mantiene dos tablas locales.
 - `allExercises` devuelve el catálogo completo.
 - `getExercisesByCategory` filtra por modalidad.
 - `getExercisesByEquipment` filtra por equipamiento.
+- `Exercise.mediaUrl` (remoto, RepDB) o `Exercise.mediaSource` (local, `require()` desde `assets/exercises/`) provee la miniatura; `mediaSource` tiene prioridad cuando ambos existen. Las 42 ejercicios del catálogo tienen imagen.
+- `app/explore.tsx` permite buscar y filtrar el catálogo completo, con detalle y sustitución por ejercicio.
 
-La pantalla de exploración y las demostraciones multimedia se incorporarán después. El bundle no incluye GIFs masivos.
