@@ -60,7 +60,15 @@ export function buildSessionSnapshot(params: {
 }): SessionSnapshot {
   const currentExercise = params.exercises[params.exerciseIndex] ?? null;
   const totalSetCount = params.exercises.reduce((sum, item) => sum + item.sets, 0);
-  const completedSetCount = params.completedSets.length;
+  const validCompletedSets = new Set(
+    params.completedSets.filter((completedSet) => {
+      const exerciseIndex = Math.floor(completedSet / 100);
+      const setIndex = completedSet % 100;
+      const exercise = params.exercises[exerciseIndex];
+      return !!exercise && setIndex >= 0 && setIndex < exercise.sets;
+    }),
+  );
+  const completedSetCount = validCompletedSets.size;
   const remainingRestSeconds = params.restEndsAt === null ? null : Math.max(0, Math.ceil((params.restEndsAt - params.now) / 1000));
   const isLastSet = !!currentExercise && params.exerciseIndex === params.exercises.length - 1 && params.setIndex === currentExercise.sets - 1;
   const phase = completedSetCount === totalSetCount && totalSetCount > 0
