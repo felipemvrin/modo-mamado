@@ -60,16 +60,21 @@ export function buildSessionSnapshot(params: {
 }): SessionSnapshot {
   const currentExercise = params.exercises[params.exerciseIndex] ?? null;
   const totalSetCount = params.exercises.reduce((sum, item) => sum + item.sets, 0);
+  const completedSetCount = params.completedSets.length;
   const remainingRestSeconds = params.restEndsAt === null ? null : Math.max(0, Math.ceil((params.restEndsAt - params.now) / 1000));
-  const phase = remainingRestSeconds === null ? 'ready' : remainingRestSeconds > 0 ? 'resting' : 'finished';
   const isLastSet = !!currentExercise && params.exerciseIndex === params.exercises.length - 1 && params.setIndex === currentExercise.sets - 1;
+  const phase = completedSetCount >= totalSetCount && totalSetCount > 0
+    ? 'finished'
+    : remainingRestSeconds !== null && remainingRestSeconds > 0
+      ? 'resting'
+      : 'ready';
   const nextExercise = params.exercises[params.exerciseIndex + 1] ?? null;
 
   return {
     selectedMuscles: params.selectedMuscles,
     exerciseIndex: params.exerciseIndex,
     setIndex: params.setIndex,
-    completedSetCount: params.completedSets.length,
+    completedSetCount,
     totalSetCount,
     phase,
     restEndsAt: params.restEndsAt,
@@ -79,7 +84,7 @@ export function buildSessionSnapshot(params: {
     currentExercise,
     nextExercise,
     isLastSet,
-    progressRatio: totalSetCount === 0 ? 0 : Math.min(1, params.completedSets.length / totalSetCount),
+    progressRatio: totalSetCount === 0 ? 0 : Math.min(1, completedSetCount / totalSetCount),
   };
 }
 
