@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import { buildSessionSnapshot } from './session.ts';
 import { buildWatchSessionPayload } from './watch.ts';
+import { parseWatchSessionPayload, serializeWatchSessionPayload } from './watch-sync.ts';
 
 const exercises = [
   {
@@ -147,4 +148,34 @@ test('buildWatchSessionPayload clamps currentSetNumber when set index is out of 
 
   assert.equal(buildWatchSessionPayload(highSetSnapshot).currentSetNumber, 3);
   assert.equal(buildWatchSessionPayload(negativeSetSnapshot).currentSetNumber, 0);
+});
+
+test('watch session transport round-trips a versioned payload', () => {
+  const snapshot = buildSessionSnapshot({
+    selectedMuscles: ['Pecho'],
+    exercises: [exercises[0]],
+    completedSets: [0],
+    exerciseIndex: 0,
+    setIndex: 1,
+    restEndsAt: null,
+    restTotalSeconds: 90,
+    now: 1_000,
+  });
+  const payload = buildWatchSessionPayload(snapshot);
+
+  assert.deepEqual(parseWatchSessionPayload(serializeWatchSessionPayload(payload)), payload);
+});
+
+test('watch session transport rejects malformed and unknown-version messages', () => {
+  assert.equal(parseWatchSessionPayload('{"version":1}'), null);
+  assert.equal(parseWatchSessionPayload('{"version":2,"type":"session.snapshot","payload":{}}'), null);
+  assert.equal(parseWatchSessionPayload('not-json'), null);
+});
+
+test('watch session transport rejects invalid numeric values and inconsistent flags', () => {
+  assert.equal(parseWatchSessionPayload('{"version":1,"type":"session.snapshot","payload":{"selectedMuscles":["Pecho"],"totalExerciseCount":1,"phase":"ready","currentExerciseId":"bench-press","currentExerciseName":"Bench Press","nextExerciseName":null,"currentSetNumber":-1,"completedSetCount":0,"totalSetCount":3,"remainingRestSeconds":null,"progressRatio":0,"isLastSet":false,"isFinished":false}}'), null);
+  assert.equal(parseWatchSessionPayload('{"version":1,"type":"session.snapshot","payload":{"selectedMuscles":["Pecho"],"totalExerciseCount":1,"phase":"finished","currentExerciseId":"bench-press","currentExerciseName":"Bench Press","nextExerciseName":null,"currentSetNumber":3,"completedSetCount":3,"totalSetCount":3,"remainingRestSeconds":null,"progressRatio":1.2,"isLastSet":true,"isFinished":true}}'), null);
+  assert.equal(parseWatchSessionPayload('{"version":1,"type":"session.snapshot","payload":{"selectedMuscles":["Pecho"],"totalExerciseCount":1,"phase":"ready","currentExerciseId":null,"currentExerciseName":null,"nextExerciseName":null,"currentSetNumber":1,"completedSetCount":0,"totalSetCount":3,"remainingRestSeconds":null,"progressRatio":0,"isLastSet":false,"isFinished":false}}'), null);
+  assert.equal(parseWatchSessionPayload('{"version":1,"type":"session.snapshot","payload":{"selectedMuscles":["Pecho"],"totalExerciseCount":1,"phase":"ready","currentExerciseId":"bench-press","currentExerciseName":"Bench Press","nextExerciseName":null,"currentSetNumber":1,"completedSetCount":4,"totalSetCount":3,"remainingRestSeconds":null,"progressRatio":0.5,"isLastSet":false,"isFinished":false}}'), null);
+  assert.equal(parseWatchSessionPayload('{"version":1,"type":"session.snapshot","payload":{"selectedMuscles":["Pecho"],"totalExerciseCount":1,"phase":"ready","currentExerciseId":"bench-press","currentExerciseName":"Bench Press","nextExerciseName":null,"currentSetNumber":1,"completedSetCount":1,"totalSetCount":3,"remainingRestSeconds":null,"progressRatio":0.5,"isLastSet":false,"isFinished":true}}'), null);
 });
