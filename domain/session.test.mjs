@@ -64,3 +64,19 @@ test('buildSessionSnapshot only marks the workout finished after all sets are co
   assert.equal(snapshot.isLastSet, true);
   assert.equal(snapshot.progressRatio, 1);
 });
+
+test('buildSessionSnapshot does not treat inconsistent progress as a finished workout', () => {
+  const snapshot = buildSessionSnapshot({
+    selectedMuscles: ['Espalda'],
+    exercises: [exercises[1]],
+    completedSets: [0, 1, 2, 3],
+    exerciseIndex: 0,
+    setIndex: 2,
+    restEndsAt: null,
+    restTotalSeconds: 0,
+    now: 1_000,
+  });
+
+  assert.equal(snapshot.phase, 'ready');
+  assert.equal(snapshot.progressRatio, 1);
+});

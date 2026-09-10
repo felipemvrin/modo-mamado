@@ -63,7 +63,7 @@ export function buildSessionSnapshot(params: {
   const completedSetCount = params.completedSets.length;
   const remainingRestSeconds = params.restEndsAt === null ? null : Math.max(0, Math.ceil((params.restEndsAt - params.now) / 1000));
   const isLastSet = !!currentExercise && params.exerciseIndex === params.exercises.length - 1 && params.setIndex === currentExercise.sets - 1;
-  const phase = completedSetCount >= totalSetCount && totalSetCount > 0
+  const phase = completedSetCount === totalSetCount && totalSetCount > 0
     ? 'finished'
     : remainingRestSeconds !== null && remainingRestSeconds > 0
       ? 'resting'
