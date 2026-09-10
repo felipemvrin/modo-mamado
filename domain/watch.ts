@@ -17,6 +17,10 @@ export type WatchSessionPayload = {
 };
 
 export function buildWatchSessionPayload(snapshot: SessionSnapshot): WatchSessionPayload {
+  const currentSetNumber = snapshot.currentExercise
+    ? Math.min(snapshot.currentExercise.sets, Math.max(0, snapshot.setIndex + 1))
+    : 0;
+
   return {
     selectedMuscles: snapshot.selectedMuscles,
     totalExerciseCount: snapshot.totalExerciseCount,
@@ -24,7 +28,7 @@ export function buildWatchSessionPayload(snapshot: SessionSnapshot): WatchSessio
     currentExerciseId: snapshot.currentExercise?.id ?? null,
     currentExerciseName: snapshot.currentExercise?.name ?? null,
     nextExerciseName: snapshot.nextExercise?.name ?? null,
-    currentSetNumber: snapshot.currentExercise ? snapshot.setIndex + 1 : 0,
+    currentSetNumber,
     completedSetCount: snapshot.completedSetCount,
     totalSetCount: snapshot.totalSetCount,
     remainingRestSeconds: snapshot.remainingRestSeconds,

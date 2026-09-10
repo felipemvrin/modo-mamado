@@ -122,3 +122,29 @@ test('buildWatchSessionPayload exposes a stable contract for a companion app', (
   assert.equal(payload.remainingRestSeconds, 0);
   assert.equal(payload.phase, 'ready');
 });
+
+test('buildWatchSessionPayload clamps currentSetNumber when set index is out of range', () => {
+  const highSetSnapshot = buildSessionSnapshot({
+    selectedMuscles: ['Pecho'],
+    exercises: [exercises[0]],
+    completedSets: [],
+    exerciseIndex: 0,
+    setIndex: 99,
+    restEndsAt: null,
+    restTotalSeconds: 90,
+    now: 1_000,
+  });
+  const negativeSetSnapshot = buildSessionSnapshot({
+    selectedMuscles: ['Pecho'],
+    exercises: [exercises[0]],
+    completedSets: [],
+    exerciseIndex: 0,
+    setIndex: -2,
+    restEndsAt: null,
+    restTotalSeconds: 90,
+    now: 1_000,
+  });
+
+  assert.equal(buildWatchSessionPayload(highSetSnapshot).currentSetNumber, 3);
+  assert.equal(buildWatchSessionPayload(negativeSetSnapshot).currentSetNumber, 0);
+});
