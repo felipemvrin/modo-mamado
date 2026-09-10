@@ -43,17 +43,28 @@ function isWatchSessionPayload(value: unknown): value is WatchSessionPayload {
   const payload = value as Partial<WatchSessionPayload>;
   return Array.isArray(payload.selectedMuscles)
     && payload.selectedMuscles.every((muscle) => typeof muscle === 'string')
-    && typeof payload.totalExerciseCount === 'number'
+    && isNonNegativeInteger(payload.totalExerciseCount)
     && typeof payload.phase === 'string'
     && ['ready', 'resting', 'finished'].includes(payload.phase)
     && (typeof payload.currentExerciseId === 'string' || payload.currentExerciseId === null)
     && (typeof payload.currentExerciseName === 'string' || payload.currentExerciseName === null)
     && (typeof payload.nextExerciseName === 'string' || payload.nextExerciseName === null)
-    && typeof payload.currentSetNumber === 'number'
-    && typeof payload.completedSetCount === 'number'
-    && typeof payload.totalSetCount === 'number'
-    && (typeof payload.remainingRestSeconds === 'number' || payload.remainingRestSeconds === null)
-    && typeof payload.progressRatio === 'number'
+    && isNonNegativeInteger(payload.currentSetNumber)
+    && isNonNegativeInteger(payload.completedSetCount)
+    && isNonNegativeInteger(payload.totalSetCount)
+    && payload.completedSetCount <= payload.totalSetCount
+    && (isNonNegativeInteger(payload.remainingRestSeconds) || payload.remainingRestSeconds === null)
+    && isProgressRatio(payload.progressRatio)
     && typeof payload.isLastSet === 'boolean'
-    && typeof payload.isFinished === 'boolean';
+    && typeof payload.isFinished === 'boolean'
+    && payload.isFinished === (payload.phase === 'finished')
+    && (payload.currentExerciseId !== null || payload.currentSetNumber === 0);
+}
+
+function isNonNegativeInteger(value: unknown): value is number {
+  return Number.isInteger(value) && typeof value === 'number' && value >= 0;
+}
+
+function isProgressRatio(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1;
 }
