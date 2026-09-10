@@ -242,6 +242,21 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - Modal de detalle al tocar una tarjeta: imagen, músculos, categoría/equipamiento/dificultad, series/reps/descanso e instrucciones.
 - Sustitutos disponibles (`getSubstitutes`) filtrados por equipamiento, con opción de fijar sustitución y volver al original — comparte el mismo estado `substitutions` que `Routine`.
 
+## Etapa 10: Preparación para Apple Watch
+
+**Rama sugerida:** `feat/stage-10-watch-companion`
+
+**Objetivo:** dejar la lógica del entrenamiento y las notificaciones preparada para una futura app companion de Apple Watch sin bloquear el flujo actual de iPhone.
+
+**Incluye:**
+
+- Separar la lógica de sesión, descanso y progreso del UI para reutilizarla en una app nativa o companion.
+- Aislar eventos de entrenamiento y notificaciones en un dominio portable y reutilizable.
+- Definir qué métricas se comunicarán con Watch: grupo muscular actual, serie en curso, tiempo de descanso, indicador de fin de sesión.
+- Preparar una API de estado mínima para sincronizar la app principal con la companion.
+
+**Nota:** la integración real requiere un proyecto WatchKit o app companion nativa; no se considera parte del alcance de esta app Expo/React Native puro.
+
 ## Etapas posteriores
 
 1. Integración Apple Watch (requiere app companion o integración nativa; fuera de alcance de este proyecto Expo/React Native puro).
