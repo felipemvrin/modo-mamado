@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import { buildSessionSnapshot } from './session.ts';
+import { buildWatchSessionPayload } from './watch.ts';
 
 const exercises = [
   {
@@ -97,4 +98,27 @@ test('buildSessionSnapshot does not finish when invalid entries hide a missing r
   assert.equal(snapshot.completedSetCount, 2);
   assert.equal(snapshot.phase, 'ready');
   assert.equal(snapshot.progressRatio, 2 / 3);
+});
+
+test('buildWatchSessionPayload exposes a stable contract for a companion app', () => {
+  const snapshot = buildSessionSnapshot({
+    selectedMuscles: ['Pecho', 'Espalda'],
+    exercises,
+    completedSets: [0],
+    exerciseIndex: 0,
+    setIndex: 1,
+    restEndsAt: 1_000,
+    restTotalSeconds: 90,
+    now: 1_000,
+  });
+
+  const payload = buildWatchSessionPayload(snapshot);
+
+  assert.equal(payload.totalExerciseCount, 2);
+  assert.equal(payload.currentSetNumber, 2);
+  assert.equal(payload.isFinished, false);
+  assert.equal(payload.currentExerciseName, 'Bench Press');
+  assert.equal(payload.nextExerciseName, 'Barbell Row');
+  assert.equal(payload.remainingRestSeconds, 0);
+  assert.equal(payload.phase, 'ready');
 });
