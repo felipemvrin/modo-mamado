@@ -4,6 +4,7 @@ export type SessionPhase = 'ready' | 'resting' | 'finished';
 
 export type SessionSnapshot = {
   selectedMuscles: MuscleGroup[];
+  totalExerciseCount: number;
   exerciseIndex: number;
   setIndex: number;
   completedSetCount: number;
@@ -80,6 +81,7 @@ export function buildSessionSnapshot(params: {
 
   return {
     selectedMuscles: params.selectedMuscles,
+    totalExerciseCount: params.exercises.length,
     exerciseIndex: params.exerciseIndex,
     setIndex: params.setIndex,
     completedSetCount,
