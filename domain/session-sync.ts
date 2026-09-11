@@ -10,6 +10,8 @@ export type InMemorySessionSyncAdapter = SessionSyncAdapter & {
   getLatestMessage(): string | null;
 };
 
+export const sessionSyncAdapter = createInMemorySessionSyncAdapter();
+
 export function createInMemorySessionSyncAdapter(): InMemorySessionSyncAdapter {
   let latestMessage: string | null = null;
 

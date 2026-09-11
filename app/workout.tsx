@@ -6,6 +6,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getExerciseById, getExercisesForMuscles } from '../data/routines';
 import { getLastSetLog } from '../database/workouts';
 import { buildSessionSnapshot, resolveNextSetPosition } from '../domain/session';
+import { sessionSyncAdapter } from '../domain/session-sync';
+import { buildWatchSessionPayload } from '../domain/watch';
 import { colors, radius, spacing, typography } from '../theme/tokens';
 import { useWorkoutStore } from '../store/workout';
 import { cancelNotification, scheduleRestFinishedNotification } from '../services/notifications';
@@ -42,7 +44,9 @@ export default function Workout() {
     restTotalSeconds,
     now,
   });
+  const watchSessionPayload = buildWatchSessionPayload(sessionSnapshot);
   const signalRestFinished = async () => { if (restFinishedFeedbackSent.current) return; const timestamp = Date.now(); if (timestamp - lastFeedbackAt.current < 1200) return; lastFeedbackAt.current = timestamp; restFinishedFeedbackSent.current = true; await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); await new Promise((resolve) => setTimeout(resolve, 280)); await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); await new Promise((resolve) => setTimeout(resolve, 280)); await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); };
+  useEffect(() => { sessionSyncAdapter.publishSessionSnapshot(watchSessionPayload); }, [watchSessionPayload]);
   useEffect(() => { if (restEndAt === null) return; const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, [restEndAt]);
   useEffect(() => { if (rest === 0) signalRestFinished(); }, [rest]);
   useEffect(() => { const subscription = AppState.addEventListener('change', (state) => { if (state === 'active' && rest === 0) signalRestFinished(); }); return () => subscription.remove(); }, [rest]);
