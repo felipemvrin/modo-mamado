@@ -41,14 +41,20 @@ function isWatchSessionPayload(value: unknown): value is WatchSessionPayload {
   if (!value || typeof value !== 'object') return false;
 
   const payload = value as Partial<WatchSessionPayload>;
+  const hasCurrentExerciseId = typeof payload.currentExerciseId === 'string';
+  const hasCurrentExerciseName = typeof payload.currentExerciseName === 'string';
+  const hasCurrentExercise = hasCurrentExerciseId && hasCurrentExerciseName;
+
   return Array.isArray(payload.selectedMuscles)
     && payload.selectedMuscles.every((muscle) => typeof muscle === 'string')
     && isNonNegativeInteger(payload.totalExerciseCount)
     && typeof payload.phase === 'string'
     && ['ready', 'resting', 'finished'].includes(payload.phase)
-    && (typeof payload.currentExerciseId === 'string' || payload.currentExerciseId === null)
-    && (typeof payload.currentExerciseName === 'string' || payload.currentExerciseName === null)
+    && (hasCurrentExerciseId || payload.currentExerciseId === null)
+    && (hasCurrentExerciseName || payload.currentExerciseName === null)
+    && hasCurrentExerciseId === hasCurrentExerciseName
     && (typeof payload.nextExerciseName === 'string' || payload.nextExerciseName === null)
+    && (payload.nextExerciseName === null || hasCurrentExercise)
     && isNonNegativeInteger(payload.currentSetNumber)
     && isNonNegativeInteger(payload.completedSetCount)
     && isNonNegativeInteger(payload.totalSetCount)
@@ -58,7 +64,7 @@ function isWatchSessionPayload(value: unknown): value is WatchSessionPayload {
     && typeof payload.isLastSet === 'boolean'
     && typeof payload.isFinished === 'boolean'
     && payload.isFinished === (payload.phase === 'finished')
-    && (payload.currentExerciseId !== null || payload.currentSetNumber === 0);
+    && (hasCurrentExercise || payload.currentSetNumber === 0);
 }
 
 function isNonNegativeInteger(value: unknown): value is number {
