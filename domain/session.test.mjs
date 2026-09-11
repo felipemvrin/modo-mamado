@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import { buildSessionSnapshot } from './session.ts';
+import { createInMemorySessionSyncAdapter } from './session-sync.ts';
 import { buildWatchSessionPayload } from './watch.ts';
 import { parseWatchSessionPayload, serializeWatchSessionPayload } from './watch-sync.ts';
 
@@ -178,4 +179,24 @@ test('watch session transport rejects invalid numeric values and inconsistent fl
   assert.equal(parseWatchSessionPayload('{"version":1,"type":"session.snapshot","payload":{"selectedMuscles":["Pecho"],"totalExerciseCount":1,"phase":"ready","currentExerciseId":null,"currentExerciseName":null,"nextExerciseName":null,"currentSetNumber":1,"completedSetCount":0,"totalSetCount":3,"remainingRestSeconds":null,"progressRatio":0,"isLastSet":false,"isFinished":false}}'), null);
   assert.equal(parseWatchSessionPayload('{"version":1,"type":"session.snapshot","payload":{"selectedMuscles":["Pecho"],"totalExerciseCount":1,"phase":"ready","currentExerciseId":"bench-press","currentExerciseName":"Bench Press","nextExerciseName":null,"currentSetNumber":1,"completedSetCount":4,"totalSetCount":3,"remainingRestSeconds":null,"progressRatio":0.5,"isLastSet":false,"isFinished":false}}'), null);
   assert.equal(parseWatchSessionPayload('{"version":1,"type":"session.snapshot","payload":{"selectedMuscles":["Pecho"],"totalExerciseCount":1,"phase":"ready","currentExerciseId":"bench-press","currentExerciseName":"Bench Press","nextExerciseName":null,"currentSetNumber":1,"completedSetCount":1,"totalSetCount":3,"remainingRestSeconds":null,"progressRatio":0.5,"isLastSet":false,"isFinished":true}}'), null);
+});
+
+test('in-memory session sync adapter publishes the latest Watch snapshot', () => {
+  const snapshot = buildSessionSnapshot({
+    selectedMuscles: ['Pecho'],
+    exercises: [exercises[0]],
+    completedSets: [],
+    exerciseIndex: 0,
+    setIndex: 0,
+    restEndsAt: null,
+    restTotalSeconds: 90,
+    now: 1_000,
+  });
+  const payload = buildWatchSessionPayload(snapshot);
+  const adapter = createInMemorySessionSyncAdapter();
+
+  assert.equal(adapter.getLatestPayload(), null);
+  adapter.publishSessionSnapshot(payload);
+  assert.deepEqual(adapter.getLatestPayload(), payload);
+  assert.match(adapter.getLatestMessage(), /"type":"session.snapshot"/);
 });
