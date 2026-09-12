@@ -6,6 +6,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getExerciseById, getExercisesForMuscles } from '../data/routines';
 import { getLastSetLog } from '../database/workouts';
 import { buildSessionSnapshot, resolveNextSetPosition } from '../domain/session';
+import { parseSetLogInput } from '../domain/set-log';
 import { sessionSyncAdapter } from '../domain/session-sync';
 import { buildWatchSessionPayload } from '../domain/watch';
 import { colors, radius, spacing, typography } from '../theme/tokens';
@@ -96,7 +97,7 @@ export default function Workout() {
     setNow(Date.now());
     await cancelNotification(previousNotificationId);
   };
-  const markSet = async () => { const weight = parseFloat(weightInput.replace(',', '.')) || 0; const reps = parseInt(repsInput, 10) || 0; logSet(exerciseIndex, setIndex, current.id, weight, reps); completeSet(exerciseIndex, setIndex); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); if (isLastSet) { await skipRest(); finishWorkout(); router.replace('/'); return; } await startRest(current.restSeconds); const nextPosition = resolveNextSetPosition(exercises, exerciseIndex, setIndex); setExerciseIndex(nextPosition.exerciseIndex); setSetIndex(nextPosition.setIndex); };
+  const markSet = async () => { const input = parseSetLogInput(weightInput, repsInput); if (!input) return; logSet(exerciseIndex, setIndex, current.id, input.weight, input.reps); completeSet(exerciseIndex, setIndex); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); if (isLastSet) { await skipRest(); finishWorkout(); router.replace('/'); return; } await startRest(current.restSeconds); const nextPosition = resolveNextSetPosition(exercises, exerciseIndex, setIndex); setExerciseIndex(nextPosition.exerciseIndex); setSetIndex(nextPosition.setIndex); };
   if (rest !== null) return <SafeAreaView style={styles.safe}><View style={styles.restScreen}><Text style={styles.kicker}>DESCANSANDO</Text><Text style={styles.restTitle}>{rest === 0 ? 'DALE NOMÁS' : formatTime(rest)}</Text><View style={styles.progressTrack}><View style={[styles.progress, { width: `${Math.max(0, Math.min(100, ((restTotalSeconds - rest) / Math.max(restTotalSeconds, 1)) * 100))}%` }]} /></View><Text style={styles.nextLabel}>PRÓXIMA SERIE</Text><Text style={styles.next}>{current.name.toUpperCase()} · {setIndex + 1}/{current.sets}</Text><View style={styles.restActions}><Pressable onPress={() => startRest(rest + 30, restTotalSeconds + 30)} style={styles.secondary}><Text style={styles.secondaryText}>+30 SEG</Text></Pressable><Pressable onPress={skipRest} style={styles.start}><Text style={styles.startText}>SALTAR DESCANSO</Text></Pressable></View></View></SafeAreaView>;
   const canShowLocal = !!current.mediaSource && !failedMediaById[current.id]?.local;
   const canShowRemote = !!current.mediaUrl && !failedMediaById[current.id]?.remote;

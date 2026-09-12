@@ -6,11 +6,11 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 
 ## Estado actual
 
-- Etapas 0 a 7 y 9: integradas en `main`.
-- Etapa 8: completa (42/42 ejercicios con imagen: 37 remotas vía RepDB + 5 propias generadas con IA en `assets/exercises/`), en rama `feat/stage-8-local-exercise-media`.
-- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo de 42 ejercicios (todos con imagen) con sustituciones por equipamiento, registro de peso/reps con progresión histórica, timer de descanso independiente, explorador de catálogo con detalle/sustitución y persistencia local.
-- Rama activa: `feat/stage-8-local-exercise-media`.
-- Pendiente sin bloquear avance: integración Apple Watch (fuera de alcance, requiere app nativa).
+- Etapas 0 a 10: integradas en `main`.
+- Etapa 8: completa (42/42 ejercicios con imagen: 37 remotas vía RepDB + 5 propias generadas con IA en `assets/exercises/`).
+- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo de 42 ejercicios (todos con imagen) con sustituciones por equipamiento, registro de peso/reps con progresión histórica, timer de descanso independiente, explorador de catálogo con detalle/sustitución, persistencia local y contrato de sincronización de sesión para una futura companion.
+- Rama activa: `main`.
+- Pendiente sin bloquear avance: integración Apple Watch nativa (fuera de alcance de Expo/React Native puro).
 
 ## Etapa 0: Documentación y control del proyecto
 
@@ -31,7 +31,7 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 
 **Rama:** `feat/stage-1-timer-alerts`
 
-**Estado:** En desarrollo
+**Estado:** Integrada en `main`.
 
 **Objetivo:** avisar de forma confiable cuando termina el descanso.
 
@@ -72,7 +72,7 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 
 **Rama:** `feat/stage-3-weekly-progress`
 
-**Estado:** En desarrollo
+**Estado:** Integrada en `main`.
 
 **Objetivo:** mostrar qué se trabajó y orientar la próxima sesión.
 
@@ -111,7 +111,7 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 
 **Rama:** `feat/stage-5-equipment-substitutions`
 
-**Estado:** En desarrollo
+**Estado:** Integrada en `main`.
 
 **Objetivo:** permitir reemplazar un ejercicio por otro equivalente cuando falta equipamiento.
 
@@ -180,7 +180,7 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 
 **Rama:** `feat/stage-7-exercise-media` (placeholder), `feat/stage-8-exercise-images`, `feat/stage-8-exercise-images-remaining`, `feat/stage-8-exercise-images-final`
 
-**Estado:** Completada en esta rama (pendiente de integrar en `main`).
+**Estado:** Integrada en `main`.
 
 **Objetivo:** mostrar una imagen de referencia por ejercicio en `Routine` y `Workout`, usando únicamente fuentes con licencia libre o de uso permitido, sin depender de media con copyright de terceros.
 
@@ -256,6 +256,15 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - Preparar una API de estado mínima para sincronizar la app principal con la companion.
 
 **Nota:** la integración real requiere un proyecto WatchKit o app companion nativa; no se considera parte del alcance de esta app Expo/React Native puro.
+
+**Implementado en `main`:**
+
+- Dominio portable para construir snapshots de sesión sin depender de la UI.
+- Payload versionado para el estado actual, descanso, progreso y ejercicio siguiente.
+- Transporte validado mediante serialización JSON y adaptador en memoria sustituible por una implementación nativa.
+- Publicación desde `Workout` evitando snapshots redundantes.
+
+**Estado:** Preparada para integración nativa; la app companion real queda pendiente.
 
 ## Etapas posteriores
 

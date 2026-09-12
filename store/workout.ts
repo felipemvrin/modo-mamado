@@ -39,7 +39,10 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
   }),
   startWorkout: () => set({ activeWorkout: get().selectedMuscles, completedSets: [], setLogs: {} }),
   completeSet: (exerciseIndex, setIndex) => set((state) => ({ completedSets: state.completedSets.includes(exerciseIndex * 100 + setIndex) ? state.completedSets : [...state.completedSets, exerciseIndex * 100 + setIndex] })),
-  logSet: (exerciseIndex, setIndex, exerciseId, weight, reps) => set((state) => ({ setLogs: { ...state.setLogs, [`${exerciseIndex}-${setIndex}`]: { exerciseId, setIndex, weight, reps } } })),
+  logSet: (exerciseIndex, setIndex, exerciseId, weight, reps) => {
+    if (!Number.isFinite(weight) || weight < 0 || !Number.isInteger(reps) || reps < 0) return;
+    set((state) => ({ setLogs: { ...state.setLogs, [`${exerciseIndex}-${setIndex}`]: { exerciseId, setIndex, weight, reps } } }));
+  },
   finishWorkout: () => {
     const { activeWorkout, setLogs } = get();
     if (!activeWorkout?.length) return;
