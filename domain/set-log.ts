@@ -4,8 +4,15 @@ export type ParsedSetLogInput = {
 };
 
 export function parseSetLogInput(weightInput: string, repsInput: string): ParsedSetLogInput | null {
-  const weight = Number(weightInput.replace(',', '.').trim());
-  const reps = Number(repsInput.trim());
+  const rawWeight = weightInput.trim();
+  const rawReps = repsInput.trim();
+  const normalizedWeight = rawWeight.replace(',', '.');
+
+  if (rawWeight !== '' && !/^\d+(?:[.,]\d*)?$/.test(rawWeight)) return null;
+  if (rawReps !== '' && !/^\d+$/.test(rawReps)) return null;
+
+  const weight = normalizedWeight === '' ? 0 : Number(normalizedWeight);
+  const reps = rawReps === '' ? 0 : Number(rawReps);
 
   if (!Number.isFinite(weight) || weight < 0) return null;
   if (!Number.isInteger(reps) || reps < 0) return null;

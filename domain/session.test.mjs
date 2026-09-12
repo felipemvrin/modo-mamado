@@ -46,6 +46,12 @@ test('parseSetLogInput rejects non-finite and negative values', () => {
   assert.equal(parseSetLogInput('20', '8.5'), null);
 });
 
+test('parseSetLogInput rejects scientific and non-decimal notations', () => {
+  assert.equal(parseSetLogInput('1e2', '8'), null);
+  assert.equal(parseSetLogInput('0x10', '8'), null);
+  assert.equal(parseSetLogInput('20', '1e1'), null);
+});
+
 test('buildSessionSnapshot keeps the session ready when rest has already expired', () => {
   const snapshot = buildSessionSnapshot({
     selectedMuscles: ['Pecho'],
