@@ -8,7 +8,7 @@ export function parseSetLogInput(weightInput: string, repsInput: string): Parsed
   const rawReps = repsInput.trim();
   const normalizedWeight = rawWeight.replace(',', '.');
 
-  if (rawWeight !== '' && !/^\d+(?:[.,]\d*)?$/.test(rawWeight)) return null;
+  if (rawWeight !== '' && !/^\d+(?:[.,]\d+)?$/.test(rawWeight)) return null;
   if (rawReps !== '' && !/^\d+$/.test(rawReps)) return null;
 
   const weight = normalizedWeight === '' ? 0 : Number(normalizedWeight);

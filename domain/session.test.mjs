@@ -50,6 +50,8 @@ test('parseSetLogInput rejects scientific and non-decimal notations', () => {
   assert.equal(parseSetLogInput('1e2', '8'), null);
   assert.equal(parseSetLogInput('0x10', '8'), null);
   assert.equal(parseSetLogInput('20', '1e1'), null);
+  assert.equal(parseSetLogInput('20,', '8'), null);
+  assert.equal(parseSetLogInput('20.', '8'), null);
 });
 
 test('buildSessionSnapshot keeps the session ready when rest has already expired', () => {
