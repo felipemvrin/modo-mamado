@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AppState, Image, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
@@ -6,6 +6,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getExerciseById, getExercisesForMuscles } from '../data/routines';
 import { getLastSetLog } from '../database/workouts';
 import { buildSessionSnapshot, resolveNextSetPosition } from '../domain/session';
+import { sessionSyncAdapter } from '../domain/session-sync';
+import { buildWatchSessionPayload } from '../domain/watch';
 import { colors, radius, spacing, typography } from '../theme/tokens';
 import { useWorkoutStore } from '../store/workout';
 import { cancelNotification, scheduleRestFinishedNotification } from '../services/notifications';
@@ -14,9 +16,11 @@ const formatTime = (seconds: number) => `${String(Math.floor(seconds / 60)).padS
 
 export default function Workout() {
   const { activeWorkout, completedSets, completeSet, logSet, finishWorkout, substitutions } = useWorkoutStore();
-  const exercises = activeWorkout
-    ? getExercisesForMuscles(activeWorkout).map((item) => (substitutions[item.id] ? getExerciseById(substitutions[item.id]) ?? item : item))
-    : [];
+  const exercises = useMemo(() => (
+    activeWorkout
+      ? getExercisesForMuscles(activeWorkout).map((item) => (substitutions[item.id] ? getExerciseById(substitutions[item.id]) ?? item : item))
+      : []
+  ), [activeWorkout, substitutions]);
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [setIndex, setSetIndex] = useState(0);
   const [restEndAt, setRestEndAt] = useState<number | null>(null);
@@ -32,7 +36,7 @@ export default function Workout() {
   const restRequestId = useRef(0);
   const current = exercises[exerciseIndex];
   const rest = restEndAt === null ? null : Math.max(0, Math.ceil((restEndAt - now) / 1000));
-  const sessionSnapshot = buildSessionSnapshot({
+  const sessionSnapshot = useMemo(() => buildSessionSnapshot({
     selectedMuscles: activeWorkout ?? [],
     exercises,
     completedSets,
@@ -41,8 +45,10 @@ export default function Workout() {
     restEndsAt: restEndAt ?? null,
     restTotalSeconds,
     now,
-  });
+  }), [activeWorkout, exercises, completedSets, exerciseIndex, setIndex, restEndAt, restTotalSeconds, now]);
+  const watchSessionPayload = useMemo(() => buildWatchSessionPayload(sessionSnapshot), [sessionSnapshot]);
   const signalRestFinished = async () => { if (restFinishedFeedbackSent.current) return; const timestamp = Date.now(); if (timestamp - lastFeedbackAt.current < 1200) return; lastFeedbackAt.current = timestamp; restFinishedFeedbackSent.current = true; await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); await new Promise((resolve) => setTimeout(resolve, 280)); await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); await new Promise((resolve) => setTimeout(resolve, 280)); await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy); };
+  useEffect(() => { sessionSyncAdapter.publishSessionSnapshot(watchSessionPayload); }, [watchSessionPayload]);
   useEffect(() => { if (restEndAt === null) return; const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, [restEndAt]);
   useEffect(() => { if (rest === 0) signalRestFinished(); }, [rest]);
   useEffect(() => { const subscription = AppState.addEventListener('change', (state) => { if (state === 'active' && rest === 0) signalRestFinished(); }); return () => subscription.remove(); }, [rest]);
