@@ -8,9 +8,9 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 
 - Etapas 0 a 10: integradas en `main`.
 - Etapa 8: completa (42/42 ejercicios con imagen: 37 remotas vía RepDB + 5 propias generadas con IA en `assets/exercises/`).
-- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo de 42 ejercicios (todos con imagen) con sustituciones por equipamiento, registro de peso/reps con progresión histórica, timer de descanso independiente, explorador de catálogo con detalle/sustitución, persistencia local y contrato de sincronización de sesión para una futura companion.
+- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo de 42 ejercicios (todos con imagen) con sustituciones por equipamiento, timer de descanso independiente, explorador de catálogo con detalle/sustitución, persistencia local del resumen de sesión y contrato de sincronización de sesión para una futura companion.
 - Rama activa: `main`.
-- Pendiente sin bloquear avance: integración Apple Watch nativa (fuera de alcance de Expo/React Native puro).
+- Pendiente sin bloquear avance: registro de peso/repeticiones y progresión histórica (ver Etapa 6, reservada) e integración Apple Watch nativa (fuera de alcance de Expo/React Native puro).
 
 ## Etapa 0: Documentación y control del proyecto
 
@@ -134,7 +134,7 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 
 **Rama:** `feat/stage-6-progress-tracking` y `feat/stage-6-progress-history-view`
 
-**Estado:** Integrada en `main`.
+**Estado:** Reservada para una etapa futura.
 
 **Objetivo:** registrar lo que realmente se levantó en cada serie y mostrar referencia de la sesión anterior para progresar.
 
@@ -145,13 +145,15 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 - Referencia a la última carga registrada para el mismo ejercicio.
 - Visualización de progresión histórica por ejercicio.
 
-**Implementado en `main`:**
+**Implementado en `feat/stage-6-progress-tracking-saved`:**
 
 - Tipo `SetLog` y `CompletedWorkout.setLogs` en `types/workout.ts`.
 - Tabla `set_logs`, `getLastSetLog`, `getExercisesWithProgress` y `getProgressionForExercise` en `database/workouts.ts`.
 - Estado `setLogs` y acción `logSet` en `WorkoutStore`.
 - Campos de peso/reps y aviso "ÚLTIMA VEZ" en `Workout`.
 - Sección "PROGRESIÓN POR EJERCICIO" en `History`: chips por ejercicio con registros y lista de sesiones (peso × reps) con indicador de tendencia.
+
+La versión oficial actual mantiene el flujo de entrenamiento simple y solo guarda el resumen de cada sesión.
 
 ## Etapa 7: Acceso rápido, descanso independiente y catálogo ampliado
 

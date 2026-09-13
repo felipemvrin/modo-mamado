@@ -1,12 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AppState, Image, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { AppState, Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getExerciseById, getExercisesForMuscles } from '../data/routines';
-import { getLastSetLog } from '../database/workouts';
 import { buildSessionSnapshot, resolveNextSetPosition } from '../domain/session';
-import { parseSetLogInput } from '../domain/set-log';
 import { sessionSyncAdapter } from '../domain/session-sync';
 import { buildWatchSessionPayload } from '../domain/watch';
 import { colors, radius, spacing, typography } from '../theme/tokens';
@@ -16,7 +14,7 @@ import { cancelNotification, scheduleRestFinishedNotification } from '../service
 const formatTime = (seconds: number) => `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 
 export default function Workout() {
-  const { activeWorkout, completedSets, completeSet, logSet, finishWorkout, substitutions } = useWorkoutStore();
+  const { activeWorkout, completedSets, completeSet, finishWorkout, substitutions } = useWorkoutStore();
   const exercises = useMemo(() => (
     activeWorkout
       ? getExercisesForMuscles(activeWorkout).map((item) => (substitutions[item.id] ? getExerciseById(substitutions[item.id]) ?? item : item))
@@ -27,9 +25,6 @@ export default function Workout() {
   const [restEndAt, setRestEndAt] = useState<number | null>(null);
   const [restTotalSeconds, setRestTotalSeconds] = useState(0);
   const [now, setNow] = useState(Date.now());
-  const [weightInput, setWeightInput] = useState('');
-  const [repsInput, setRepsInput] = useState('');
-  const [lastLog, setLastLog] = useState<{ weight: number; reps: number } | null>(null);
   const [failedMediaById, setFailedMediaById] = useState<Record<string, { local?: true; remote?: true }>>({});
   const lastFeedbackAt = useRef(0);
   const restFinishedFeedbackSent = useRef(false);
@@ -59,13 +54,6 @@ export default function Workout() {
     notificationIdRef.current = null;
     void cancelNotification(notificationId);
   }, []);
-  useEffect(() => {
-    if (!current) return;
-    const log = getLastSetLog(current.id);
-    setLastLog(log);
-    setWeightInput(log ? String(log.weight) : '');
-    setRepsInput(log ? String(log.reps) : '');
-  }, [current?.id, setIndex]);
   if (!activeWorkout || !current) return null;
   const totalSets = sessionSnapshot.totalSetCount;
   const completedTotal = sessionSnapshot.completedSetCount;
@@ -97,17 +85,12 @@ export default function Workout() {
     setNow(Date.now());
     await cancelNotification(previousNotificationId);
   };
-  const markSet = async () => { const input = parseSetLogInput(weightInput, repsInput); if (!input) return; logSet(exerciseIndex, setIndex, current.id, input.weight, input.reps); completeSet(exerciseIndex, setIndex); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); if (isLastSet) { await skipRest(); finishWorkout(); router.replace('/'); return; } await startRest(current.restSeconds); const nextPosition = resolveNextSetPosition(exercises, exerciseIndex, setIndex); setExerciseIndex(nextPosition.exerciseIndex); setSetIndex(nextPosition.setIndex); };
+  const markSet = async () => { completeSet(exerciseIndex, setIndex); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); if (isLastSet) { await skipRest(); finishWorkout(); router.replace('/'); return; } await startRest(current.restSeconds); const nextPosition = resolveNextSetPosition(exercises, exerciseIndex, setIndex); setExerciseIndex(nextPosition.exerciseIndex); setSetIndex(nextPosition.setIndex); };
   if (rest !== null) return <SafeAreaView style={styles.safe}><View style={styles.restScreen}><Text style={styles.kicker}>DESCANSANDO</Text><Text style={styles.restTitle}>{rest === 0 ? 'DALE NOMÁS' : formatTime(rest)}</Text><View style={styles.progressTrack}><View style={[styles.progress, { width: `${Math.max(0, Math.min(100, ((restTotalSeconds - rest) / Math.max(restTotalSeconds, 1)) * 100))}%` }]} /></View><Text style={styles.nextLabel}>PRÓXIMA SERIE</Text><Text style={styles.next}>{current.name.toUpperCase()} · {setIndex + 1}/{current.sets}</Text><View style={styles.restActions}><Pressable onPress={() => startRest(rest + 30, restTotalSeconds + 30)} style={styles.secondary}><Text style={styles.secondaryText}>+30 SEG</Text></Pressable><Pressable onPress={skipRest} style={styles.start}><Text style={styles.startText}>SALTAR DESCANSO</Text></Pressable></View></View></SafeAreaView>;
   const canShowLocal = !!current.mediaSource && !failedMediaById[current.id]?.local;
   const canShowRemote = !!current.mediaUrl && !failedMediaById[current.id]?.remote;
   const imageSource = canShowLocal ? current.mediaSource : canShowRemote ? { uri: current.mediaUrl } : null;
   return <SafeAreaView style={styles.safe}><View style={styles.container}><View style={styles.header}><Pressable onPress={() => router.back()}><MaterialCommunityIcons name="close" size={26} color={colors.text} /></Pressable><Text style={styles.headerTitle}>{activeWorkout.join(' + ').toUpperCase()}</Text><Text style={styles.counter}>{completedTotal}/{totalSets}</Text></View><View style={styles.main}><Text style={styles.kicker}>EJERCICIO {String(exerciseIndex + 1).padStart(2, '0')} / {String(exercises.length).padStart(2, '0')}</Text><View style={styles.thumbnail}>{imageSource ? <Image source={imageSource} style={styles.thumbnailImage} onError={() => setFailedMediaById((previous) => ({ ...previous, [current.id]: canShowLocal ? { ...previous[current.id], local: true } : { ...previous[current.id], remote: true } }))} /> : <MaterialCommunityIcons name="image-off-outline" size={28} color={colors.muted} />}</View><Text style={styles.exerciseName}>{current.name.toUpperCase()}</Text><Text style={styles.equipment}>{current.equipment.toUpperCase()}</Text><View style={styles.prescription}><Text style={styles.seriesLabel}>SERIE</Text><Text style={styles.series}>{setIndex + 1} <Text style={styles.seriesMuted}>/ {current.sets}</Text></Text><View style={styles.repsBox}><Text style={styles.reps}>{current.reps}</Text><Text style={styles.repsLabel}>REPETICIONES</Text></View>
-    <View style={styles.logRow}>
-      <View style={styles.logField}><Text style={styles.logLabel}>PESO (KG)</Text><TextInput value={weightInput} onChangeText={setWeightInput} keyboardType="decimal-pad" placeholder="0" placeholderTextColor={colors.muted} style={styles.logInput} /></View>
-      <View style={styles.logField}><Text style={styles.logLabel}>REPS REALES</Text><TextInput value={repsInput} onChangeText={setRepsInput} keyboardType="number-pad" placeholder="0" placeholderTextColor={colors.muted} style={styles.logInput} /></View>
-    </View>
-    {lastLog && <Text style={styles.lastLog}>ÚLTIMA VEZ: {lastLog.weight}KG × {lastLog.reps}</Text>}
     </View></View><Pressable onPress={markSet} style={styles.complete}><MaterialCommunityIcons name="check" size={28} color={colors.background} /><Text style={styles.completeText}>SERIE COMPLETADA</Text></Pressable></View></SafeAreaView>;
 }
 
