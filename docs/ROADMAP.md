@@ -184,7 +184,7 @@ La versión oficial actual mantiene el flujo de entrenamiento simple y solo guar
 
 **Estado:** Integrada en `main`.
 
-**Objetivo:** mostrar una imagen de referencia por ejercicio en `Routine`, `Workout` y `Explore`, usando únicamente fuentes con licencia libre o de uso permitido, sin depender de media con copyright de terceros.
+**Objetivo:** mostrar una imagen de referencia por ejercicio en `Routine` y `Workout`, usando únicamente fuentes con licencia libre o de uso permitido, sin depender de media con copyright de terceros.
 
 **Nota sobre licencias:**
 
@@ -214,8 +214,8 @@ La versión oficial actual mantiene el flujo de entrenamiento simple y solo guar
 
 **Implementado en `feat/stage-8-local-exercise-media`:**
 
-- Imágenes propias generadas con IA para los 5 ejercicios sin coincidencia en RepDB, guardadas en `assets/exercises/` e incluidas en el bundle (`Exercise.mediaSource` vía `require()`).
-- `Routine`, `Workout` y `Explore` priorizan `mediaSource` (local) sobre `mediaUrl` (remoto) al renderizar la miniatura.
+- Imágenes propias generadas con IA para los 6 ejercicios sin coincidencia en RepDB, guardadas en `assets/exercises/` e incluidas en el bundle (`Exercise.mediaSource` vía `require()`).
+- `Routine` y `Workout` priorizan `mediaSource` (local) sobre `mediaUrl` (remoto) al renderizar la miniatura; `Explore` reutiliza esa prioridad al integrarse en la Etapa 9.
 - **Total final: 84 de 84 ejercicios con imagen: 78 remotas vía RepDB y 6 imágenes locales.**
 
 **Estado final:** catálogo completo con imagen. Sin pendientes.
