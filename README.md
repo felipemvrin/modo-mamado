@@ -8,7 +8,7 @@ MODO MAMADO es un copiloto de entrenamiento offline-first para gimnasio. Te dice
 
 - Selección visual de uno o más grupos musculares.
 - Rutinas locales de pecho, espalda, brazos, hombros, piernas y core.
-- Sesión guiada con series, repeticiones y progreso.
+- Sesión guiada con series y repeticiones objetivo.
 - Descanso automático con cronómetro grande, +30 segundos, saltar y feedback háptico.
 - Historial local de entrenamientos con Expo SQLite.
 - Señales de grupos trabajados durante los últimos 7 días.
@@ -60,8 +60,8 @@ El avance está organizado por etapas y ramas. Consulta [docs/ROADMAP.md](docs/R
 3. Selección múltiple muscular.
 4. Historial semanal y recomendaciones.
 5. Catálogo amplio, filtros y sustituciones.
-6. Progresión y preparación para Apple Watch.
+6. Preparación de arquitectura para Apple Watch.
 
-La siguiente etapa real del producto es registrar peso y repeticiones reales para mostrar progresión histórica. La integración nativa con Apple Watch queda después, fuera del alcance actual de Expo.
+El alcance actual mantiene el flujo de entrenamiento simple y deja preparada la arquitectura para una futura integración nativa con Apple Watch, fuera del alcance actual de Expo.
 
 Para comandos, validaciones y flujo de ramas consulta [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md). Para decisiones técnicas consulta [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
