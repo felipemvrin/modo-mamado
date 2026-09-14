@@ -8,7 +8,7 @@ MODO MAMADO es un copiloto de entrenamiento offline-first para gimnasio. Te dice
 
 - Selección visual de uno o más grupos musculares.
 - Rutinas locales de pecho, espalda, brazos, hombros, piernas y core.
-- Sesión guiada con series, repeticiones y progreso.
+- Sesión guiada con series y repeticiones objetivo.
 - Descanso automático con cronómetro grande, +30 segundos, saltar y feedback háptico.
 - Historial local de entrenamientos con Expo SQLite.
 - Señales de grupos trabajados durante los últimos 7 días.

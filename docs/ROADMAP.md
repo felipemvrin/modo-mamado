@@ -227,7 +227,7 @@ La funcionalidad ya existe en `main`; esta rama queda como nombre estándar para
 
 **Incluye:**
 
-- Separar la lógica de sesión, descanso y progreso del UI para reutilizarla en una app nativa o companion.
+- Separar la lógica de sesión, descanso y avance de sesión del UI para reutilizarla en una app nativa o companion.
 - Aislar eventos de entrenamiento y notificaciones en un dominio portable y reutilizable.
 - Definir qué métricas se comunicarán con Watch: grupo muscular actual, serie en curso, tiempo de descanso, indicador de fin de sesión.
 - Preparar una API de estado mínima para sincronizar la app principal con la companion.
