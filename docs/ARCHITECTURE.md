@@ -1,5 +1,7 @@
 # Arquitectura actual
 
+Diagrama completo: [architecture.mmd](architecture.mmd).
+
 ## Capas
 
 ```text

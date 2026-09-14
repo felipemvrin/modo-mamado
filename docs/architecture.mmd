@@ -1,0 +1,94 @@
+flowchart TD
+
+subgraph group_presentation["Expo routes"]
+  node_router["Navigation root<br/>Expo Router<br/>[_layout.tsx]"]
+  node_discovery["Discovery screens<br/>route screens<br/>[index.tsx]"]
+  node_explore["Exercise explorer<br/>route screen<br/>[explore.tsx]"]
+  node_routine["Routine detail<br/>route screen<br/>[routine.tsx]"]
+  node_workout["Active workout<br/>route screen<br/>[workout.tsx]"]
+  node_timer["Rest timer<br/>route screen<br/>[timer.tsx]"]
+  node_history["History screen<br/>route screen<br/>[history.tsx]"]
+  node_tokens["Theme tokens<br/>design tokens<br/>[tokens.ts]"]
+end
+
+subgraph group_core["Workout core"]
+  node_contracts["Workout contracts<br/>TypeScript types<br/>[workout.ts]"]
+  node_session{{"Session lifecycle<br/>domain model<br/>[session.ts]"}}
+  node_session_sync["Session sync boundary<br/>sync contracts<br/>[session-sync.ts]"]
+  node_workout_store["Active workout store<br/>Zustand store<br/>[workout.ts]"]
+end
+
+subgraph group_local["Local data"]
+  node_catalog["Routine catalog<br/>bundled data<br/>[routines.ts]"]
+  node_exercise_assets["Exercise assets<br/>bundled assets"]
+  node_workout_db[("Workout history repository<br/>Expo SQLite<br/>[workouts.ts]")]
+  node_weekly_progress["Weekly progress<br/>history derivation<br/>[weeklyProgress.ts]"]
+end
+
+subgraph group_device["Device and future sync"]
+  node_notifications["Local notifications<br/>device service<br/>[notifications.ts]"]
+  node_watch["Watch companion model<br/>future domain<br/>[watch.ts]"]
+  node_watch_sync["Watch sync boundary<br/>future sync<br/>[watch-sync.ts]"]
+end
+
+node_router -->|"routes to"| node_discovery
+node_router -->|"routes to"| node_explore
+node_router -->|"routes to"| node_routine
+node_router -->|"routes to"| node_workout
+node_router -->|"routes to"| node_timer
+node_router -->|"routes to"| node_history
+node_discovery -->|"selects exercises"| node_explore
+node_explore -->|"selects routine"| node_routine
+node_routine -->|"launches"| node_workout
+node_workout -->|"starts rest"| node_timer
+node_catalog -->|"uses"| node_contracts
+node_exercise_assets -->|"visualizes exercises"| node_catalog
+node_discovery -->|"reads"| node_catalog
+node_explore -->|"reads"| node_catalog
+node_routine -->|"creates session"| node_workout_store
+node_workout -->|"drives"| node_workout_store
+node_timer -->|"resumes session"| node_workout_store
+node_workout_store -->|"applies lifecycle"| node_session
+node_session -->|"uses"| node_contracts
+node_session -->|"persists completion"| node_workout_db
+node_history -->|"reads history"| node_workout_db
+node_workout_db -->|"supplies history"| node_weekly_progress
+node_history -->|"shows signals"| node_weekly_progress
+node_timer -->|"schedules alerts"| node_notifications
+node_session -.->|"exposes sync boundary"| node_session_sync
+node_session_sync -.->|"future synchronization"| node_watch_sync
+node_watch_sync -.->|"syncs companion model"| node_watch
+node_workout -->|"styles with"| node_tokens
+node_history -->|"styles with"| node_tokens
+
+click node_router "https://github.com/felipemvrin/modo-mamado/blob/main/app/_layout.tsx"
+click node_discovery "https://github.com/felipemvrin/modo-mamado/blob/main/app/index.tsx"
+click node_explore "https://github.com/felipemvrin/modo-mamado/blob/main/app/explore.tsx"
+click node_routine "https://github.com/felipemvrin/modo-mamado/blob/main/app/routine.tsx"
+click node_workout "https://github.com/felipemvrin/modo-mamado/blob/main/app/workout.tsx"
+click node_timer "https://github.com/felipemvrin/modo-mamado/blob/main/app/timer.tsx"
+click node_history "https://github.com/felipemvrin/modo-mamado/blob/main/app/history.tsx"
+click node_tokens "https://github.com/felipemvrin/modo-mamado/blob/main/theme/tokens.ts"
+click node_contracts "https://github.com/felipemvrin/modo-mamado/blob/main/types/workout.ts"
+click node_session "https://github.com/felipemvrin/modo-mamado/blob/main/domain/session.ts"
+click node_session_sync "https://github.com/felipemvrin/modo-mamado/blob/main/domain/session-sync.ts"
+click node_workout_store "https://github.com/felipemvrin/modo-mamado/blob/main/store/workout.ts"
+click node_catalog "https://github.com/felipemvrin/modo-mamado/blob/main/data/routines.ts"
+click node_exercise_assets "https://github.com/felipemvrin/modo-mamado/tree/main/assets/exercises"
+click node_workout_db "https://github.com/felipemvrin/modo-mamado/blob/main/database/workouts.ts"
+click node_weekly_progress "https://github.com/felipemvrin/modo-mamado/blob/main/utils/weeklyProgress.ts"
+click node_notifications "https://github.com/felipemvrin/modo-mamado/blob/main/services/notifications.ts"
+click node_watch "https://github.com/felipemvrin/modo-mamado/blob/main/domain/watch.ts"
+click node_watch_sync "https://github.com/felipemvrin/modo-mamado/blob/main/domain/watch-sync.ts"
+
+classDef toneNeutral fill:#f8fafc,stroke:#334155,stroke-width:1.5px,color:#0f172a
+classDef toneBlue fill:#dbeafe,stroke:#2563eb,stroke-width:1.5px,color:#172554
+classDef toneAmber fill:#fef3c7,stroke:#d97706,stroke-width:1.5px,color:#78350f
+classDef toneMint fill:#dcfce7,stroke:#16a34a,stroke-width:1.5px,color:#14532d
+classDef toneRose fill:#ffe4e6,stroke:#e11d48,stroke-width:1.5px,color:#881337
+classDef toneIndigo fill:#e0e7ff,stroke:#4f46e5,stroke-width:1.5px,color:#312e81
+classDef toneTeal fill:#ccfbf1,stroke:#0f766e,stroke-width:1.5px,color:#134e4a
+class node_router,node_discovery,node_explore,node_routine,node_workout,node_timer,node_history,node_tokens toneBlue
+class node_contracts,node_session,node_session_sync,node_workout_store toneAmber
+class node_catalog,node_exercise_assets,node_workout_db,node_weekly_progress toneMint
+class node_notifications,node_watch,node_watch_sync toneRose
