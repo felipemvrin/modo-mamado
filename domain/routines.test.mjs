@@ -30,26 +30,30 @@ test('bench press has same-muscle substitutes with different equipment, includin
 });
 
 test('exercise media stays explicit when there is no trustworthy match yet', () => {
-  const placeholderOnly = [
-    'overhead-db-extension',
-    'kickback',
-    'overhead-cable-extension',
-    'reverse-pec-deck',
-    'woodchopper',
-    'dead-bug',
-  ];
-  const localAssetOnlyInNode = [
+  const localAssetBacked = [
     'band-press',
     'band-curl',
     'band-pushdown',
     'kettlebell-press',
     'pike-pushup',
+    'woodchopper',
   ];
 
+  const withLocalAsset = allExercises
+    .filter((item) => item.mediaAssetId)
+    .map((item) => item.id)
+    .sort();
+  assert.deepEqual(withLocalAsset, localAssetBacked.sort());
+
   const withoutMedia = allExercises
-    .filter((item) => !item.mediaUrl && !item.mediaSource)
+    .filter((item) => !item.mediaUrl && !item.mediaAssetId)
     .map((item) => item.id)
     .sort();
 
-  assert.deepEqual(withoutMedia, [...placeholderOnly, ...localAssetOnlyInNode].sort());
+  assert.deepEqual(withoutMedia, []);
+});
+
+test('plank variants keep the official main-pose image URLs', () => {
+  assert.equal(getExerciseById('plank')?.mediaUrl, 'https://exercise-dataset.com/images/flat/plank-main.webp');
+  assert.equal(getExerciseById('side-plank')?.mediaUrl, 'https://exercise-dataset.com/images/flat/side-plank-main.webp');
 });
