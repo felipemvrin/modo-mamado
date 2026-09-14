@@ -7,8 +7,8 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 ## Estado actual
 
 - Etapas 0 a 10: integradas en `main`.
-- Etapa 8: completa (42/42 ejercicios con imagen: 37 remotas vía RepDB + 5 propias generadas con IA en `assets/exercises/`).
-- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo de 42 ejercicios (todos con imagen) con sustituciones por equipamiento, timer de descanso independiente, explorador de catálogo con detalle/sustitución, persistencia local del resumen de sesión y contrato de sincronización de sesión para una futura companion.
+- Etapa 8: completa (84/84 ejercicios con imagen: 78 remotas vía RepDB + 6 propias en `assets/exercises/`).
+- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo de 84 ejercicios (todos con imagen) con sustituciones por equipamiento, timer de descanso independiente, explorador de catálogo con detalle/sustitución, persistencia local del resumen de sesión y contrato de sincronización de sesión para una futura companion.
 - Rama activa: `main`.
 - Pendiente sin bloquear avance: registro de peso/repeticiones y progresión histórica (ver Etapa 6, reservada) e integración Apple Watch nativa (fuera de alcance de Expo/React Native puro).
 
@@ -176,7 +176,7 @@ La versión oficial actual mantiene el flujo de entrenamiento simple y solo guar
 - Pantalla `Timer` (`app/timer.tsx`): temporizador de descanso independiente, sin rutina activa, con presets (30/60/90/120s) y duración personalizada.
 - Reutiliza notificación local y feedback háptico de `Workout` al terminar el descanso.
 - Acceso rápido en `Home` (ícono junto al historial) que navega directo a `/timer`.
-- Catálogo local ampliado a 6 ejercicios por grupo muscular (42 en total), sumando variantes en polea, bandas, kettlebell, barra paralela y peso corporal para mejorar la cobertura de sustituciones por equipamiento.
+- Catálogo local ampliado a 12 ejercicios por grupo muscular (84 en total), sumando variantes en polea, bandas, kettlebell, barra paralela y peso corporal para mejorar la cobertura de sustituciones por equipamiento.
 
 ## Etapa 8: Imágenes de referencia por ejercicio
 
@@ -199,24 +199,24 @@ La versión oficial actual mantiene el flujo de entrenamiento simple y solo guar
 **Implementado en `feat/stage-8-exercise-images`:**
 
 - `mediaId` + helper `repdbImage()` en `data/routines.ts`, apuntando a `https://exercise-dataset.com/images/flat/<id>-start.webp`.
-- **24 de 42 ejercicios** verificados uno por uno contra el dataset real de RepDB y con imagen asignada.
+- **24 de 84 ejercicios** verificados uno por uno contra el dataset real de RepDB y con imagen asignada.
 - Atribución visible "Ilustraciones de ejercicio: RepDB (repdb.co)" agregada al pie de `History` (requisito de la licencia gratuita).
 
 **Implementado en `feat/stage-8-exercise-images-remaining`:**
 
 - 6 ejercicios adicionales verificados y mapeados: Sentadilla (`squat`), Sentadilla con banda (`banded-squat`), Zancadas (`lunge`), Pallof press (`cable-pallof-press`), Giro ruso con kettlebell (`kettlebell-russian-twist`), Extensión con kettlebell (`kettlebell-skull-crusher`).
-- Total actual: **36 de 42 ejercicios** con imagen.
+- Total actual: **36 de 84 ejercicios** con imagen.
 
 **Implementado en `feat/stage-8-exercise-images-final`:**
 
 - Curl con kettlebell → `kettlebell-hammer-curl`.
-- Total: **37 de 42 ejercicios** con imagen remota (RepDB).
+- Total: **37 de 84 ejercicios** con imagen remota (RepDB).
 
 **Implementado en `feat/stage-8-local-exercise-media`:**
 
-- Imágenes propias generadas con IA para los 5 ejercicios sin coincidencia en RepDB, guardadas en `assets/exercises/` e incluidas en el bundle (`Exercise.mediaSource` vía `require()`).
-- `Routine`, `Workout` y `Explore` priorizan `mediaSource` (local) sobre `mediaUrl` (remoto) al renderizar la miniatura.
-- **Total final: 42 de 42 ejercicios con imagen.**
+- Imágenes propias generadas con IA para los 6 ejercicios sin coincidencia en RepDB, guardadas en `assets/exercises/` e incluidas en el bundle (`Exercise.mediaSource` vía `require()`).
+- `Routine` y `Workout` priorizan `mediaSource` (local) sobre `mediaUrl` (remoto) al renderizar la miniatura; `Explore` reutiliza esa prioridad al integrarse en la Etapa 9.
+- **Total final: 84 de 84 ejercicios con imagen: 78 remotas vía RepDB y 6 imágenes locales.**
 
 **Estado final:** catálogo completo con imagen. Sin pendientes.
 
@@ -226,7 +226,7 @@ La versión oficial actual mantiene el flujo de entrenamiento simple y solo guar
 
 **Estado:** Integrada en `main`.
 
-**Objetivo:** dejar navegar el catálogo completo (42 ejercicios) fuera del flujo de selección de grupos, con búsqueda y filtros.
+**Objetivo:** dejar navegar el catálogo completo (84 ejercicios) fuera del flujo de selección de grupos, con búsqueda y filtros.
 
 **Incluye:**
 
