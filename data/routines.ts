@@ -1,7 +1,7 @@
 import { muscleGroups } from '../types/workout.ts';
 import type { Difficulty, Exercise, ExerciseCategory, EquipmentType, MuscleGroup } from '../types/workout.ts';
 
-type ExerciseOptions = { category: ExerciseCategory; secondaryMuscles?: MuscleGroup[]; difficulty?: Difficulty; restSeconds?: number; mediaId?: string; mediaPose?: 'start' | 'main'; mediaSource?: Exercise['mediaSource'] };
+type ExerciseOptions = { category: ExerciseCategory; secondaryMuscles?: MuscleGroup[]; difficulty?: Difficulty; restSeconds?: number; mediaId?: string; mediaPose?: 'start' | 'main'; mediaAssetId?: string; mediaSource?: Exercise['mediaSource'] };
 
 const repdbImage = (id: string, pose: 'start' | 'main' = 'start') => `https://exercise-dataset.com/images/flat/${id}-${pose}.webp`;
 
@@ -9,6 +9,7 @@ const exercise = (id: string, name: string, muscleGroup: MuscleGroup, equipment:
   id, name, muscleGroup, secondaryMuscles: options.secondaryMuscles ?? [], category: options.category, equipment, difficulty: options.difficulty ?? 'Inicial', sets, reps, restSeconds: options.restSeconds ?? 90,
   instructions: `Controla el movimiento y mantén la técnica. ${equipment}.`,
   mediaUrl: options.mediaId ? repdbImage(options.mediaId, options.mediaPose) : undefined,
+  mediaAssetId: options.mediaAssetId,
   mediaSource: options.mediaSource,
 });
 
@@ -29,7 +30,7 @@ export const routines: Record<MuscleGroup, Exercise[]> = {
     exercise('chest-fly', 'Aperturas', 'Pecho', 'Máquina', 3, '12', { category: 'Máquinas', restSeconds: 60, mediaId: 'machine-chest-fly' }),
     exercise('push-ups', 'Flexiones', 'Pecho', 'Peso corporal', 3, '10-15', { category: 'Calistenia', secondaryMuscles: ['Tríceps', 'Hombros'], mediaId: 'push-up' }),
     exercise('cable-fly', 'Aperturas en polea', 'Pecho', 'Polea', 3, '12-15', { category: 'Máquinas', secondaryMuscles: ['Hombros'], restSeconds: 60, mediaId: 'cable-fly' }),
-    exercise('band-press', 'Press con banda', 'Pecho', 'Bandas', 3, '12-15', { category: 'Bandas', secondaryMuscles: ['Tríceps'], restSeconds: 60, mediaSource: localMedia.bandPress }),
+    exercise('band-press', 'Press con banda', 'Pecho', 'Bandas', 3, '12-15', { category: 'Bandas', secondaryMuscles: ['Tríceps'], restSeconds: 60, mediaAssetId: 'band-press', mediaSource: localMedia.bandPress }),
     exercise('decline-db-press', 'Press declinado', 'Pecho', 'Mancuernas', 4, '8-12', { category: 'Pesas libres', secondaryMuscles: ['Tríceps'], difficulty: 'Intermedio', restSeconds: 90, mediaId: 'decline-bench-press' }),
     exercise('db-pullover', 'Pullover', 'Pecho', 'Mancuernas', 3, '10-12', { category: 'Pesas libres', secondaryMuscles: ['Espalda', 'Tríceps'], difficulty: 'Intermedio', restSeconds: 90, mediaId: 'db-pullover' }),
     exercise('chest-dip', 'Fondos para pecho', 'Pecho', 'Barra paralela', 3, '8-10', { category: 'Calistenia', secondaryMuscles: ['Tríceps', 'Hombros'], difficulty: 'Avanzado', restSeconds: 90, mediaId: 'dips' }),
@@ -55,7 +56,7 @@ export const routines: Record<MuscleGroup, Exercise[]> = {
     exercise('barbell-curl', 'Curl con barra', 'Bíceps', 'Barra', 4, '8-12', { category: 'Pesas libres', mediaId: 'barbell-curl' }),
     exercise('incline-curl', 'Curl inclinado', 'Bíceps', 'Mancuernas', 3, '10-12', { category: 'Pesas libres', restSeconds: 60, mediaId: 'incline-db-curl' }),
     exercise('kettlebell-curl', 'Curl con kettlebell', 'Bíceps', 'Kettlebell', 3, '10-12', { category: 'Kettlebell', restSeconds: 60, mediaId: 'kettlebell-hammer-curl' }),
-    exercise('band-curl', 'Curl con banda', 'Bíceps', 'Bandas', 3, '12-15', { category: 'Bandas', restSeconds: 60, mediaSource: localMedia.bandCurl }),
+    exercise('band-curl', 'Curl con banda', 'Bíceps', 'Bandas', 3, '12-15', { category: 'Bandas', restSeconds: 60, mediaAssetId: 'band-curl', mediaSource: localMedia.bandCurl }),
     exercise('cable-curl', 'Curl en polea', 'Bíceps', 'Polea', 3, '10-12', { category: 'Máquinas', restSeconds: 60, mediaId: 'cable-curl' }),
     exercise('chin-up-underhand', 'Dominada supina', 'Bíceps', 'Barra paralela', 3, '6-10', { category: 'Calistenia', secondaryMuscles: ['Espalda'], difficulty: 'Intermedio', mediaId: 'chin-ups' }),
     exercise('hammer-curl', 'Curl martillo', 'Bíceps', 'Mancuernas', 4, '10-12', { category: 'Pesas libres', restSeconds: 60, mediaId: 'hammer-curl' }),
@@ -70,7 +71,7 @@ export const routines: Record<MuscleGroup, Exercise[]> = {
     exercise('skullcrusher', 'Press francés', 'Tríceps', 'Barra', 3, '8-12', { category: 'Pesas libres', difficulty: 'Intermedio', mediaId: 'skull-crusher' }),
     exercise('bench-dip', 'Fondos en banco', 'Tríceps', 'Peso corporal', 3, '10-15', { category: 'Calistenia', secondaryMuscles: ['Pecho'], restSeconds: 60, mediaId: 'bench-dips' }),
     exercise('kettlebell-extension', 'Extensión con kettlebell', 'Tríceps', 'Kettlebell', 3, '10-12', { category: 'Kettlebell', restSeconds: 60, mediaId: 'kettlebell-skull-crusher' }),
-    exercise('band-pushdown', 'Extensión con banda', 'Tríceps', 'Bandas', 3, '12-15', { category: 'Bandas', restSeconds: 60, mediaSource: localMedia.bandPushdown }),
+    exercise('band-pushdown', 'Extensión con banda', 'Tríceps', 'Bandas', 3, '12-15', { category: 'Bandas', restSeconds: 60, mediaAssetId: 'band-pushdown', mediaSource: localMedia.bandPushdown }),
     exercise('parallel-dip', 'Fondos en paralelas', 'Tríceps', 'Barra paralela', 3, '8-12', { category: 'Calistenia', secondaryMuscles: ['Pecho', 'Hombros'], difficulty: 'Intermedio', mediaId: 'dips' }),
     exercise('overhead-db-extension', 'Extensión copa', 'Tríceps', 'Mancuernas', 4, '10-12', { category: 'Pesas libres', restSeconds: 60, mediaId: 'dumbbell-tricep-extension' }),
     exercise('rope-pushdown', 'Extensión con cuerda', 'Tríceps', 'Polea', 4, '12-15', { category: 'Máquinas', restSeconds: 60, mediaId: 'tricep-pushdown' }),
@@ -83,8 +84,8 @@ export const routines: Record<MuscleGroup, Exercise[]> = {
     exercise('shoulder-press', 'Press militar', 'Hombros', 'Mancuernas', 4, '8-12', { category: 'Pesas libres', secondaryMuscles: ['Tríceps'], difficulty: 'Intermedio', mediaId: 'dumbbell-shoulder-press' }),
     exercise('lateral-raise', 'Elevaciones laterales', 'Hombros', 'Mancuernas', 4, '12-15', { category: 'Pesas libres', restSeconds: 60, mediaId: 'lateral-raise' }),
     exercise('band-pull-apart', 'Pull apart con banda', 'Hombros', 'Bandas', 3, '15-20', { category: 'Bandas', secondaryMuscles: ['Espalda'], restSeconds: 60, mediaId: 'band-pull-apart' }),
-    exercise('kettlebell-press', 'Press con kettlebell', 'Hombros', 'Kettlebell', 4, '8-10', { category: 'Kettlebell', secondaryMuscles: ['Tríceps'], difficulty: 'Intermedio', restSeconds: 90, mediaSource: localMedia.kettlebellPress }),
-    exercise('pike-pushup', 'Flexión pike', 'Hombros', 'Peso corporal', 3, '8-12', { category: 'Calistenia', secondaryMuscles: ['Tríceps'], difficulty: 'Intermedio', restSeconds: 60, mediaSource: localMedia.pikePushup }),
+    exercise('kettlebell-press', 'Press con kettlebell', 'Hombros', 'Kettlebell', 4, '8-10', { category: 'Kettlebell', secondaryMuscles: ['Tríceps'], difficulty: 'Intermedio', restSeconds: 90, mediaAssetId: 'kettlebell-press', mediaSource: localMedia.kettlebellPress }),
+    exercise('pike-pushup', 'Flexión pike', 'Hombros', 'Peso corporal', 3, '8-12', { category: 'Calistenia', secondaryMuscles: ['Tríceps'], difficulty: 'Intermedio', restSeconds: 60, mediaAssetId: 'pike-pushup', mediaSource: localMedia.pikePushup }),
     exercise('cable-front-raise', 'Elevación frontal en polea', 'Hombros', 'Polea', 3, '12-15', { category: 'Máquinas', restSeconds: 60, mediaId: 'cable-front-raise' }),
     exercise('arnold-press', 'Press Arnold', 'Hombros', 'Mancuernas', 4, '8-12', { category: 'Pesas libres', secondaryMuscles: ['Tríceps'], difficulty: 'Intermedio', restSeconds: 90, mediaId: 'dumbbell-shoulder-press' }),
     exercise('rear-delt-fly', 'Pájaro con mancuernas', 'Hombros', 'Mancuernas', 4, '12-15', { category: 'Pesas libres', secondaryMuscles: ['Espalda'], restSeconds: 60, mediaId: 'dumbbell-reverse-fly' }),
@@ -118,7 +119,7 @@ export const routines: Record<MuscleGroup, Exercise[]> = {
     exercise('hanging-leg-raise', 'Elevación de piernas', 'Core', 'Barra paralela', 3, '8-12', { category: 'Calistenia', difficulty: 'Intermedio', restSeconds: 60, mediaId: 'hanging-leg-raise' }),
     exercise('side-plank', 'Plancha lateral', 'Core', 'Peso corporal', 3, '30-45 seg', { category: 'Peso corporal', restSeconds: 60, mediaId: 'side-plank', mediaPose: 'main' }),
     exercise('bicycle-crunch', 'Crunch bicicleta', 'Core', 'Peso corporal', 3, '15-20', { category: 'Peso corporal', restSeconds: 45, mediaId: 'bicycle-crunch' }),
-    exercise('woodchopper', 'Leñador en polea', 'Core', 'Polea', 3, '12-15', { category: 'Máquinas', secondaryMuscles: ['Hombros'], restSeconds: 60, mediaSource: localMedia.woodchopper }),
+    exercise('woodchopper', 'Leñador en polea', 'Core', 'Polea', 3, '12-15', { category: 'Máquinas', secondaryMuscles: ['Hombros'], restSeconds: 60, mediaAssetId: 'woodchopper', mediaSource: localMedia.woodchopper }),
     exercise('dead-bug', 'Dead bug', 'Core', 'Peso corporal', 3, '12-15', { category: 'Peso corporal', restSeconds: 45, mediaId: 'dead-bug' }),
   ],
 };

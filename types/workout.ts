@@ -26,6 +26,7 @@ export type Exercise = {
   restSeconds: number;
   instructions: string;
   mediaUrl?: string;
+  mediaAssetId?: string;
   mediaSource?: ImageSourcePropType;
 };
 
