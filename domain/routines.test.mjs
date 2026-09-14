@@ -31,12 +31,7 @@ test('bench press has same-muscle substitutes with different equipment, includin
 
 test('exercise media stays explicit when there is no trustworthy match yet', () => {
   const placeholderOnly = [
-    'overhead-db-extension',
-    'kickback',
-    'overhead-cable-extension',
-    'reverse-pec-deck',
     'woodchopper',
-    'dead-bug',
   ];
   const localAssetOnlyInNode = [
     'band-press',
