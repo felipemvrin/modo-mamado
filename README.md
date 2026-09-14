@@ -62,6 +62,6 @@ El avance está organizado por etapas y ramas. Consulta [docs/ROADMAP.md](docs/R
 5. Catálogo amplio, filtros y sustituciones.
 6. Progresión y preparación para Apple Watch.
 
-La siguiente etapa real del producto es una preparación de arquitectura para una app companion de Apple Watch, con integración nativa fuera del alcance actual de Expo.
+La siguiente etapa real del producto es registrar peso y repeticiones reales para mostrar progresión histórica. La integración nativa con Apple Watch queda después, fuera del alcance actual de Expo.
 
 Para comandos, validaciones y flujo de ramas consulta [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md). Para decisiones técnicas consulta [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
