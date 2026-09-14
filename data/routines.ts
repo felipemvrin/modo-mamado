@@ -19,6 +19,7 @@ const localMedia = {
   bandPushdown: typeof require === 'function' ? require('../assets/exercises/band-pushdown.webp') : undefined,
   kettlebellPress: typeof require === 'function' ? require('../assets/exercises/kettlebell-press.webp') : undefined,
   pikePushup: typeof require === 'function' ? require('../assets/exercises/pike-pushup.webp') : undefined,
+  woodchopper: typeof require === 'function' ? require('../assets/exercises/woodchopper.webp') : undefined,
 };
 
 export const routines: Record<MuscleGroup, Exercise[]> = {
@@ -117,7 +118,7 @@ export const routines: Record<MuscleGroup, Exercise[]> = {
     exercise('hanging-leg-raise', 'Elevación de piernas', 'Core', 'Barra paralela', 3, '8-12', { category: 'Calistenia', difficulty: 'Intermedio', restSeconds: 60, mediaId: 'hanging-leg-raise' }),
     exercise('side-plank', 'Plancha lateral', 'Core', 'Peso corporal', 3, '30-45 seg', { category: 'Peso corporal', restSeconds: 60, mediaId: 'side-plank', mediaPose: 'main' }),
     exercise('bicycle-crunch', 'Crunch bicicleta', 'Core', 'Peso corporal', 3, '15-20', { category: 'Peso corporal', restSeconds: 45, mediaId: 'bicycle-crunch' }),
-    exercise('woodchopper', 'Leñador en polea', 'Core', 'Polea', 3, '12-15', { category: 'Máquinas', secondaryMuscles: ['Hombros'], restSeconds: 60 }),
+    exercise('woodchopper', 'Leñador en polea', 'Core', 'Polea', 3, '12-15', { category: 'Máquinas', secondaryMuscles: ['Hombros'], restSeconds: 60, mediaSource: localMedia.woodchopper }),
     exercise('dead-bug', 'Dead bug', 'Core', 'Peso corporal', 3, '12-15', { category: 'Peso corporal', restSeconds: 45, mediaId: 'dead-bug' }),
   ],
 };
