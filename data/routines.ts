@@ -1,4 +1,5 @@
-import { Difficulty, Exercise, ExerciseCategory, EquipmentType, MuscleGroup, muscleGroups } from '../types/workout';
+import { muscleGroups } from '../types/workout.ts';
+import type { Difficulty, Exercise, ExerciseCategory, EquipmentType, MuscleGroup } from '../types/workout.ts';
 
 type ExerciseOptions = { category: ExerciseCategory; secondaryMuscles?: MuscleGroup[]; difficulty?: Difficulty; restSeconds?: number; mediaId?: string; mediaSource?: Exercise['mediaSource'] };
 
@@ -13,11 +14,11 @@ const exercise = (id: string, name: string, muscleGroup: MuscleGroup, equipment:
 
 // Imágenes generadas propias para ejercicios sin coincidencia en RepDB.
 const localMedia = {
-  bandPress: require('../assets/exercises/band-press.webp'),
-  bandCurl: require('../assets/exercises/band-curl.webp'),
-  bandPushdown: require('../assets/exercises/band-pushdown.webp'),
-  kettlebellPress: require('../assets/exercises/kettlebell-press.webp'),
-  pikePushup: require('../assets/exercises/pike-pushup.webp'),
+  bandPress: typeof require === 'function' ? require('../assets/exercises/band-press.webp') : undefined,
+  bandCurl: typeof require === 'function' ? require('../assets/exercises/band-curl.webp') : undefined,
+  bandPushdown: typeof require === 'function' ? require('../assets/exercises/band-pushdown.webp') : undefined,
+  kettlebellPress: typeof require === 'function' ? require('../assets/exercises/kettlebell-press.webp') : undefined,
+  pikePushup: typeof require === 'function' ? require('../assets/exercises/pike-pushup.webp') : undefined,
 };
 
 export const routines: Record<MuscleGroup, Exercise[]> = {
