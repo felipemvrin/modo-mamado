@@ -28,3 +28,28 @@ test('bench press has same-muscle substitutes with different equipment, includin
   assert.ok(substitutes.every((item) => item.equipment !== benchPress.equipment));
   assert.ok(substitutes.some((item) => item.equipment === 'Polea'));
 });
+
+test('exercise media stays explicit when there is no trustworthy match yet', () => {
+  const placeholderOnly = [
+    'overhead-db-extension',
+    'kickback',
+    'overhead-cable-extension',
+    'reverse-pec-deck',
+    'woodchopper',
+    'dead-bug',
+  ];
+  const localAssetOnlyInNode = [
+    'band-press',
+    'band-curl',
+    'band-pushdown',
+    'kettlebell-press',
+    'pike-pushup',
+  ];
+
+  const withoutMedia = allExercises
+    .filter((item) => !item.mediaUrl && !item.mediaSource)
+    .map((item) => item.id)
+    .sort();
+
+  assert.deepEqual(withoutMedia, [...placeholderOnly, ...localAssetOnlyInNode].sort());
+});
