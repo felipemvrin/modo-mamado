@@ -14,12 +14,14 @@ import { cancelNotification, scheduleRestFinishedNotification } from '../service
 const formatTime = (seconds: number) => `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 
 export default function Workout() {
-  const { activeWorkout, completedSets, completeSet, finishWorkout, substitutions } = useWorkoutStore();
+  const { activeWorkout, activeExerciseIds, completedSets, completeSet, finishWorkout, substitutions } = useWorkoutStore();
   const exercises = useMemo(() => (
     activeWorkout
-      ? getExercisesForMuscles(activeWorkout).map((item) => (substitutions[item.id] ? getExerciseById(substitutions[item.id]) ?? item : item))
+      ? getExercisesForMuscles(activeWorkout)
+        .filter((item) => !activeExerciseIds || activeExerciseIds.includes(item.id))
+        .map((item) => (substitutions[item.id] ? getExerciseById(substitutions[item.id]) ?? item : item))
       : []
-  ), [activeWorkout, substitutions]);
+  ), [activeWorkout, activeExerciseIds, substitutions]);
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [setIndex, setSetIndex] = useState(0);
   const [restEndAt, setRestEndAt] = useState<number | null>(null);

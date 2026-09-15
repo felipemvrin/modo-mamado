@@ -44,7 +44,7 @@ export default function Routine() {
     })}</View>
     {exercises.length === 0 && <Text style={styles.emptyText}>Eliminaste todos los ejercicios. Restaura alguno para poder empezar.</Text>}
     <View style={styles.note}><MaterialCommunityIcons name="information-outline" color={colors.lime} size={20} /><Text style={styles.noteText}>Calienta antes de empezar. La técnica manda. Desliza un ejercicio hacia la izquierda para eliminarlo.</Text></View>
-    <Pressable onPress={() => { if (!canStartWorkout) return; startWorkout(); router.push('/workout'); }} style={[styles.start, !canStartWorkout && styles.startDisabled]} disabled={!canStartWorkout}><Text style={styles.startText}>COMENZAR ENTRENAMIENTO</Text><MaterialCommunityIcons name="arrow-right" size={21} color={colors.background} /></Pressable>
+    <Pressable onPress={() => { if (!canStartWorkout) return; startWorkout(baseExercises.map((exercise) => exercise.id)); router.push('/workout'); }} style={[styles.start, !canStartWorkout && styles.startDisabled]} disabled={!canStartWorkout}><Text style={styles.startText}>COMENZAR ENTRENAMIENTO</Text><MaterialCommunityIcons name="arrow-right" size={21} color={colors.background} /></Pressable>
   </ScrollView>
   <Modal visible={!!pickerFor} transparent animationType="fade" onRequestClose={() => setPickerFor(null)}>
     <Pressable style={styles.modalBackdrop} onPress={() => setPickerFor(null)}>

@@ -6,12 +6,13 @@ import { CompletedWorkout, EquipmentType, equipmentTypes, MuscleGroup } from '..
 type WorkoutState = {
   selectedMuscles: MuscleGroup[];
   activeWorkout: MuscleGroup[] | null;
+  activeExerciseIds: string[] | null;
   completedSets: number[];
   history: CompletedWorkout[];
   availableEquipment: EquipmentType[];
   substitutions: Record<string, string>;
   toggleMuscle: (muscle: MuscleGroup) => void;
-  startWorkout: () => void;
+  startWorkout: (exerciseIds?: string[]) => void;
   completeSet: (exerciseIndex: number, setIndex: number) => void;
   finishWorkout: () => void;
   loadHistory: () => void;
@@ -23,6 +24,7 @@ type WorkoutState = {
 export const useWorkoutStore = create<WorkoutState>((set, get) => ({
   selectedMuscles: [defaultMuscle],
   activeWorkout: null,
+  activeExerciseIds: null,
   completedSets: [],
   history: [],
   availableEquipment: [...equipmentTypes],
@@ -34,14 +36,26 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
     }
     return { selectedMuscles: [...state.selectedMuscles, muscle] };
   }),
-  startWorkout: () => set({ activeWorkout: get().selectedMuscles, completedSets: [] }),
+  startWorkout: (exerciseIds) => set(() => {
+    const activeWorkout = get().selectedMuscles;
+    return {
+      activeWorkout,
+      activeExerciseIds: exerciseIds ?? getExercisesForMuscles(activeWorkout).map((exercise) => exercise.id),
+      completedSets: [],
+    };
+  }),
   completeSet: (exerciseIndex, setIndex) => set((state) => ({ completedSets: state.completedSets.includes(exerciseIndex * 100 + setIndex) ? state.completedSets : [...state.completedSets, exerciseIndex * 100 + setIndex] })),
   finishWorkout: () => {
-    const { activeWorkout } = get();
+    const { activeWorkout, activeExerciseIds } = get();
     if (!activeWorkout?.length) return;
-    const workout: CompletedWorkout = { id: `${Date.now()}`, muscleGroups: activeWorkout, completedAt: new Date().toISOString(), exerciseCount: getExercisesForMuscles(activeWorkout).length };
+    const workout: CompletedWorkout = {
+      id: `${Date.now()}`,
+      muscleGroups: activeWorkout,
+      completedAt: new Date().toISOString(),
+      exerciseCount: activeExerciseIds?.length ?? getExercisesForMuscles(activeWorkout).length,
+    };
     saveWorkout(workout);
-    set({ activeWorkout: null, history: [workout, ...get().history] });
+    set({ activeWorkout: null, activeExerciseIds: null, history: [workout, ...get().history] });
   },
   loadHistory: () => {
     initializeDatabase();
