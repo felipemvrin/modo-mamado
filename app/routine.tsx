@@ -23,7 +23,8 @@ export default function Routine() {
   const substituteOptions = pickerFor ? getSubstitutes(pickerFor, availableEquipment) : [];
   const zoomCanShowLocal = !!zoomExercise?.mediaSource && !failedMediaById[zoomExercise.id]?.local;
   const zoomCanShowRemote = !!zoomExercise?.mediaUrl && !failedMediaById[zoomExercise.id]?.remote;
-  const zoomImageSource = zoomCanShowLocal ? zoomExercise?.mediaSource : zoomCanShowRemote ? { uri: zoomExercise?.mediaUrl } : null;
+  const zoomImageType = zoomCanShowLocal ? 'local' : zoomCanShowRemote ? 'remote' : null;
+  const zoomImageSource = zoomImageType === 'local' ? zoomExercise?.mediaSource : zoomImageType === 'remote' ? { uri: zoomExercise?.mediaUrl } : null;
   return <SafeAreaView style={styles.safe}><ScrollView contentContainerStyle={styles.container}>
     <Pressable onPress={() => router.back()} style={styles.back}><MaterialCommunityIcons name="arrow-left" size={22} color={colors.text} /><Text style={styles.backText}>VOLVER</Text></Pressable>
     <Text style={styles.kicker}>RUTINA SUGERIDA / {exercises.length} EJERCICIOS</Text><Text style={styles.title}>{selectedMuscles.join(' + ').toUpperCase()}</Text><Text style={styles.subtitle}>Hoy no toca pensar. Solo ejecutar.</Text>
@@ -66,7 +67,7 @@ export default function Routine() {
   </Modal>
   <Modal visible={!!zoomExercise} transparent animationType="fade" onRequestClose={() => setZoomExercise(null)}>
     <Pressable style={styles.zoomBackdrop} onPress={() => setZoomExercise(null)}>
-      {zoomImageSource && <Image source={zoomImageSource} style={styles.zoomImage} resizeMode="contain" onError={() => { if (!zoomExercise) return; setFailedMediaById((previous) => ({ ...previous, [zoomExercise.id]: zoomCanShowLocal ? { ...previous[zoomExercise.id], local: true } : { ...previous[zoomExercise.id], remote: true } })); }} />}
+      {zoomImageSource && <Image source={zoomImageSource} style={styles.zoomImage} resizeMode="contain" onError={() => { if (!zoomExercise || !zoomImageType) return; setFailedMediaById((previous) => ({ ...previous, [zoomExercise.id]: { ...previous[zoomExercise.id], [zoomImageType]: true } })); }} />}
       <Text style={styles.zoomName}>{zoomExercise?.name.toUpperCase()}</Text>
       <Pressable style={styles.zoomClose} onPress={() => setZoomExercise(null)}><MaterialCommunityIcons name="close" size={26} color={colors.text} /></Pressable>
     </Pressable>
