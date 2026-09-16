@@ -14,6 +14,8 @@ export default function Routine() {
   const [zoomExercise, setZoomExercise] = useState<Exercise | null>(null);
   const [failedMediaById, setFailedMediaById] = useState<Record<string, { local?: true; remote?: true }>>({});
   const [removedIds, setRemovedIds] = useState<Record<string, true>>({});
+  const markMediaAsFailed = (exerciseId: string, mediaType: 'local' | 'remote') =>
+    setFailedMediaById((previous) => ({ ...previous, [exerciseId]: { ...previous[exerciseId], [mediaType]: true } }));
   const removeExercise = (id: string) => setRemovedIds((current) => ({ ...current, [id]: true }));
   const restoreExercises = () => setRemovedIds({});
   const removedCount = Object.keys(removedIds).length;
@@ -68,7 +70,7 @@ export default function Routine() {
   <Modal visible={!!zoomExercise} transparent animationType="fade" onRequestClose={() => setZoomExercise(null)}>
     <Pressable style={styles.zoomBackdrop} onPress={() => setZoomExercise(null)}>
       <Pressable style={styles.zoomContent} onPress={(event) => event.stopPropagation()}>
-        {zoomImageSource && <Image source={zoomImageSource} style={styles.zoomImage} resizeMode="contain" onError={() => { if (!zoomExercise || !zoomImageType) return; setFailedMediaById((previous) => ({ ...previous, [zoomExercise.id]: { ...previous[zoomExercise.id], [zoomImageType]: true } })); }} />}
+        {zoomImageSource && <Image source={zoomImageSource} style={styles.zoomImage} resizeMode="contain" onError={() => { if (!zoomExercise || !zoomImageType) return; markMediaAsFailed(zoomExercise.id, zoomImageType); }} />}
         <Text style={styles.zoomName}>{zoomExercise?.name.toUpperCase()}</Text>
         <Pressable style={styles.zoomClose} onPress={() => setZoomExercise(null)}><MaterialCommunityIcons name="close" size={26} color={colors.text} /></Pressable>
       </Pressable>
