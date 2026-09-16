@@ -52,7 +52,7 @@ export default function Routine() {
   </ScrollView>
   <Modal visible={!!pickerFor} transparent animationType="fade" onRequestClose={() => setPickerFor(null)}>
     <Pressable style={styles.modalBackdrop} onPress={() => setPickerFor(null)}>
-      <View style={styles.modalCard}>
+      <Pressable style={styles.modalCard} onPress={(event) => event.stopPropagation()}>
         <Text style={styles.modalTitle}>SUSTITUIR {pickerFor?.name.toUpperCase()}</Text>
         {substituteOptions.length === 0 && <Text style={styles.modalEmpty}>Sin alternativas con tu equipamiento disponible.</Text>}
         <ScrollView>
@@ -61,12 +61,12 @@ export default function Routine() {
           </Pressable>)}
         </ScrollView>
         {pickerFor && substitutions[pickerFor.id] && <Pressable style={styles.modalReset} onPress={() => { clearSubstitute(pickerFor.id); setPickerFor(null); }}><Text style={styles.modalResetText}>VOLVER AL ORIGINAL</Text></Pressable>}
-      </View>
+      </Pressable>
     </Pressable>
   </Modal>
   <Modal visible={!!zoomExercise} transparent animationType="fade" onRequestClose={() => setZoomExercise(null)}>
     <Pressable style={styles.zoomBackdrop} onPress={() => setZoomExercise(null)}>
-      {zoomImageSource && <Image source={zoomImageSource} style={styles.zoomImage} resizeMode="contain" />}
+      {zoomImageSource && <Image source={zoomImageSource} style={styles.zoomImage} resizeMode="contain" onError={() => { if (!zoomExercise) return; setFailedMediaById((previous) => ({ ...previous, [zoomExercise.id]: zoomCanShowLocal ? { ...previous[zoomExercise.id], local: true } : { ...previous[zoomExercise.id], remote: true } })); }} />}
       <Text style={styles.zoomName}>{zoomExercise?.name.toUpperCase()}</Text>
       <Pressable style={styles.zoomClose} onPress={() => setZoomExercise(null)}><MaterialCommunityIcons name="close" size={26} color={colors.text} /></Pressable>
     </Pressable>
