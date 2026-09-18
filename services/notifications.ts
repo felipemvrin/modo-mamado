@@ -3,19 +3,19 @@ import { Platform } from 'react-native';
 
 const REST_CHANNEL_ID = 'rest-timer';
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
-
 export async function configureNotifications(): Promise<boolean> {
   if (Platform.OS === 'web') return false;
 
   try {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+        shouldShowBanner: true,
+        shouldShowList: true,
+      }),
+    });
+
     if (Platform.OS === 'android') {
       await Notifications.setNotificationChannelAsync(REST_CHANNEL_ID, {
         name: 'Descanso de entrenamiento',
