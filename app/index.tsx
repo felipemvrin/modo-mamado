@@ -26,7 +26,7 @@ export default function Home() {
     <View style={styles.top}><View><Text style={styles.kicker}>MODO MAMADO / 01</Text></View><View>
       <Pressable accessibilityLabel={menuOpen ? 'Cerrar menú' : 'Abrir menú'} accessibilityRole="button" onPress={() => setMenuOpen((open) => !open)} style={styles.iconButton}><MaterialCommunityIcons name={menuOpen ? 'close' : 'menu'} size={24} color={colors.text} /></Pressable>
     </View></View>
-    <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={() => setMenuOpen(false)}>
+    <Modal visible={menuOpen} transparent animationType="fade" accessibilityViewIsModal aria-modal onRequestClose={() => setMenuOpen(false)}>
       <View style={styles.menuOverlay}>
         <Pressable style={styles.menuBackdrop} accessibilityLabel="Cerrar menú" onPress={() => setMenuOpen(false)} />
         <View style={styles.menuContainer} pointerEvents="box-none">
