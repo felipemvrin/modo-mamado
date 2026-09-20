@@ -33,12 +33,11 @@ export default function Home() {
           <View
             style={styles.menu}
             accessible
-            accessibilityRole="menu"
             accessibilityLabel="Menú principal"
             accessibilityViewIsModal
             onAccessibilityEscape={() => setMenuOpen(false)}
           >
-            {menuItems.map((item) => <Link key={item.href} href={item.href} asChild><Pressable accessibilityLabel={item.accessibilityLabel} accessibilityRole="menuitem" style={styles.menuItem} onPress={() => setMenuOpen(false)}><MaterialCommunityIcons name={item.icon} size={20} color={colors.text} /><Text style={styles.menuItemText}>{item.label}</Text></Pressable></Link>)}
+            {menuItems.map((item) => <Link key={item.href} href={item.href} asChild><Pressable accessibilityLabel={item.accessibilityLabel} accessibilityRole="button" style={styles.menuItem} onPress={() => setMenuOpen(false)}><MaterialCommunityIcons name={item.icon} size={20} color={colors.text} /><Text style={styles.menuItemText}>{item.label}</Text></Pressable></Link>)}
           </View>
         </View>
       </View>
