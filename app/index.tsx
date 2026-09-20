@@ -28,7 +28,15 @@ export default function Home() {
     </View></View>
     <Modal visible={menuOpen} transparent animationType="fade" onRequestClose={() => setMenuOpen(false)}>
       <Pressable style={styles.menuBackdrop} accessibilityLabel="Cerrar menú" onPress={() => setMenuOpen(false)}>
-        <Pressable style={styles.menu} onPress={(event) => event.stopPropagation()}>
+        <Pressable
+          style={styles.menu}
+          accessible
+          accessibilityRole="menu"
+          accessibilityLabel="Menú principal"
+          accessibilityViewIsModal
+          onAccessibilityEscape={() => setMenuOpen(false)}
+          onPress={(event) => event.stopPropagation()}
+        >
           {menuItems.map((item) => <Link key={item.href} href={item.href} asChild><Pressable accessibilityLabel={item.accessibilityLabel} accessibilityRole="button" style={styles.menuItem} onPress={() => setMenuOpen(false)}><MaterialCommunityIcons name={item.icon} size={20} color={colors.text} /><Text style={styles.menuItemText}>{item.label}</Text></Pressable></Link>)}
         </Pressable>
       </Pressable>
