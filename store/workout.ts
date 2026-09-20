@@ -58,8 +58,12 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
     set({ activeWorkout: null, activeExerciseIds: null, history: [workout, ...get().history] });
   },
   loadHistory: () => {
-    initializeDatabase();
-    set({ history: getWorkouts() });
+    try {
+      initializeDatabase();
+      set({ history: getWorkouts() });
+    } catch {
+      set({ history: [] });
+    }
   },
   toggleEquipment: (equipment) => set((state) => {
     if (state.availableEquipment.includes(equipment)) {

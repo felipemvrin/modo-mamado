@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "modo-mamado",
+    "name": "Modo Mamado",
     "slug": "modo-mamado",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,13 +8,15 @@
     "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.felipemvrin.modomamado",
-      "buildNumber": "1",
+      "bundleIdentifier": "com.felipemarin.modomamado",
+      "buildNumber": "4",
       "config": {
         "usesNonExemptEncryption": false
       }
     },
     "android": {
+      "package": "com.felipemarin.modomamado",
+      "versionCode": 4,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
