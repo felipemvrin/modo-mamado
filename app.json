@@ -9,7 +9,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.felipemarin.modomamado",
-      "buildNumber": "14",
+      "buildNumber": "9",
       "config": {
         "usesNonExemptEncryption": false
       }

@@ -1,4 +1,3 @@
-import { Link } from 'expo-router';
 import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
 export default function Home() {
@@ -6,8 +5,7 @@ export default function Home() {
     <View style={styles.container}>
       <Text style={styles.title}>MODO MAMADO</Text>
       <Text style={styles.message}>EXPO ROUTER OK</Text>
-      <Text style={styles.meta}>Home minima sin store ni SQLite</Text>
-      <Link href='/history' style={styles.link}>PROBAR RUTA HISTORIAL</Link>
+      <Text style={styles.meta}>Home mínima sin store ni SQLite</Text>
     </View>
   </SafeAreaView>;
 }
@@ -35,15 +33,5 @@ const styles = StyleSheet.create({
   meta: {
     color: '#A1A1AA',
     fontSize: 13,
-  },
-  link: {
-    marginTop: 12,
-    color: '#090909',
-    backgroundColor: '#C6FF00',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 4,
-    fontSize: 12,
-    fontWeight: '700',
   },
 });
