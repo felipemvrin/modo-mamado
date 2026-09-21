@@ -16,7 +16,7 @@
     },
     "android": {
       "package": "com.felipemarin.modomamado",
-      "versionCode": 7,
+      "versionCode": 8,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
