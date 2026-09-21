@@ -5,7 +5,7 @@ import { colors } from '../theme/tokens';
 
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   return <View style={styles.fallback}>
-    <View style={styles.fallbackContent}>
+    <View accessibilityLiveRegion='assertive' accessibilityRole='alert' accessible style={styles.fallbackContent}>
       <Text style={styles.fallbackTitle}>ERROR DE ARRANQUE</Text>
       <Text style={styles.fallbackMessage}>No se pudo iniciar la app. Intenta nuevamente.</Text>
       {__DEV__ && !!error.message && <Text style={styles.fallbackDetails}>{error.message}</Text>}
