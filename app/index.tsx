@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.text,
-    fontFamily: "QuanticoBold",
+    fontFamily: "Quantico", fontWeight: "700",
     fontSize: 36,
     lineHeight: 38,
     marginTop: spacing.sm,
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   todayLabel: { color: colors.muted, fontFamily: "Quantico", fontSize: 11 },
   todayValue: {
     color: colors.text,
-    fontFamily: "QuanticoBold",
+    fontFamily: "Quantico", fontWeight: "700",
     fontSize: 18,
     marginTop: 4,
   },
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
   weekSummaryText: { flex: 1, minWidth: 0 },
   weekTitle: {
     color: colors.text,
-    fontFamily: "QuanticoBold",
+    fontFamily: "Quantico", fontWeight: "700",
     fontSize: 20,
     marginTop: 4,
   },
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   muscleActive: { backgroundColor: colors.lime, borderColor: colors.lime },
-  muscleName: { color: colors.text, fontFamily: "QuanticoBold", fontSize: 10 },
+  muscleName: { color: colors.text, fontFamily: "Quantico", fontWeight: "700", fontSize: 10 },
   muscleNameActive: { color: colors.background },
   muscleMeta: { color: colors.muted, fontFamily: "Quantico", fontSize: 8 },
   chipRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs },
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   startDisabled: { opacity: 0.4 },
   startText: {
     color: colors.background,
-    fontFamily: "QuanticoBold",
+    fontFamily: "Quantico", fontWeight: "700",
     fontSize: 14,
   },
   last: {

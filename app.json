@@ -9,14 +9,14 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.felipemarin.modomamado",
-      "buildNumber": "4",
+      "buildNumber": "5",
       "config": {
         "usesNonExemptEncryption": false
       }
     },
     "android": {
       "package": "com.felipemarin.modomamado",
-      "versionCode": 4,
+      "versionCode": 5,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -31,7 +31,34 @@
     "plugins": [
       "expo-router",
       "expo-sqlite",
-      "expo-font",
+      [
+        "expo-font",
+        {
+          "ios": {
+            "fonts": [
+              "./assets/fonts/Quantico_400Regular.ttf",
+              "./assets/fonts/Quantico_700Bold.ttf"
+            ]
+          },
+          "android": {
+            "fonts": [
+              {
+                "fontFamily": "Quantico",
+                "fontDefinitions": [
+                  {
+                    "path": "./assets/fonts/Quantico_400Regular.ttf",
+                    "weight": 400
+                  },
+                  {
+                    "path": "./assets/fonts/Quantico_700Bold.ttf",
+                    "weight": 700
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
       "expo-status-bar",
       "expo-notifications"
     ],
