@@ -298,8 +298,9 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   iconButton: {
-    width: 48,
+    minWidth: 64,
     height: 48,
+    paddingHorizontal: spacing.sm,
     borderWidth: 1,
     borderColor: colors.border,
     alignItems: "center",
