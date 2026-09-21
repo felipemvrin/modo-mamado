@@ -31,7 +31,15 @@
     "plugins": [
       "expo-router",
       "expo-sqlite",
-      "expo-font",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Quantico_400Regular.ttf",
+            "./assets/fonts/Quantico_700Bold.ttf"
+          ]
+        }
+      ],
       "expo-status-bar",
       "expo-notifications"
     ],
