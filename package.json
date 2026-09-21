@@ -1,7 +1,7 @@
 {
   "name": "modo-mamado",
   "version": "1.0.0",
-  "main": "expo-router/entry",
+  "main": "minimal-entry.js",
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
     "expo": "~57.0.24",
