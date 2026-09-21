@@ -1,18 +1,22 @@
 const { expo: baseConfig } = require('./app.json');
 
 const isDiagnosticBuild = process.env.EXPO_PUBLIC_MINIMAL_DIAGNOSTIC === '1';
+const iosConfig = baseConfig.ios ?? {};
+const androidConfig = baseConfig.android;
 
 module.exports = {
   ...baseConfig,
   name: isDiagnosticBuild ? 'Modo Mamado Diag' : baseConfig.name,
   ios: {
-    ...baseConfig.ios,
-    buildNumber: isDiagnosticBuild ? '11' : baseConfig.ios.buildNumber,
-    bundleIdentifier: isDiagnosticBuild ? `${baseConfig.ios.bundleIdentifier}.diag` : baseConfig.ios.bundleIdentifier,
+    ...iosConfig,
+    buildNumber: isDiagnosticBuild ? '11' : iosConfig.buildNumber,
+    bundleIdentifier: isDiagnosticBuild ? `${iosConfig.bundleIdentifier}.diag` : iosConfig.bundleIdentifier,
   },
-  android: {
-    ...baseConfig.android,
-    versionCode: isDiagnosticBuild ? 11 : baseConfig.android.versionCode,
-    package: isDiagnosticBuild ? `${baseConfig.android.package}.diag` : baseConfig.android.package,
-  },
+  ...(androidConfig ? {
+    android: {
+      ...androidConfig,
+      versionCode: isDiagnosticBuild ? 11 : androidConfig.versionCode,
+      package: isDiagnosticBuild ? `${androidConfig.package}.diag` : androidConfig.package,
+    },
+  } : {}),
 };
