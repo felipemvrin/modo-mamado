@@ -1,42 +1,441 @@
-import { useEffect, useState } from 'react';
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Link } from 'expo-router';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { colors, radius, spacing, typography } from '../theme/tokens';
-import { equipmentTypes, muscleGroups } from '../types/workout';
-import { useWorkoutStore } from '../store/workout';
-import { getWeeklyProgress } from '../utils/weeklyProgress';
+import { useEffect, useState } from "react";
+import {
+  Modal,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { Link } from "expo-router";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { colors, radius, spacing, typography } from "../theme/tokens";
+import { equipmentTypes, muscleGroups } from "../types/workout";
+import { useWorkoutStore } from "../store/workout";
+import { getWeeklyProgress } from "../utils/weeklyProgress";
 
-const icons: Record<string, keyof typeof MaterialCommunityIcons.glyphMap> = { Pecho: 'arm-flex', Espalda: 'human', Bíceps: 'arm-flex', Tríceps: 'weight-lifter', Hombros: 'human-male', Piernas: 'run-fast', Core: 'meditation' };
+const icons: Record<string, keyof typeof MaterialCommunityIcons.glyphMap> = {
+  Pecho: "arm-flex",
+  Espalda: "human",
+  Bíceps: "arm-flex",
+  Tríceps: "weight-lifter",
+  Hombros: "human-male",
+  Piernas: "run-fast",
+  Core: "meditation",
+};
 
-const menuItems: { href: '/explore' | '/timer' | '/history'; label: string; icon: keyof typeof MaterialCommunityIcons.glyphMap; accessibilityLabel: string }[] = [
-  { href: '/explore', label: 'EXPLORAR', icon: 'magnify', accessibilityLabel: 'Explorar catálogo de ejercicios' },
-  { href: '/timer', label: 'DESCANSO', icon: 'timer-outline', accessibilityLabel: 'Abrir temporizador de descanso' },
-  { href: '/history', label: 'HISTORIAL', icon: 'history', accessibilityLabel: 'Abrir historial' },
+const menuItems: {
+  href: "/explore" | "/timer" | "/history";
+  label: string;
+  icon: keyof typeof MaterialCommunityIcons.glyphMap;
+  accessibilityLabel: string;
+}[] = [
+  {
+    href: "/explore",
+    label: "EXPLORAR",
+    icon: "magnify",
+    accessibilityLabel: "Explorar catálogo de ejercicios",
+  },
+  {
+    href: "/timer",
+    label: "DESCANSO",
+    icon: "timer-outline",
+    accessibilityLabel: "Abrir temporizador de descanso",
+  },
+  {
+    href: "/history",
+    label: "HISTORIAL",
+    icon: "history",
+    accessibilityLabel: "Abrir historial",
+  },
 ];
 
 export default function Home() {
-  const { selectedMuscles, toggleMuscle, loadHistory, history, availableEquipment, toggleEquipment } = useWorkoutStore();
+  const {
+    selectedMuscles,
+    toggleMuscle,
+    loadHistory,
+    history,
+    availableEquipment,
+    toggleEquipment,
+  } = useWorkoutStore();
   const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => loadHistory(), [loadHistory]);
   const weeklyProgress = getWeeklyProgress(history);
   const workedThisWeek = new Set(weeklyProgress.trainedMuscles);
-  const selectedLabel = selectedMuscles.length > 0 ? selectedMuscles.join(' + ') : 'SIN SELECCIÓN';
-  return <SafeAreaView style={styles.safe}><ScrollView contentContainerStyle={styles.container}>
-    <View style={styles.top}><View><Text style={styles.kicker}>MODO MAMADO / 01</Text></View><View>
-      <Pressable accessibilityLabel={menuOpen ? 'Cerrar menú' : 'Abrir menú'} accessibilityRole="button" onPress={() => setMenuOpen((open) => !open)} style={styles.iconButton}><MaterialCommunityIcons name={menuOpen ? 'close' : 'menu'} size={24} color={colors.text} /></Pressable>
-      {menuOpen && <>
-        <Pressable style={styles.menuBackdrop} accessibilityLabel="Cerrar menú" onPress={() => setMenuOpen(false)} />
-        <View style={styles.menu}>{menuItems.map((item) => <Link key={item.href} href={item.href} asChild><Pressable accessibilityLabel={item.accessibilityLabel} accessibilityRole="button" style={styles.menuItem} onPress={() => setMenuOpen(false)}><MaterialCommunityIcons name={item.icon} size={20} color={colors.text} /><Text style={styles.menuItemText}>{item.label}</Text></Pressable></Link>)}</View>
-      </>}
-    </View></View>
-    <View style={styles.today}><View><Text style={styles.todayLabel}>¿QUÉ TOCA HOY? · {new Date().toLocaleDateString('es-CL', { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase()}</Text><Text style={styles.todayValue}>{selectedLabel}</Text></View><MaterialCommunityIcons name="lightning-bolt" size={30} color={colors.lime} /></View>
-    <View style={styles.weekSummary}><View><Text style={styles.section}>ESTA SEMANA</Text><Text style={styles.weekTitle}>{weeklyProgress.workouts.length} ENTRENAMIENTO{weeklyProgress.workouts.length === 1 ? '' : 'S'}</Text></View><MaterialCommunityIcons name="calendar-check" size={27} color={colors.lime} /><Text style={styles.weekMessage}>{weeklyProgress.recommendedMuscles.length > 0 ? `SIGUIENTE: ${weeklyProgress.recommendedMuscles.slice(0, 2).join(' + ').toUpperCase()}` : 'TODOS LOS GRUPOS REGISTRADOS'}</Text></View>
-    <Text style={styles.section}>ELIGE UNO O MÁS GRUPOS</Text><Text style={styles.helper}>Seleccionados: {selectedMuscles.length}. Puedes combinar pecho, espalda, core y más.</Text><View style={styles.grid}>{muscleGroups.map((muscle) => { const isSelected = selectedMuscles.includes(muscle); const wasWorked = workedThisWeek.has(muscle); return <Pressable key={muscle} onPress={() => toggleMuscle(muscle)} accessibilityRole="button" accessibilityState={{ selected: isSelected }} style={[styles.muscle, isSelected && styles.muscleActive]}><MaterialCommunityIcons name={icons[muscle]} size={22} color={isSelected ? colors.background : colors.lime} /><Text style={[styles.muscleName, isSelected && styles.muscleNameActive]}>{muscle.toUpperCase()}</Text><Text style={[styles.muscleMeta, isSelected && styles.muscleNameActive]}>{isSelected ? 'SELECCIONADO' : wasWorked ? 'HECHO' : 'DISPONIBLE'}</Text></Pressable>; })}</View>
-    <Text style={styles.section}>EQUIPAMIENTO DISPONIBLE HOY</Text><Text style={styles.helper}>Se usa para sugerir sustitutos si un ejercicio no aplica.</Text><View style={styles.chipRow}>{equipmentTypes.map((equipment) => { const isAvailable = availableEquipment.includes(equipment); return <Pressable key={equipment} onPress={() => toggleEquipment(equipment)} accessibilityRole="button" accessibilityState={{ selected: isAvailable }} style={[styles.chip, isAvailable && styles.chipActive]}><Text style={[styles.chipText, isAvailable && styles.chipTextActive]}>{equipment.toUpperCase()}</Text></Pressable>; })}</View>
-    <View style={styles.ctaRow}><View><Text style={styles.section}>LISTO PARA EMPEZAR</Text><Text style={styles.ctaSub}>Tu rutina tendrá {selectedMuscles.length} grupo{selectedMuscles.length === 1 ? '' : 's'}.</Text></View><Link href="/routine" asChild><Pressable style={selectedMuscles.length === 0 ? styles.startDisabled : styles.start} disabled={selectedMuscles.length === 0} accessibilityRole="button"><Text style={styles.startText}>VER RUTINA</Text><MaterialCommunityIcons name="arrow-right" size={20} color={colors.background} /></Pressable></Link></View>
-    {history[0] && <Text style={styles.last}>ÚLTIMO: {history[0].muscleGroups.join(' + ').toUpperCase()} · COMPLETADO</Text>}
-  </ScrollView></SafeAreaView>;
+  const selectedLabel =
+    selectedMuscles.length > 0 ? selectedMuscles.join(" + ") : "SIN SELECCIÓN";
+  return (
+    <SafeAreaView style={styles.safe}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.top}>
+          <View>
+            <Text style={styles.kicker}>MODO MAMADO / 01</Text>
+          </View>
+          <View>
+            <Pressable
+              accessibilityLabel={menuOpen ? "Cerrar menú" : "Abrir menú"}
+              accessibilityRole="button"
+              onPress={() => setMenuOpen((open) => !open)}
+              style={styles.iconButton}
+            >
+              <MaterialCommunityIcons
+                name={menuOpen ? "close" : "menu"}
+                size={24}
+                color={colors.text}
+              />
+            </Pressable>
+          </View>
+        </View>
+        <Modal
+          visible={menuOpen}
+          transparent
+          animationType="fade"
+          accessibilityViewIsModal
+          onRequestClose={() => setMenuOpen(false)}
+        >
+          <View style={styles.menuOverlay}>
+            <Pressable
+              style={styles.menuBackdrop}
+              accessibilityLabel="Cerrar menú"
+              onPress={() => setMenuOpen(false)}
+            />
+            <View style={styles.menuContainer} pointerEvents="box-none">
+              <View
+                style={styles.menu}
+                accessible
+                accessibilityLabel="Menú principal"
+                accessibilityViewIsModal
+                onAccessibilityEscape={() => setMenuOpen(false)}
+              >
+                {menuItems.map((item) => (
+                  <Link key={item.href} href={item.href} asChild>
+                    <Pressable
+                      accessibilityLabel={item.accessibilityLabel}
+                      accessibilityRole="button"
+                      style={styles.menuItem}
+                      onPress={() => setMenuOpen(false)}
+                    >
+                      <MaterialCommunityIcons
+                        name={item.icon}
+                        size={20}
+                        color={colors.text}
+                      />
+                      <Text style={styles.menuItemText}>{item.label}</Text>
+                    </Pressable>
+                  </Link>
+                ))}
+              </View>
+            </View>
+          </View>
+        </Modal>
+        <View style={styles.today}>
+          <View>
+            <Text style={styles.todayLabel}>
+              ¿QUÉ TOCA HOY? ·{" "}
+              {new Date()
+                .toLocaleDateString("es-CL", {
+                  weekday: "short",
+                  day: "numeric",
+                  month: "short",
+                })
+                .toUpperCase()}
+            </Text>
+            <Text style={styles.todayValue}>{selectedLabel}</Text>
+          </View>
+          <MaterialCommunityIcons
+            name="lightning-bolt"
+            size={30}
+            color={colors.lime}
+          />
+        </View>
+        <View style={styles.weekSummary}>
+          <MaterialCommunityIcons
+            name="calendar-check"
+            size={27}
+            color={colors.lime}
+          />
+          <View style={styles.weekSummaryText}>
+            <Text style={styles.section}>ESTA SEMANA</Text>
+            <Text style={styles.weekTitle}>
+              {weeklyProgress.workouts.length} ENTRENAMIENTO
+              {weeklyProgress.workouts.length === 1 ? "" : "S"}
+            </Text>
+            <Text style={styles.weekMessage}>
+              {weeklyProgress.recommendedMuscles.length > 0
+                ? `SIGUIENTE: ${weeklyProgress.recommendedMuscles.slice(0, 2).join(" + ").toUpperCase()}`
+                : "TODOS LOS GRUPOS REGISTRADOS"}
+            </Text>
+          </View>
+        </View>
+        <Text style={styles.section}>ELIGE UNO O MÁS GRUPOS</Text>
+        <Text style={styles.helper}>
+          Seleccionados: {selectedMuscles.length}. Puedes combinar pecho,
+          espalda, core y más.
+        </Text>
+        <View style={styles.grid}>
+          {muscleGroups.map((muscle) => {
+            const isSelected = selectedMuscles.includes(muscle);
+            const wasWorked = workedThisWeek.has(muscle);
+            return (
+              <Pressable
+                key={muscle}
+                onPress={() => toggleMuscle(muscle)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: isSelected }}
+                style={[styles.muscle, isSelected && styles.muscleActive]}
+              >
+                <MaterialCommunityIcons
+                  name={icons[muscle]}
+                  size={22}
+                  color={isSelected ? colors.background : colors.lime}
+                />
+                <Text
+                  style={[
+                    styles.muscleName,
+                    isSelected && styles.muscleNameActive,
+                  ]}
+                >
+                  {muscle.toUpperCase()}
+                </Text>
+                <Text
+                  style={[
+                    styles.muscleMeta,
+                    isSelected && styles.muscleNameActive,
+                  ]}
+                >
+                  {isSelected
+                    ? "SELECCIONADO"
+                    : wasWorked
+                      ? "HECHO"
+                      : "DISPONIBLE"}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+        <Text style={styles.section}>EQUIPAMIENTO DISPONIBLE HOY</Text>
+        <Text style={styles.helper}>
+          Se usa para sugerir sustitutos si un ejercicio no aplica.
+        </Text>
+        <View style={styles.chipRow}>
+          {equipmentTypes.map((equipment) => {
+            const isAvailable = availableEquipment.includes(equipment);
+            return (
+              <Pressable
+                key={equipment}
+                onPress={() => toggleEquipment(equipment)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: isAvailable }}
+                style={[styles.chip, isAvailable && styles.chipActive]}
+              >
+                <Text
+                  style={[
+                    styles.chipText,
+                    isAvailable && styles.chipTextActive,
+                  ]}
+                >
+                  {equipment.toUpperCase()}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+        <View style={styles.ctaRow}>
+          <View>
+            <Text style={styles.section}>LISTO PARA EMPEZAR</Text>
+            <Text style={styles.ctaSub}>
+              Tu rutina tendrá {selectedMuscles.length} grupo
+              {selectedMuscles.length === 1 ? "" : "s"}.
+            </Text>
+          </View>
+          <Link href="/routine" asChild>
+            <Pressable
+              style={
+                selectedMuscles.length === 0
+                  ? styles.startDisabled
+                  : styles.start
+              }
+              disabled={selectedMuscles.length === 0}
+              accessibilityRole="button"
+            >
+              <Text style={styles.startText}>VER RUTINA</Text>
+              <MaterialCommunityIcons
+                name="arrow-right"
+                size={20}
+                color={colors.background}
+              />
+            </Pressable>
+          </Link>
+        </View>
+        {history[0] && (
+          <Text style={styles.last}>
+            ÚLTIMO: {history[0].muscleGroups.join(" + ").toUpperCase()} ·
+            COMPLETADO
+          </Text>
+        )}
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
 
-const styles = StyleSheet.create({ safe: { flex: 1, backgroundColor: colors.background }, container: { padding: spacing.lg, paddingTop: spacing.md, gap: spacing.lg }, top: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }, menuBackdrop: { position: 'absolute', top: -1000, left: -1000, right: -1000, bottom: -1000, zIndex: 1 }, menu: { position: 'absolute', top: 56, right: 0, minWidth: 180, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: radius.sm, paddingVertical: spacing.xs, zIndex: 2, gap: 2 }, menuItem: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.sm, paddingHorizontal: spacing.md }, menuItemText: { color: colors.text, fontFamily: 'Quantico', fontSize: 13, letterSpacing: 1 }, kicker: { color: colors.lime, fontFamily: 'Quantico', fontSize: 12, letterSpacing: 1 }, title: { color: colors.text, fontFamily: 'QuanticoBold', fontSize: 36, lineHeight: 38, marginTop: spacing.sm }, iconButton: { width: 48, height: 48, borderWidth: 1, borderColor: colors.border, alignItems: 'center', justifyContent: 'center', borderRadius: radius.sm }, today: { padding: spacing.md, borderLeftWidth: 3, borderLeftColor: colors.lime, backgroundColor: colors.surface, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, todayLabel: { color: colors.muted, fontFamily: 'Quantico', fontSize: 11 }, todayValue: { color: colors.text, fontFamily: 'QuanticoBold', fontSize: 18, marginTop: 4 }, weekSummary: { padding: spacing.md, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, gap: spacing.sm }, weekTitle: { color: colors.text, fontFamily: 'QuanticoBold', fontSize: 20, marginTop: 4 }, weekMessage: { color: colors.lime, fontFamily: 'Quantico', fontSize: 11 }, section: { color: colors.muted, fontFamily: 'Quantico', fontSize: 12, letterSpacing: 1 }, helper: { color: colors.muted, fontSize: 13, marginTop: -12 }, grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }, muscle: { width: '23.5%', minHeight: 92, padding: spacing.xs, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: radius.sm, justifyContent: 'space-between' }, muscleActive: { backgroundColor: colors.lime, borderColor: colors.lime }, muscleName: { color: colors.text, fontFamily: 'QuanticoBold', fontSize: 10 }, muscleNameActive: { color: colors.background }, muscleMeta: { color: colors.muted, fontFamily: 'Quantico', fontSize: 8 }, chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }, chip: { paddingVertical: spacing.xs, paddingHorizontal: spacing.sm, borderWidth: 1, borderColor: colors.border, borderRadius: radius.sm, backgroundColor: colors.card }, chipActive: { backgroundColor: colors.lime, borderColor: colors.lime }, chipText: { color: colors.muted, fontFamily: 'Quantico', fontSize: 10 }, chipTextActive: { color: colors.background }, ctaRow: { paddingTop: spacing.sm, gap: spacing.md }, ctaSub: { color: colors.muted, ...typography.body, marginTop: 4 }, start: { backgroundColor: colors.lime, minHeight: 58, paddingHorizontal: spacing.md, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, borderRadius: radius.sm }, startDisabled: { opacity: 0.4 }, startText: { color: colors.background, fontFamily: 'QuanticoBold', fontSize: 14 }, last: { color: colors.lime, fontFamily: 'Quantico', fontSize: 11, textAlign: 'center' } });
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.background },
+  container: { padding: spacing.lg, paddingTop: spacing.md, gap: spacing.lg },
+  top: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  menuOverlay: { flex: 1 },
+  menuBackdrop: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: "rgba(0,0,0,0.25)",
+  },
+  menuContainer: {
+    flex: 1,
+    alignItems: "flex-end",
+    paddingTop: spacing.md + 56,
+    paddingHorizontal: spacing.lg,
+  },
+  menu: {
+    minWidth: 180,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    paddingVertical: spacing.xs,
+    gap: 2,
+  },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+  },
+  menuItemText: {
+    color: colors.text,
+    fontFamily: "Quantico",
+    fontSize: 13,
+    letterSpacing: 1,
+  },
+  kicker: {
+    color: colors.lime,
+    fontFamily: "Quantico",
+    fontSize: 12,
+    letterSpacing: 1,
+  },
+  title: {
+    color: colors.text,
+    fontFamily: "QuanticoBold",
+    fontSize: 36,
+    lineHeight: 38,
+    marginTop: spacing.sm,
+  },
+  iconButton: {
+    width: 48,
+    height: 48,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: radius.sm,
+  },
+  today: {
+    padding: spacing.md,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.lime,
+    backgroundColor: colors.surface,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  todayLabel: { color: colors.muted, fontFamily: "Quantico", fontSize: 11 },
+  todayValue: {
+    color: colors.text,
+    fontFamily: "QuanticoBold",
+    fontSize: 18,
+    marginTop: 4,
+  },
+  weekSummary: {
+    padding: spacing.md,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: spacing.sm,
+  },
+  weekSummaryText: { flex: 1, minWidth: 0 },
+  weekTitle: {
+    color: colors.text,
+    fontFamily: "QuanticoBold",
+    fontSize: 20,
+    marginTop: 4,
+  },
+  weekMessage: { color: colors.lime, fontFamily: "Quantico", fontSize: 11 },
+  section: {
+    color: colors.muted,
+    fontFamily: "Quantico",
+    fontSize: 12,
+    letterSpacing: 1,
+  },
+  helper: { color: colors.muted, fontSize: 13, marginTop: -12 },
+  grid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs },
+  muscle: {
+    width: "23.5%",
+    minHeight: 92,
+    padding: spacing.xs,
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    justifyContent: "space-between",
+  },
+  muscleActive: { backgroundColor: colors.lime, borderColor: colors.lime },
+  muscleName: { color: colors.text, fontFamily: "QuanticoBold", fontSize: 10 },
+  muscleNameActive: { color: colors.background },
+  muscleMeta: { color: colors.muted, fontFamily: "Quantico", fontSize: 8 },
+  chipRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs },
+  chip: {
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    backgroundColor: colors.card,
+  },
+  chipActive: { backgroundColor: colors.lime, borderColor: colors.lime },
+  chipText: { color: colors.muted, fontFamily: "Quantico", fontSize: 10 },
+  chipTextActive: { color: colors.background },
+  ctaRow: { paddingTop: spacing.sm, gap: spacing.md },
+  ctaSub: { color: colors.muted, ...typography.body, marginTop: 4 },
+  start: {
+    backgroundColor: colors.lime,
+    minHeight: 58,
+    paddingHorizontal: spacing.md,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+    borderRadius: radius.sm,
+  },
+  startDisabled: { opacity: 0.4 },
+  startText: {
+    color: colors.background,
+    fontFamily: "QuanticoBold",
+    fontSize: 14,
+  },
+  last: {
+    color: colors.lime,
+    fontFamily: "Quantico",
+    fontSize: 11,
+    textAlign: "center",
+  },
+});
