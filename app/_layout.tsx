@@ -8,7 +8,7 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
     <View style={styles.fallbackContent}>
       <Text style={styles.fallbackTitle}>ERROR DE ARRANQUE</Text>
       <Text style={styles.fallbackMessage}>{error.message || 'Error desconocido'}</Text>
-      <Pressable onPress={retry} style={styles.retryButton}>
+      <Pressable accessibilityLabel='Reintentar iniciar la aplicación' accessibilityRole='button' onPress={retry} style={styles.retryButton}>
         <Text style={styles.retryLabel}>REINTENTAR</Text>
       </Pressable>
     </View>
