@@ -16,7 +16,7 @@
     },
     "android": {
       "package": "com.felipemarin.modomamado",
-      "versionCode": 4,
+      "versionCode": 5,
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -37,7 +37,24 @@
           "fonts": [
             "./assets/fonts/Quantico_400Regular.ttf",
             "./assets/fonts/Quantico_700Bold.ttf"
-          ]
+          ],
+          "android": {
+            "fonts": [
+              {
+                "fontFamily": "Quantico",
+                "fontDefinitions": [
+                  {
+                    "path": "./assets/fonts/Quantico_400Regular.ttf",
+                    "weight": 400
+                  },
+                  {
+                    "path": "./assets/fonts/Quantico_700Bold.ttf",
+                    "weight": 700
+                  }
+                ]
+              }
+            ]
+          }
         }
       ],
       "expo-status-bar",
