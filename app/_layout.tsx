@@ -1,36 +1,23 @@
-import { Component, ReactNode } from 'react';
-import { Stack } from 'expo-router';
+import { Stack, type ErrorBoundaryProps } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/tokens';
 
-type RootErrorBoundaryProps = { children: ReactNode };
-type RootErrorBoundaryState = { error: Error | null };
-
-class RootErrorBoundary extends Component<RootErrorBoundaryProps, RootErrorBoundaryState> {
-  state: RootErrorBoundaryState = { error: null };
-
-  static getDerivedStateFromError(error: Error): RootErrorBoundaryState {
-    return { error };
-  }
-
-  render() {
-    if (this.state.error) {
-      return <View style={styles.fallback}>
-        <Text style={styles.fallbackTitle}>ERROR DE ARRANQUE</Text>
-        <Text style={styles.fallbackMessage}>{this.state.error.message || 'Error desconocido'}</Text>
-      </View>;
-    }
-
-    return this.props.children;
-  }
+export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
+  return <View style={styles.fallback}>
+    <View style={styles.fallbackContent}>
+      <Text style={styles.fallbackTitle}>ERROR DE ARRANQUE</Text>
+      <Text style={styles.fallbackMessage}>{error.message || 'Error desconocido'}</Text>
+      <Pressable onPress={retry} style={styles.retryButton}>
+        <Text style={styles.retryLabel}>REINTENTAR</Text>
+      </Pressable>
+    </View>
+  </View>;
 }
 
 export default function Layout() {
   return <GestureHandlerRootView style={{ flex: 1 }}>
-    <RootErrorBoundary>
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }} />
-    </RootErrorBoundary>
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }} />
   </GestureHandlerRootView>;
 }
 
@@ -42,9 +29,11 @@ const styles = StyleSheet.create({
     padding: 24,
     gap: 12,
   },
+  fallbackContent: {
+    gap: 12,
+  },
   fallbackTitle: {
     color: colors.lime,
-    fontFamily: 'Quantico',
     fontWeight: '700',
     fontSize: 18,
     letterSpacing: 1,
@@ -53,5 +42,19 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 15,
     lineHeight: 22,
+  },
+  retryButton: {
+    alignSelf: 'flex-start',
+    marginTop: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 8,
+    backgroundColor: colors.lime,
+  },
+  retryLabel: {
+    color: colors.background,
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 1,
   },
 });
