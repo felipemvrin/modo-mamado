@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Modo Mamado Diag",
+    "name": "Modo Mamado",
     "slug": "modo-mamado",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.felipemarin.modomamado",
-      "buildNumber": "11",
+      "buildNumber": "9",
       "config": {
         "usesNonExemptEncryption": false
       }

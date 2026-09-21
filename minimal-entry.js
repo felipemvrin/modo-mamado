@@ -1,4 +1,5 @@
-import { AppRegistry, StyleSheet, Text, View } from 'react-native';
+import { registerRootComponent } from 'expo';
+import { StyleSheet, Text, View } from 'react-native';
 
 function MinimalDiagnosticApp() {
   return (
@@ -36,4 +37,4 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('main', () => MinimalDiagnosticApp);
+registerRootComponent(MinimalDiagnosticApp);
