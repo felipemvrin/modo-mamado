@@ -9,44 +9,29 @@ import {
   View,
 } from "react-native";
 import { Link } from "expo-router";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors, radius, spacing, typography } from "../theme/tokens";
 import { equipmentTypes, muscleGroups } from "../types/workout";
 import { useWorkoutStore } from "../store/workout";
 import { getWeeklyProgress } from "../utils/weeklyProgress";
 
-const icons: Record<string, keyof typeof MaterialCommunityIcons.glyphMap> = {
-  Pecho: "arm-flex",
-  Espalda: "human",
-  Bíceps: "arm-flex",
-  Tríceps: "weight-lifter",
-  Hombros: "human-male",
-  Piernas: "run-fast",
-  Core: "meditation",
-};
-
 const menuItems: {
   href: "/explore" | "/timer" | "/history";
   label: string;
-  icon: keyof typeof MaterialCommunityIcons.glyphMap;
   accessibilityLabel: string;
 }[] = [
   {
     href: "/explore",
     label: "EXPLORAR",
-    icon: "magnify",
     accessibilityLabel: "Explorar catálogo de ejercicios",
   },
   {
     href: "/timer",
     label: "DESCANSO",
-    icon: "timer-outline",
     accessibilityLabel: "Abrir temporizador de descanso",
   },
   {
     href: "/history",
     label: "HISTORIAL",
-    icon: "history",
     accessibilityLabel: "Abrir historial",
   },
 ];
@@ -80,11 +65,7 @@ export default function Home() {
               onPress={() => setMenuOpen((open) => !open)}
               style={styles.iconButton}
             >
-              <MaterialCommunityIcons
-                name={menuOpen ? "close" : "menu"}
-                size={24}
-                color={colors.text}
-              />
+              <Text style={styles.menuButtonText}>{menuOpen ? "X" : "MENU"}</Text>
             </Pressable>
           </View>
         </View>
@@ -117,11 +98,6 @@ export default function Home() {
                       style={styles.menuItem}
                       onPress={() => setMenuOpen(false)}
                     >
-                      <MaterialCommunityIcons
-                        name={item.icon}
-                        size={20}
-                        color={colors.text}
-                      />
                       <Text style={styles.menuItemText}>{item.label}</Text>
                     </Pressable>
                   </Link>
@@ -144,18 +120,10 @@ export default function Home() {
             </Text>
             <Text style={styles.todayValue}>{selectedLabel}</Text>
           </View>
-          <MaterialCommunityIcons
-            name="lightning-bolt"
-            size={30}
-            color={colors.lime}
-          />
+          <Text style={styles.panelMarker}>01</Text>
         </View>
         <View style={styles.weekSummary}>
-          <MaterialCommunityIcons
-            name="calendar-check"
-            size={27}
-            color={colors.lime}
-          />
+          <Text style={styles.panelMarker}>7D</Text>
           <View style={styles.weekSummaryText}>
             <Text style={styles.section}>ESTA SEMANA</Text>
             <Text style={styles.weekTitle}>
@@ -186,11 +154,6 @@ export default function Home() {
                 accessibilityState={{ selected: isSelected }}
                 style={[styles.muscle, isSelected && styles.muscleActive]}
               >
-                <MaterialCommunityIcons
-                  name={icons[muscle]}
-                  size={22}
-                  color={isSelected ? colors.background : colors.lime}
-                />
                 <Text
                   style={[
                     styles.muscleName,
@@ -261,11 +224,7 @@ export default function Home() {
               accessibilityRole="button"
             >
               <Text style={styles.startText}>VER RUTINA</Text>
-              <MaterialCommunityIcons
-                name="arrow-right"
-                size={20}
-                color={colors.background}
-              />
+              <Text style={styles.startText}>{">"}</Text>
             </Pressable>
           </Link>
         </View>
@@ -339,13 +298,28 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   iconButton: {
-    width: 48,
+    minWidth: 64,
     height: 48,
+    paddingHorizontal: spacing.sm,
     borderWidth: 1,
     borderColor: colors.border,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: radius.sm,
+  },
+  menuButtonText: {
+    color: colors.text,
+    fontFamily: "Quantico",
+    fontWeight: "700",
+    fontSize: 11,
+    letterSpacing: 1,
+  },
+  panelMarker: {
+    color: colors.lime,
+    fontFamily: "Quantico",
+    fontWeight: "700",
+    fontSize: 18,
+    lineHeight: 27,
   },
   today: {
     padding: spacing.md,
