@@ -11,6 +11,15 @@
         "simulator": true
       }
     },
+    "diagnostic": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_MINIMAL_DIAGNOSTIC": "1"
+      },
+      "ios": {
+        "simulator": false
+      }
+    },
     "preview": {
       "distribution": "internal",
       "ios": {
