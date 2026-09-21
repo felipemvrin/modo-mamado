@@ -1,9 +1,16 @@
+import { useEffect } from 'react';
 import { Stack, type ErrorBoundaryProps } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { AccessibilityInfo, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/tokens';
 
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
+  useEffect(() => {
+    if (Platform.OS === 'ios') {
+      void AccessibilityInfo.announceForAccessibility('Error de arranque. No se pudo iniciar la app. Intenta nuevamente.');
+    }
+  }, []);
+
   return <View style={styles.fallback}>
     <View accessibilityLiveRegion='assertive' accessibilityRole='alert' accessible style={styles.fallbackContent}>
       <Text style={styles.fallbackTitle}>ERROR DE ARRANQUE</Text>
