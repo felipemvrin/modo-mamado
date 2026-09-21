@@ -7,7 +7,8 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   return <View style={styles.fallback}>
     <View style={styles.fallbackContent}>
       <Text style={styles.fallbackTitle}>ERROR DE ARRANQUE</Text>
-      <Text style={styles.fallbackMessage}>{error.message || 'Error desconocido'}</Text>
+      <Text style={styles.fallbackMessage}>No se pudo iniciar la app. Intenta nuevamente.</Text>
+      {__DEV__ && !!error.message && <Text style={styles.fallbackDetails}>{error.message}</Text>}
       <Pressable accessibilityLabel='Reintentar iniciar la aplicación' accessibilityRole='button' onPress={retry} style={styles.retryButton}>
         <Text style={styles.retryLabel}>REINTENTAR</Text>
       </Pressable>
@@ -42,6 +43,11 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 15,
     lineHeight: 22,
+  },
+  fallbackDetails: {
+    color: colors.muted,
+    fontSize: 13,
+    lineHeight: 20,
   },
   retryButton: {
     alignSelf: 'flex-start',
