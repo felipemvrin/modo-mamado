@@ -1,0 +1,19 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+
+import { createWorkoutId } from './workout-id.ts';
+
+test('createWorkoutId keeps ids unique in the same millisecond even with equal random values', () => {
+  const first = createWorkoutId(1727030999000, 0.5);
+  const second = createWorkoutId(1727030999000, 0.5);
+
+  assert.notEqual(first, second);
+});
+
+test('createWorkoutId keeps a non-empty random suffix when random value is zero', () => {
+  const id = createWorkoutId(1727030999001, 0);
+  const [, , suffix] = id.split('-');
+
+  assert.equal(suffix.length, 8);
+  assert.equal(suffix, '00000000');
+});
