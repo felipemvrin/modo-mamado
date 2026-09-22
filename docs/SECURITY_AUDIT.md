@@ -25,17 +25,17 @@ Fecha: 2026-09-22
 
 ## Hallazgos y recomendaciones
 
-1. **IDs de `CompletedWorkout` basados en `Date.now()`** (`store/workout.ts`): riesgo de colisión si dos guardados ocurren en el mismo milisegundo (`INSERT OR REPLACE` sobrescribiría uno). No es una vulnerabilidad de seguridad, pero sí de integridad de datos.
-   - Recomendación: usar `crypto.randomUUID()` o un ID compuesto (timestamp + contador/random).
+1. **[Resuelto] IDs de `CompletedWorkout` basados en `Date.now()`** (`store/workout.ts`): riesgo de colisión si dos guardados ocurren en el mismo milisegundo (`INSERT OR REPLACE` sobrescribiría uno). No era una vulnerabilidad de seguridad, pero sí de integridad de datos.
+   - Corregido: el `id` ahora combina timestamp + sufijo aleatorio (`${Date.now()}-${random}`).
 
-2. **`NSAllowsLocalNetworking: true`** en `ios/ModoMamado/Info.plist`: habilitado por Expo para desarrollo (Metro). Bajo riesgo real en producción.
-   - Recomendación: revisar si se puede desactivar en builds 100% release sin necesidad de debug local.
+2. **[Revisado, sin cambio] `NSAllowsLocalNetworking: true`** en `ios/ModoMamado/Info.plist`: habilitado por Expo para desarrollo (Metro/dev client). Bajo riesgo real en producción.
+   - Decisión: no desactivar. Desactivarlo rompería flujos de desarrollo local (Metro/dev client) y Expo no ofrece una forma soportada de alternarlo solo para release sin prebuild manual; el riesgo residual es bajo porque solo habilita red local, no dominios arbitrarios (`NSAllowsArbitraryLoads` sigue en `false`).
 
-3. **`aps-environment: development`** en `ios/ModoMamado/ModoMamado.entitlements`: EAS Build debería sobrescribir esto a `production` al firmar para App Store.
-   - Recomendación: confirmar con `eas credentials` antes de cada publicación que el certificado de producción esté en uso.
+3. **[Revisado, sin cambio] `aps-environment: development`** en `ios/ModoMamado/ModoMamado.entitlements`: EAS Build sobrescribe esto a `production` automáticamente al firmar para App Store.
+   - Decisión: no requiere cambio de código. Verificar con `eas credentials` antes de cada publicación que el certificado de producción esté en uso.
 
-4. **`npm audit`: 13 vulnerabilidades moderadas**, todas en herramientas de build (`@expo/cli`, `@expo/config-plugins`, `uuid`, `query-string`). No se empaquetan en el binario final del cliente.
-   - Recomendación: monitorear, no requiere acción urgente. Evaluar en el próximo salto mayor de Expo SDK/CLI.
+4. **[Revisado, sin cambio] `npm audit`: 13 vulnerabilidades moderadas**, todas en herramientas de build (`@expo/cli`, `@expo/config-plugins`, `uuid`, `query-string`). No se empaquetan en el binario final del cliente.
+   - Decisión: no forzar `npm audit fix --force` (rompe compatibilidad con Expo SDK 57). Monitorear y resolver en el próximo salto mayor de Expo SDK/CLI.
 
 ## Notas para el futuro
 Si se agrega un backend (sync en la nube, cuentas de usuario, telemetría):

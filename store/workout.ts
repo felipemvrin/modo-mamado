@@ -49,7 +49,7 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
     const { activeWorkout, activeExerciseIds } = get();
     if (!activeWorkout?.length) return;
     const workout: CompletedWorkout = {
-      id: `${Date.now()}`,
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
       muscleGroups: activeWorkout,
       completedAt: new Date().toISOString(),
       exerciseCount: activeExerciseIds?.length ?? getExercisesForMuscles(activeWorkout).length,
