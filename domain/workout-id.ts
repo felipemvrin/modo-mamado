@@ -10,7 +10,7 @@ function randomSuffix(randomValue: number): string {
 }
 
 export function createWorkoutId(now = Date.now(), randomValue = Math.random()): string {
-  if (now === lastWorkoutIdTimestamp) {
+  if (now <= lastWorkoutIdTimestamp) {
     workoutIdSequence += 1;
   } else {
     lastWorkoutIdTimestamp = now;

@@ -17,3 +17,10 @@ test('createWorkoutId keeps a non-empty random suffix when random value is zero'
   assert.equal(suffix.length, 8);
   assert.equal(suffix, '00000000');
 });
+
+test('createWorkoutId stays unique when clock moves backwards', () => {
+  const newer = createWorkoutId(1727030999005, 0.5);
+  const older = createWorkoutId(1727030999004, 0.5);
+
+  assert.notEqual(newer, older);
+});
