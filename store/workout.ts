@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { defaultMuscle, getExercisesForMuscles } from '../data/routines';
 import { getWorkouts, initializeDatabase, saveWorkout } from '../database/workouts';
+import { createWorkoutId } from '../domain/workout-id';
 import { CompletedWorkout, EquipmentType, equipmentTypes, MuscleGroup } from '../types/workout';
 
 type WorkoutState = {
@@ -49,7 +50,7 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
     const { activeWorkout, activeExerciseIds } = get();
     if (!activeWorkout?.length) return;
     const workout: CompletedWorkout = {
-      id: `${Date.now()}`,
+      id: createWorkoutId(),
       muscleGroups: activeWorkout,
       completedAt: new Date().toISOString(),
       exerciseCount: activeExerciseIds?.length ?? getExercisesForMuscles(activeWorkout).length,
