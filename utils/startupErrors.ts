@@ -48,10 +48,8 @@ export function installStartupErrorHandler(): void {
   const previousHandler = errorUtils?.getGlobalHandler?.();
 
   errorUtils?.setGlobalHandler?.((error, isFatal = false) => {
-    publishError(error, isFatal);
-    if (!isFatal) {
-      previousHandler?.(error, isFatal);
-    }
+    if (isFatal) publishError(error, true);
+    else previousHandler?.(error, false);
   });
 
   globalScope.__modoMamadoStartupErrorHandlerInstalled = true;
