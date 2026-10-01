@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { Stack, type ErrorBoundaryProps } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { AccessibilityInfo, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { AccessibilityInfo, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/tokens';
+import { useStartupError } from '../utils/startupErrors';
 
 export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   useEffect(() => {
@@ -24,6 +25,21 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
 }
 
 export default function Layout() {
+  const startupError = useStartupError();
+
+  if (startupError) {
+    return <GestureHandlerRootView style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={styles.fallback}>
+        <View accessibilityLiveRegion='assertive' accessibilityRole='alert' accessible style={styles.fallbackContent}>
+          <Text style={styles.fallbackTitle}>ERROR DE ARRANQUE JS</Text>
+          <Text selectable style={styles.fallbackMessage}>{startupError.message}</Text>
+          <Text selectable style={styles.fallbackDetails}>{startupError.name}{startupError.isFatal ? ' · fatal' : ''}</Text>
+          {!!startupError.stack && <Text selectable style={styles.fallbackDetails}>{startupError.stack}</Text>}
+        </View>
+      </ScrollView>
+    </GestureHandlerRootView>;
+  }
+
   return <GestureHandlerRootView style={{ flex: 1 }}>
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }} />
   </GestureHandlerRootView>;
