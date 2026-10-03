@@ -7,6 +7,7 @@ const androidConfig = baseConfig.android;
 module.exports = {
   ...baseConfig,
   name: isDiagnosticBuild ? 'Modo Mamado Diag' : baseConfig.name,
+  scheme: isDiagnosticBuild ? `${baseConfig.scheme}.diag` : baseConfig.scheme,
   ios: {
     ...iosConfig,
     buildNumber: isDiagnosticBuild ? '11' : iosConfig.buildNumber,
