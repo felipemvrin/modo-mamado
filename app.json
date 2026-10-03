@@ -4,12 +4,13 @@
     "slug": "modo-mamado",
     "version": "1.0.0",
     "orientation": "portrait",
+    "scheme": "com.felipemarin.modomamado",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.felipemarin.modomamado",
-      "buildNumber": "16",
+      "buildNumber": "27",
       "config": {
         "usesNonExemptEncryption": false
       }
