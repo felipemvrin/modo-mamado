@@ -69,11 +69,11 @@ export default function Routine() {
   </Modal>
   <Modal visible={!!zoomExercise} transparent animationType="fade" onRequestClose={() => setZoomExercise(null)}>
     <Pressable style={styles.zoomBackdrop} onPress={() => setZoomExercise(null)}>
-      <Pressable style={styles.zoomContent} onPress={(event) => event.stopPropagation()}>
-        {zoomImageSource && <Image source={zoomImageSource} style={styles.zoomImage} resizeMode="contain" onError={() => { if (!zoomExercise || !zoomImageType) return; markMediaAsFailed(zoomExercise.id, zoomImageType); }} />}
+      <View style={styles.zoomContent}>
+        {zoomImageSource && <Pressable style={{ width: '100%', height: '70%' }} accessibilityRole="imagebutton" accessibilityLabel={`Imagen ampliada de ${zoomExercise?.name ?? 'ejercicio'}`} onPress={(event) => event.stopPropagation()}><Image source={zoomImageSource} style={styles.zoomImage} resizeMode="contain" onError={() => { if (!zoomExercise || !zoomImageType) return; markMediaAsFailed(zoomExercise.id, zoomImageType); }} /></Pressable>}
         <Text style={styles.zoomName}>{zoomExercise?.name.toUpperCase()}</Text>
-        <Pressable style={styles.zoomClose} onPress={() => setZoomExercise(null)}><MaterialCommunityIcons name="close" size={26} color={colors.text} /></Pressable>
-      </Pressable>
+        <Pressable accessibilityRole="button" accessibilityLabel="Cerrar imagen ampliada" style={[styles.zoomClose, { width: 48, height: 48, padding: 0, alignItems: 'center', justifyContent: 'center', borderRadius: 24, backgroundColor: colors.lime }]} onPress={() => setZoomExercise(null)}><MaterialCommunityIcons name="close" size={26} color="#000000" /></Pressable>
+      </View>
     </Pressable>
   </Modal>
   </SafeAreaView>;
