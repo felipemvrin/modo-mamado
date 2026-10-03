@@ -9,10 +9,21 @@ import {
   View,
 } from "react-native";
 import { Link } from "expo-router";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors, radius, spacing, typography } from "../theme/tokens";
-import { equipmentTypes, muscleGroups } from "../types/workout";
+import { equipmentTypes, muscleGroups, type MuscleGroup } from "../types/workout";
 import { useWorkoutStore } from "../store/workout";
 import { getWeeklyProgress } from "../utils/weeklyProgress";
+
+const muscleIcons: Record<MuscleGroup, keyof typeof MaterialCommunityIcons.glyphMap> = {
+  Pecho: "arm-flex",
+  Espalda: "human",
+  Bíceps: "arm-flex-outline",
+  Tríceps: "weight-lifter",
+  Hombros: "human-handsup",
+  Piernas: "run-fast",
+  Core: "meditation",
+};
 
 const menuItems: {
   href: "/explore" | "/timer" | "/history";
@@ -107,7 +118,7 @@ export default function Home() {
           </View>
         </Modal>
         <View style={styles.today}>
-          <View>
+          <View style={styles.todayText}>
             <Text style={styles.todayLabel}>
               ¿QUÉ TOCA HOY? ·{" "}
               {new Date()
@@ -123,7 +134,6 @@ export default function Home() {
           <Text style={styles.panelMarker}>01</Text>
         </View>
         <View style={styles.weekSummary}>
-          <Text style={styles.panelMarker}>7D</Text>
           <View style={styles.weekSummaryText}>
             <Text style={styles.section}>ESTA SEMANA</Text>
             <Text style={styles.weekTitle}>
@@ -154,6 +164,11 @@ export default function Home() {
                 accessibilityState={{ selected: isSelected }}
                 style={[styles.muscle, isSelected && styles.muscleActive]}
               >
+                <MaterialCommunityIcons
+                  name={muscleIcons[muscle]}
+                  size={22}
+                  color={isSelected ? colors.background : colors.lime}
+                />
                 <Text
                   style={[
                     styles.muscleName,
@@ -330,6 +345,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  todayText: { flex: 1, minWidth: 0, paddingRight: spacing.sm },
   todayLabel: { color: colors.muted, fontFamily: "Quantico", fontSize: 11 },
   todayValue: {
     color: colors.text,
@@ -371,6 +387,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: radius.sm,
     justifyContent: "space-between",
+    gap: spacing.xs,
   },
   muscleActive: { backgroundColor: colors.lime, borderColor: colors.lime },
   muscleName: { color: colors.text, fontFamily: "Quantico", fontWeight: "700", fontSize: 10 },
