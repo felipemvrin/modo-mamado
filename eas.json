@@ -20,6 +20,20 @@
         "simulator": false
       }
     },
+    "startup-minimal": {
+      "distribution": "store",
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_STARTUP_MINIMAL_ENTRY": "1"
+      }
+    },
+    "router-core": {
+      "distribution": "store",
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_ROUTER_ROOT_MINIMAL": "1"
+      }
+    },
     "preview": {
       "distribution": "internal",
       "ios": {

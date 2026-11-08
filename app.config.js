@@ -1,11 +1,17 @@
 const { expo: baseConfig } = require('./app.json');
 
 const isDiagnosticBuild = process.env.EXPO_PUBLIC_MINIMAL_DIAGNOSTIC === '1';
+const isRouterRootMinimal = process.env.EXPO_PUBLIC_ROUTER_ROOT_MINIMAL === '1';
 const iosConfig = baseConfig.ios ?? {};
 const androidConfig = baseConfig.android;
 
 module.exports = {
   ...baseConfig,
+  plugins: (baseConfig.plugins ?? []).map((plugin) => (
+    plugin === 'expo-router'
+      ? ['expo-router', { root: isRouterRootMinimal ? 'startup-router' : 'app' }]
+      : plugin
+  )),
   name: isDiagnosticBuild ? 'Modo Mamado Diag' : baseConfig.name,
   scheme: isDiagnosticBuild ? `${baseConfig.scheme}.diag` : baseConfig.scheme,
   ios: {
