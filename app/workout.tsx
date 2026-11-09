@@ -3,7 +3,8 @@ import { AppState, Image, Pressable, SafeAreaView, StyleSheet, Text, View } from
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { getExerciseById, getExercisesForMuscles } from '../data/routines';
+import { getExerciseById, getRoutineExercises } from '../data/routines';
+import type { Exercise } from '../types/workout';
 import { buildSessionSnapshot, resolveNextSetPosition } from '../domain/session';
 import { sessionSyncAdapter } from '../domain/session-sync';
 import { buildWatchSessionPayload } from '../domain/watch';
@@ -14,14 +15,14 @@ import { cancelNotification, scheduleRestFinishedNotification } from '../service
 const formatTime = (seconds: number) => `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
 
 export default function Workout() {
-  const { activeWorkout, activeExerciseIds, completedSets, completeSet, finishWorkout, substitutions } = useWorkoutStore();
+  const { activeWorkout, activeExerciseIds, completedSets, completeSet, finishWorkout, availableEquipment, substitutions } = useWorkoutStore();
   const exercises = useMemo(() => (
     activeWorkout
-      ? getExercisesForMuscles(activeWorkout)
-        .filter((item) => !activeExerciseIds || activeExerciseIds.includes(item.id))
-        .map((item) => (substitutions[item.id] ? getExerciseById(substitutions[item.id]) ?? item : item))
+      ? activeExerciseIds
+        ? activeExerciseIds.map(getExerciseById).filter((item): item is Exercise => !!item)
+        : getRoutineExercises(activeWorkout, availableEquipment, substitutions).map(({ exercise }) => exercise)
       : []
-  ), [activeWorkout, activeExerciseIds, substitutions]);
+  ), [activeWorkout, activeExerciseIds, availableEquipment, substitutions]);
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [setIndex, setSetIndex] = useState(0);
   const [restEndAt, setRestEndAt] = useState<number | null>(null);

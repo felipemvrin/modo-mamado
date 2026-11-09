@@ -188,7 +188,7 @@ export default function Home() {
         <View style={styles.sectionHeading}>
           <Text style={styles.section}>EQUIPAMIENTO DISPONIBLE HOY</Text>
           <Text style={styles.helper}>
-            Se usa para sugerir sustitutos si un ejercicio no aplica.
+            La rutina mostrará solo ejercicios con el equipamiento seleccionado.
           </Text>
         </View>
         <View style={styles.chipRow}>

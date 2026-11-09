@@ -48,7 +48,9 @@ Las alertas y el tiempo restante deben vivir en una capa de timer separada cuand
 ## Sustituciones
 
 - `getSubstitutes(exercise, availableEquipment?)` en `data/routines.ts` busca ejercicios del mismo `muscleGroup` con distinto `equipment`, filtrando por el equipamiento marcado como disponible.
-- `Routine` resuelve cada ejercicio contra `substitutions` antes de renderizarlo, sin alterar el catálogo base.
+- `getRoutineExercises` resuelve sustituciones del mismo grupo compatibles con el equipamiento disponible y filtra la rutina por el equipo del ejercicio resultante. Una sustitución incompatible vuelve al original si su equipo está disponible; si no, se excluye.
+- `Routine` conserva el ID original para eliminar/restaurar o sustituir filas y pasa los IDs finales al iniciar. `Workout` usa esa lista exacta, sin volver a aplicar sustituciones ni cambiar ejercicios si se modifica el equipamiento durante una sesión.
+- Sin coincidencias se muestra un aviso y se deshabilita el inicio; no se incluyen ejercicios de otro equipamiento como alternativa automática.
 - El equipamiento disponible se marca en `Home` y persiste en memoria durante la sesión (no en SQLite).
 
 ## Persistencia
