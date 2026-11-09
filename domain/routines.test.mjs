@@ -1,20 +1,30 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { allExercises, getExerciseById, getSubstitutes, routines } from '../data/routines.ts';
+import { allExercises, getExerciseById, getExercisesForMuscles, getSubstitutes, routines } from '../data/routines.ts';
 import { muscleGroups } from '../types/workout.ts';
 
-test('exercise catalog keeps 12 exercises per muscle group and 84 total', () => {
+test('exercise catalog keeps 20 exercises per muscle group and 140 total', () => {
   for (const muscle of muscleGroups) {
-    assert.equal(routines[muscle].length, 12, `${muscle} should have 12 exercises`);
+    assert.equal(routines[muscle].length, 20, `${muscle} should have 20 exercises`);
+    assert.ok(new Set(routines[muscle].map((item) => item.equipment)).size >= 6, `${muscle} should offer varied equipment`);
   }
 
-  assert.equal(allExercises.length, 84);
+  assert.equal(allExercises.length, 140);
 });
 
 test('exercise catalog keeps unique ids across all exercises', () => {
   const unique = new Set(allExercises.map((item) => item.id));
   assert.equal(unique.size, allExercises.length);
+});
+
+test('guided workouts keep 12 exercises per muscle while the full catalog remains available', () => {
+  for (const muscle of muscleGroups) {
+    assert.equal(getExercisesForMuscles([muscle]).length, 12, `${muscle} should keep its guided workout size`);
+  }
+
+  assert.equal(getExercisesForMuscles(muscleGroups).length, 84);
+  assert.equal(allExercises.length, 140);
 });
 
 test('bench press has same-muscle substitutes with different equipment, including polea', () => {
