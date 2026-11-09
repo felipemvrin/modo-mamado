@@ -182,8 +182,10 @@ export const routines: Record<MuscleGroup, Exercise[]> = {
 
 export const defaultMuscle: MuscleGroup = muscleGroups[0];
 
+const guidedExercisesPerMuscle = 12;
+
 export function getExercisesForMuscles(selectedMuscles: MuscleGroup[]): Exercise[] {
-  return selectedMuscles.flatMap((muscle) => routines[muscle]);
+  return selectedMuscles.flatMap((muscle) => routines[muscle].slice(0, guidedExercisesPerMuscle));
 }
 
 export const allExercises: Exercise[] = Object.values(routines).flat();
