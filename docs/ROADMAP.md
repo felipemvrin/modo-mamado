@@ -8,7 +8,8 @@ Este roadmap se organiza por etapas y ramas. Cada etapa debe terminar con valida
 
 - Etapas 0 a 10: integradas en `main`.
 - Etapa 8: completa (84/84 ejercicios con imagen: 78 remotas vía RepDB + 6 propias en `assets/exercises/`).
-- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo de 84 ejercicios (todos con imagen) con sustituciones por equipamiento, timer de descanso independiente, explorador de catálogo con detalle/sustitución, persistencia local del resumen de sesión y contrato de sincronización de sesión para una futura companion.
+- Catálogo actual: 140 ejercicios, 20 por grupo, todos con imagen: 134 remotas vía RepDB + 6 propias en `assets/exercises/`.
+- Base disponible: Expo SDK 57, selección múltiple de grupos, catálogo de 140 ejercicios (20 por grupo, todos con imagen) con sustituciones por equipamiento, timer de descanso independiente, explorador de catálogo con detalle/sustitución, persistencia local del resumen de sesión y contrato de sincronización de sesión para una futura companion.
 - Rama activa: `main`.
 - Alcance actual: flujo de entrenamiento simple, catálogo completo con imágenes y preparación técnica para una futura companion.
 

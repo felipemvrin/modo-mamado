@@ -7,7 +7,7 @@ export type MuscleGroup = (typeof muscleGroups)[number];
 export const exerciseCategories = ['Pesas libres', 'Máquinas', 'Kettlebell', 'Calistenia', 'Bandas', 'Peso corporal'] as const;
 export type ExerciseCategory = (typeof exerciseCategories)[number];
 
-export const equipmentTypes = ['Barra', 'Mancuernas', 'Máquina', 'Polea', 'Kettlebell', 'Bandas', 'Peso corporal', 'Barra paralela'] as const;
+export const equipmentTypes = ['Barra', 'Mancuernas', 'Máquina', 'Polea', 'Kettlebell', 'Bandas', 'TRX', 'Pelota de estabilidad', 'Peso corporal', 'Barra paralela'] as const;
 export type EquipmentType = (typeof equipmentTypes)[number];
 
 export const difficultyLevels = ['Inicial', 'Intermedio', 'Avanzado'] as const;
