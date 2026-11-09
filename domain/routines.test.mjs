@@ -18,13 +18,16 @@ test('exercise catalog keeps unique ids across all exercises', () => {
   assert.equal(unique.size, allExercises.length);
 });
 
-test('guided workouts keep 12 exercises per muscle while the full catalog remains available', () => {
+test('guided workouts include all 20 exercises per selected muscle in catalog order', () => {
   for (const muscle of muscleGroups) {
-    assert.equal(getExercisesForMuscles([muscle]).length, 12, `${muscle} should keep its guided workout size`);
+    const exercises = getExercisesForMuscles([muscle]);
+    assert.equal(exercises.length, 20, `${muscle} should include all 20 exercises`);
+    assert.deepEqual(exercises, routines[muscle]);
   }
 
-  assert.equal(getExercisesForMuscles(muscleGroups).length, 84);
-  assert.equal(allExercises.length, 140);
+  assert.deepEqual(getExercisesForMuscles(['Core', 'Pecho']), [...routines.Core, ...routines.Pecho]);
+  assert.deepEqual(getExercisesForMuscles(muscleGroups), allExercises);
+  assert.deepEqual(getExercisesForMuscles([]), []);
 });
 
 test('bench press has same-muscle substitutes with different equipment, including polea', () => {

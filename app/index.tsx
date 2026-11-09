@@ -11,19 +11,10 @@ import {
 import { Link } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors, radius, spacing, typography } from "../theme/tokens";
-import { equipmentTypes, muscleGroups, type MuscleGroup } from "../types/workout";
+import { equipmentTypes, muscleGroups } from "../types/workout";
+import { MuscleGroupIcon } from "../components/MuscleGroupIcon";
 import { useWorkoutStore } from "../store/workout";
 import { getWeeklyProgress } from "../utils/weeklyProgress";
-
-const muscleIcons: Record<MuscleGroup, keyof typeof MaterialCommunityIcons.glyphMap> = {
-  Pecho: "arm-flex",
-  Espalda: "human",
-  Bíceps: "arm-flex-outline",
-  Tríceps: "weight-lifter",
-  Hombros: "human-handsup",
-  Piernas: "run-fast",
-  Core: "meditation",
-};
 
 const menuItems: {
   href: "/explore" | "/timer" | "/history";
@@ -135,11 +126,13 @@ export default function Home() {
         </View>
         <View style={styles.weekSummary}>
           <View style={styles.weekSummaryText}>
-            <Text style={styles.section}>ESTA SEMANA</Text>
-            <Text style={styles.weekTitle}>
-              {weeklyProgress.workouts.length} ENTRENAMIENTO
-              {weeklyProgress.workouts.length === 1 ? "" : "S"}
-            </Text>
+            <View style={styles.weekSummaryHeader}>
+              <Text style={styles.section}>ESTA SEMANA</Text>
+              <Text style={styles.weekTitle}>
+                {weeklyProgress.workouts.length} ENTRENAMIENTO
+                {weeklyProgress.workouts.length === 1 ? "" : "S"}
+              </Text>
+            </View>
             <Text style={styles.weekMessage}>
               {weeklyProgress.recommendedMuscles.length > 0
                 ? `SIGUIENTE: ${weeklyProgress.recommendedMuscles.slice(0, 2).join(" + ").toUpperCase()}`
@@ -147,11 +140,13 @@ export default function Home() {
             </Text>
           </View>
         </View>
-        <Text style={styles.section}>ELIGE UNO O MÁS GRUPOS</Text>
-        <Text style={styles.helper}>
-          Seleccionados: {selectedMuscles.length}. Puedes combinar pecho,
-          espalda, core y más.
-        </Text>
+        <View style={styles.sectionHeading}>
+          <Text style={styles.section}>ELIGE UNO O MÁS GRUPOS</Text>
+          <Text style={styles.helper}>
+            Seleccionados: {selectedMuscles.length}. Puedes combinar pecho,
+            espalda, core y más.
+          </Text>
+        </View>
         <View style={styles.grid}>
           {muscleGroups.map((muscle) => {
             const isSelected = selectedMuscles.includes(muscle);
@@ -161,14 +156,11 @@ export default function Home() {
                 key={muscle}
                 onPress={() => toggleMuscle(muscle)}
                 accessibilityRole="button"
+                accessibilityLabel={muscle}
                 accessibilityState={{ selected: isSelected }}
                 style={[styles.muscle, isSelected && styles.muscleActive]}
               >
-                <MaterialCommunityIcons
-                  name={muscleIcons[muscle]}
-                  size={22}
-                  color={isSelected ? colors.background : colors.lime}
-                />
+                <MuscleGroupIcon muscle={muscle} selected={isSelected} />
                 <Text
                   style={[
                     styles.muscleName,
@@ -193,10 +185,12 @@ export default function Home() {
             );
           })}
         </View>
-        <Text style={styles.section}>EQUIPAMIENTO DISPONIBLE HOY</Text>
-        <Text style={styles.helper}>
-          Se usa para sugerir sustitutos si un ejercicio no aplica.
-        </Text>
+        <View style={styles.sectionHeading}>
+          <Text style={styles.section}>EQUIPAMIENTO DISPONIBLE HOY</Text>
+          <Text style={styles.helper}>
+            Se usa para sugerir sustitutos si un ejercicio no aplica.
+          </Text>
+        </View>
         <View style={styles.chipRow}>
           {equipmentTypes.map((equipment) => {
             const isAvailable = availableEquipment.includes(equipment);
@@ -230,16 +224,14 @@ export default function Home() {
           </View>
           <Link href="/routine" asChild>
             <Pressable
-              style={
-                selectedMuscles.length === 0
-                  ? styles.startDisabled
-                  : styles.start
-              }
+              style={StyleSheet.flatten([styles.start, selectedMuscles.length === 0 && styles.startDisabled])}
               disabled={selectedMuscles.length === 0}
               accessibilityRole="button"
+              accessibilityLabel="Ver rutina"
+              accessibilityState={{ disabled: selectedMuscles.length === 0 }}
             >
               <Text style={styles.startText}>VER RUTINA</Text>
-              <Text style={styles.startText}>{">"}</Text>
+              <MaterialCommunityIcons name="arrow-right" size={24} color={colors.background} />
             </Pressable>
           </Link>
         </View>
@@ -256,11 +248,11 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
-  container: { padding: spacing.lg, paddingTop: spacing.md, gap: spacing.lg },
+  container: { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, gap: 12 },
   top: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
   },
   menuOverlay: { flex: 1 },
   menuBackdrop: {
@@ -274,7 +266,7 @@ const styles = StyleSheet.create({
   menuContainer: {
     flex: 1,
     alignItems: "flex-end",
-    paddingTop: spacing.md + 56,
+    paddingTop: spacing.md + 44 + spacing.xs,
     paddingHorizontal: spacing.lg,
   },
   menu: {
@@ -313,8 +305,8 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   iconButton: {
-    minWidth: 64,
-    height: 48,
+    minWidth: 56,
+    height: 44,
     paddingHorizontal: spacing.sm,
     borderWidth: 1,
     borderColor: colors.border,
@@ -337,7 +329,7 @@ const styles = StyleSheet.create({
     lineHeight: 27,
   },
   today: {
-    padding: spacing.md,
+    padding: spacing.sm,
     borderLeftWidth: 3,
     borderLeftColor: colors.lime,
     backgroundColor: colors.surface,
@@ -350,11 +342,11 @@ const styles = StyleSheet.create({
   todayValue: {
     color: colors.text,
     fontFamily: "Quantico", fontWeight: "700",
-    fontSize: 18,
+    fontSize: 16,
     marginTop: 4,
   },
   weekSummary: {
-    padding: spacing.md,
+    padding: spacing.sm,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.border,
@@ -362,12 +354,18 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     gap: spacing.sm,
   },
-  weekSummaryText: { flex: 1, minWidth: 0 },
+  weekSummaryText: { flex: 1, minWidth: 0, gap: spacing.xs },
+  weekSummaryHeader: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: spacing.xs,
+  },
   weekTitle: {
     color: colors.text,
     fontFamily: "Quantico", fontWeight: "700",
-    fontSize: 20,
-    marginTop: 4,
+    fontSize: 16,
   },
   weekMessage: { color: colors.lime, fontFamily: "Quantico", fontSize: 11 },
   section: {
@@ -376,18 +374,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     letterSpacing: 1,
   },
-  helper: { color: colors.muted, fontSize: 13, marginTop: -12 },
+  sectionHeading: { gap: spacing.xs },
+  helper: { color: colors.muted, fontSize: 12, lineHeight: 16 },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.xs },
   muscle: {
     width: "23.5%",
-    minHeight: 92,
+    minHeight: 76,
     padding: spacing.xs,
     backgroundColor: colors.card,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: radius.sm,
     justifyContent: "space-between",
-    gap: spacing.xs,
+    gap: 4,
   },
   muscleActive: { backgroundColor: colors.lime, borderColor: colors.lime },
   muscleName: { color: colors.text, fontFamily: "Quantico", fontWeight: "700", fontSize: 10 },
@@ -405,15 +404,15 @@ const styles = StyleSheet.create({
   chipActive: { backgroundColor: colors.lime, borderColor: colors.lime },
   chipText: { color: colors.muted, fontFamily: "Quantico", fontSize: 10 },
   chipTextActive: { color: colors.background },
-  ctaRow: { paddingTop: spacing.sm, gap: spacing.md },
-  ctaSub: { color: colors.muted, ...typography.body, marginTop: 4 },
+  ctaRow: { gap: spacing.sm },
+  ctaSub: { color: colors.muted, ...typography.body, fontSize: 13, lineHeight: 18, marginTop: 4 },
   start: {
     backgroundColor: colors.lime,
-    minHeight: 58,
+    minHeight: 52,
     paddingHorizontal: spacing.md,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
     gap: spacing.sm,
     borderRadius: radius.sm,
   },

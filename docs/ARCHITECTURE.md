@@ -70,6 +70,7 @@ Los cambios de esquema futuros deben incluir una migración explícita y una not
 - Tokens propios en `theme/`.
 - Expo Router para navegación basada en archivos.
 - Dependencias nativas compatibles con Expo SDK 57.
+- `MuscleGroupIcon` renderiza siluetas anatómicas recortadas con `react-native-svg`; los trazados locales y su licencia MIT están en `assets/anatomy/`. El músculo resaltado se distingue tanto en tarjetas normales como seleccionadas, sin cargar imágenes remotas.
 - Sin backend, login o red social en esta fase.
 
 ## Catálogo de ejercicios
@@ -77,6 +78,7 @@ Los cambios de esquema futuros deben incluir una migración explícita y una not
 `data/routines.ts` mantiene un catálogo local pequeño y reutilizable:
 
 - `allExercises` devuelve el catálogo completo.
+- `getExercisesForMuscles` combina los 20 ejercicios de cada grupo seleccionado, en orden de selección, sin limitar la rutina a los primeros 12.
 - `getExercisesByCategory` filtra por modalidad.
 - `getExercisesByEquipment` filtra por equipamiento.
 - `Exercise.mediaUrl` (remoto, RepDB) o `Exercise.mediaSource` (local, `require()` desde `assets/exercises/`) provee la miniatura; `mediaSource` tiene prioridad cuando ambos existen. Los 140 ejercicios del catálogo tienen imagen: 134 remotas y 6 locales.
