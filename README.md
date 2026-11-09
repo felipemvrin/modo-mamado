@@ -8,11 +8,14 @@ MODO MAMADO es un copiloto de entrenamiento offline-first para gimnasio. Te dice
 
 - Selección visual de uno o más grupos musculares.
 - Catálogo local ilustrado de 140 ejercicios: 20 por cada uno de los siete grupos musculares, con variedad de equipamiento.
+- Ver rutina incluye los 20 ejercicios de cada grupo seleccionado; puedes eliminar ejercicios antes de comenzar.
 - Sesión guiada con series y repeticiones objetivo.
 - Descanso automático con cronómetro grande, +30 segundos, saltar y feedback háptico.
 - Historial local de entrenamientos con Expo SQLite.
 - Señales de grupos trabajados durante los últimos 7 días.
 - Tipografía Quantico, iconografía consistente y diseño oscuro de alto contraste.
+
+Las siluetas de grupos musculares adaptan trazados de [react-native-body-highlighter](https://github.com/HichamELBSI/react-native-body-highlighter), bajo [licencia MIT](assets/anatomy/LICENSE). Se incluyen localmente y no requieren conexión.
 
 ## Stack
 
