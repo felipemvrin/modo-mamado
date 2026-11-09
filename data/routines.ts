@@ -200,6 +200,21 @@ export function getExerciseById(id: string): Exercise | undefined {
   return allExercises.find((item) => item.id === id);
 }
 
+export function getRoutineExercises(
+  selectedMuscles: MuscleGroup[],
+  availableEquipment: EquipmentType[],
+  substitutions: Record<string, string> = {},
+): { original: Exercise; exercise: Exercise }[] {
+  return getExercisesForMuscles(selectedMuscles).map((original) => {
+    const substituteId = substitutions[original.id];
+    const substitute = substituteId ? getExerciseById(substituteId) : undefined;
+    const exercise = substitute && substitute.muscleGroup === original.muscleGroup && availableEquipment.includes(substitute.equipment)
+      ? substitute
+      : original;
+    return { original, exercise };
+  }).filter(({ exercise }) => availableEquipment.includes(exercise.equipment));
+}
+
 export function getSubstitutes(exercise: Exercise, availableEquipment?: EquipmentType[]): Exercise[] {
   return allExercises.filter((item) => item.id !== exercise.id && item.muscleGroup === exercise.muscleGroup && item.equipment !== exercise.equipment && (!availableEquipment || availableEquipment.includes(item.equipment)));
 }

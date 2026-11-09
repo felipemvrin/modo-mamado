@@ -3,7 +3,7 @@ import { FlatList, Image, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet
 import { Swipeable } from 'react-native-gesture-handler';
 import { router } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { getExerciseById, getExercisesForMuscles, getSubstitutes } from '../data/routines';
+import { getRoutineExercises, getSubstitutes } from '../data/routines';
 import { colors, radius, spacing, typography } from '../theme/tokens';
 import { useWorkoutStore } from '../store/workout';
 import { Exercise } from '../types/workout';
@@ -20,8 +20,8 @@ export default function Routine() {
   const removeExercise = (id: string) => setRemovedIds((current) => ({ ...current, [id]: true }));
   const restoreExercises = () => setRemovedIds({});
   const removedCount = Object.keys(removedIds).length;
-  const baseExercises = getExercisesForMuscles(selectedMuscles).filter((item) => !removedIds[item.id]);
-  const exercises = baseExercises.map((item) => (substitutions[item.id] ? getExerciseById(substitutions[item.id]) ?? item : item));
+  const compatibleExercises = getRoutineExercises(selectedMuscles, availableEquipment, substitutions);
+  const exercises = compatibleExercises.filter(({ original }) => !removedIds[original.id]);
   const canStartWorkout = exercises.length > 0;
   const substituteOptions = pickerFor ? getSubstitutes(pickerFor, availableEquipment) : [];
   const zoomCanShowLocal = !!zoomExercise?.mediaSource && !failedMediaById[zoomExercise.id]?.local;
@@ -31,9 +31,8 @@ export default function Routine() {
   const zoomImageSize = Math.min(windowWidth - spacing.lg * 2, windowHeight * 0.5);
   return <SafeAreaView style={styles.safe}><FlatList
     data={exercises}
-    keyExtractor={(_, index) => baseExercises[index].id}
-    renderItem={({ item, index }) => {
-      const original = baseExercises[index];
+    keyExtractor={({ original }) => original.id}
+    renderItem={({ item: { original, exercise: item }, index }) => {
       const isSubstituted = original.id !== item.id;
       const canShowLocal = !!item.mediaSource && !failedMediaById[item.id]?.local;
       const canShowRemote = !!item.mediaUrl && !failedMediaById[item.id]?.remote;
@@ -58,9 +57,11 @@ export default function Routine() {
     </View>}
     ListHeaderComponentStyle={styles.listHeaderContainer}
     ListFooterComponent={<View style={styles.listFooter}>
-      {exercises.length === 0 && <Text style={styles.emptyText}>Eliminaste todos los ejercicios. Restaura alguno para poder empezar.</Text>}
+      {exercises.length === 0 && <Text style={styles.emptyText} accessibilityRole="alert">{compatibleExercises.length === 0
+        ? 'No hay ejercicios compatibles con los grupos y el equipamiento seleccionados. Vuelve y elige otro equipamiento o grupo muscular.'
+        : 'Eliminaste todos los ejercicios. Restaura alguno para poder empezar.'}</Text>}
       <View style={styles.note}><MaterialCommunityIcons name="information-outline" color={colors.lime} size={20} /><Text style={styles.noteText}>Calienta antes de empezar. La técnica manda. Desliza un ejercicio hacia la izquierda para eliminarlo.</Text></View>
-      <Pressable onPress={() => { if (!canStartWorkout) return; startWorkout(baseExercises.map((exercise) => exercise.id)); router.push('/workout'); }} style={[styles.start, !canStartWorkout && styles.startDisabled]} disabled={!canStartWorkout}><Text style={styles.startText}>COMENZAR ENTRENAMIENTO</Text><MaterialCommunityIcons name="arrow-right" size={21} color={colors.background} /></Pressable>
+      <Pressable onPress={() => { if (!canStartWorkout) return; startWorkout(exercises.map(({ exercise }) => exercise.id)); router.push('/workout'); }} style={[styles.start, !canStartWorkout && styles.startDisabled]} disabled={!canStartWorkout} accessibilityRole="button" accessibilityState={{ disabled: !canStartWorkout }}><Text style={styles.startText}>COMENZAR ENTRENAMIENTO</Text><MaterialCommunityIcons name="arrow-right" size={21} color={colors.background} /></Pressable>
     </View>}
     ListFooterComponentStyle={styles.listFooterContainer}
     contentContainerStyle={styles.container}

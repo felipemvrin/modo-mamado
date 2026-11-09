@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { defaultMuscle, getExercisesForMuscles } from '../data/routines';
+import { defaultMuscle, getRoutineExercises } from '../data/routines';
 import { getWorkouts, initializeDatabase, saveWorkout } from '../database/workouts';
 import { createWorkoutId } from '../domain/workout-id';
 import { CompletedWorkout, EquipmentType, equipmentTypes, MuscleGroup } from '../types/workout';
@@ -38,22 +38,22 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
     return { selectedMuscles: [...state.selectedMuscles, muscle] };
   }),
   startWorkout: (exerciseIds) => set(() => {
-    const activeWorkout = get().selectedMuscles;
+    const { selectedMuscles: activeWorkout, availableEquipment, substitutions } = get();
     return {
       activeWorkout,
-      activeExerciseIds: exerciseIds ?? getExercisesForMuscles(activeWorkout).map((exercise) => exercise.id),
+      activeExerciseIds: exerciseIds ?? getRoutineExercises(activeWorkout, availableEquipment, substitutions).map(({ exercise }) => exercise.id),
       completedSets: [],
     };
   }),
   completeSet: (exerciseIndex, setIndex) => set((state) => ({ completedSets: state.completedSets.includes(exerciseIndex * 100 + setIndex) ? state.completedSets : [...state.completedSets, exerciseIndex * 100 + setIndex] })),
   finishWorkout: () => {
-    const { activeWorkout, activeExerciseIds } = get();
+    const { activeWorkout, activeExerciseIds, availableEquipment, substitutions } = get();
     if (!activeWorkout?.length) return;
     const workout: CompletedWorkout = {
       id: createWorkoutId(),
       muscleGroups: activeWorkout,
       completedAt: new Date().toISOString(),
-      exerciseCount: activeExerciseIds?.length ?? getExercisesForMuscles(activeWorkout).length,
+      exerciseCount: activeExerciseIds?.length ?? getRoutineExercises(activeWorkout, availableEquipment, substitutions).length,
     };
     saveWorkout(workout);
     set({ activeWorkout: null, activeExerciseIds: null, history: [workout, ...get().history] });
